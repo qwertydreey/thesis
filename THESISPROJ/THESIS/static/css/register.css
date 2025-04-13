@@ -37,11 +37,6 @@ body {
     overflow: hidden;
 }
 
-/* Hover effect: scale and shadow */
-.wood-login-wrapper:hover {
-    transform: scale(1.03);
-}
-
 /* Login content inside the wood background */
 .login-content {
     background-color: rgba(255, 255, 255, 0); /* Transparent */
@@ -192,16 +187,6 @@ form .mb-3 {
     margin-bottom: 0.5rem;
 }
 
-
-@media (max-width: 768px) {
-    .gender-group {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-}
-
-
 /* Submit button styling */
 button[type="submit"] {
     background-color: #4CAF50;
@@ -213,7 +198,7 @@ button[type="submit"] {
     width: 100%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-bottom: 0.1rem; /* Adjust this to control the gap between the button and the links */
+    margin-bottom: 0.6rem; /* Adjust this to control the gap between the button and the links */
 }
 
 /* Hover effect for submit button */
@@ -235,60 +220,240 @@ a:hover {
     color: #4b0082;
 }
 
-/* Base responsive layout for smaller screens */
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) and (orientation: portrait) {
     .wood-login-wrapper {
-        width: 90vw; /* Adjust the width for small screens */
-        max-width: 500px; /* Set a reasonable max-width for mobile */
-        min-height: auto; /* Let the height adjust according to content */
-        padding: 15px;
-    }
-
-    .login-text {
-        font-size: 3rem; /* Adjust font size for smaller screens */
-        letter-spacing: 2px;
+        background-size: contain;
+        width: 100vw;
+        min-height: 500px;
+        padding: 20px;
     }
 
     .login-content {
         width: 100%;
-        max-width: 100%; /* Allow content to use more space */
-        padding: 20px;
-    }
-
-    .kid-input {
-        font-size: 0.95rem; /* Slightly smaller font for mobile */
-        padding: 8px 12px; /* Adjust padding for compactness */
-    }
-
-    button[type="submit"] {
-        font-size: 0.95rem;
-        padding: 10px;
-    }
-}
-
-/* Ultra-small screens (older iPhones, etc.) */
-@media screen and (max-width: 400px) {
-    .wood-login-wrapper {
-        width: 85vw; /* Narrower for small screens */
-        padding: 10px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1em;
+        gap: 0.7em;
     }
 
     .login-text {
-        font-size: 1.8rem; /* Even smaller for small devices */
+        font-size: 2.2em;
+        text-align: center;
+        position: relative;
+        top: 14px;
+        margin-top: -1.6rem;
     }
 
     .kid-input {
-        font-size: 0.85rem; /* Compact text for small screens */
-        padding: 6px 10px; /* Adjust padding for even more compactness */
+        font-size: 1.1em;
+        padding-top: 0.6em;
+        padding-left: 0.6em;
+        height: 1.7em;
+        width: 16em;
+        border: 2px solid #D97706;
+        border-radius: 0.5em;
+        color: #5B3A29;
+        font-weight: 600;
+        display: block;
+        margin: 0 auto;
     }
 
-    button[type="submit"] {
-        font-size: 0.85rem;
-        padding: 6px;
+    .kid-input::placeholder {
+        font-size: 0.7rem;
     }
 
-    .login-content {
-        padding: 8px;
+    .birthdate-wrapper {
+        display: flex;
+        flex-direction: row; /* Ensure horizontal layout */
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-top: -0.2rem;
+        margin-bottom: -0rem;
+
+    }
+
+    .birthday-select {
+        font-size: 0.6rem; /* Smaller font for landscape tablets or phones */
+        padding: 3px 7px; /* Top-Bottom: 6px | Left-Right: 10px */
+        width: 30%; /* Adjusted to fit better in landscape */
+        height: 2.9em; /* Smaller height for dropdown */
+        border-radius: 0.8em; /* Rounded corners */
+        background-size: 12px; /* Smaller arrow icon */
+        background-position: right 6px center; /* Tighter icon alignment */
+    } 
+
+    .gender-option {
+        padding: 11px;
+        font-size: 0.7rem;
+        height: 1.8rem;
+        border-radius: 0.9em;
+    }
+
+    .gender-radio {
+        transform: scale(1.1);
+        margin-left: 7px;
+        height: 1.1em;
+    }
+
+    .gender-group {
+        gap: 14px;
+        margin-top: -0.65rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .btn-wrapper .btn {
+        font-size: 0.8rem;
+        padding: 0 1em;
+        height: 2.7em;
+        border-radius: 0.7em;
+    }
+
+    .text-center a,
+    .text-center span,
+    .text-center {
+        font-size: 0.7rem !important;
+        line-height: 1.3em !important;
+        margin-top: 0.6rem !important;
+        padding-top: 0 !important;
     }
 }
 
+
+
+
+
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+    html, body {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+/* Default styling for login text */
+
+
+.wood-login-wrapper {
+    width: 100vw;
+    height: 100vh;
+    padding: 8px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    
+    max-width: 33vw;
+    max-height: 20vh;
+    font-size: unset;  /* Remove font size inheritance from this element */
+}
+
+    
+    .login-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5em;
+        gap: 0.4em;
+        
+    }
+    
+    .login-text {
+        font-size: 2em;
+        text-align: center;
+        position: relative;
+        top: 19px; /* move downward */
+        margin-top: -0.9em; /* Move the text down */
+
+    }
+    
+    
+    .kid-input {
+        font-size: 1em;
+        padding-top: 0.5em; /* Add padding to the top to move the placeholder up */
+        padding-left: 0.5em; /* Add padding to the left to move the placeholder right */
+        height: 1.5em;
+        width: 13em;
+        border: 2px solid #D97706;
+        border-radius: 0.4em;
+        color: #5B3A29;
+        font-weight: 600;
+    
+        display: block;
+        margin: 0 auto; /* ⬅️ this centers it horizontally */
+    }
+    
+    .kid-input::placeholder {
+        color: #8b8b8b;
+        font-size: 0.6rem;
+        font-style: normal;
+    }
+    
+/* Birthdate wrapper with horizontal alignment for day, month, and year */
+.birthdate-wrapper,.birthday-select {
+    display: flex;
+    justify-content: space-between;
+    width: 100%; /* Ensures the wrapper takes full width */
+    height: 3em; /* Control the height of select boxes */
+    gap: 10px; /* Space between the select elements */
+    font-size: 0.6rem; /* Smaller font for landscape tablets or phones */
+    margin-top: -0.04rem;
+    }  
+
+.birthday-select {
+        font-size: 0.6rem; /* Smaller font for landscape tablets or phones */
+        padding: 3px 7px; /* Top-Bottom: 6px | Left-Right: 10px */
+        width: 30%; /* Adjusted to fit better in landscape */
+        height: 2.4em; /* Smaller height for dropdown */
+        border-radius: 0.8em; /* Rounded corners */
+        background-size: 12px; /* Smaller arrow icon */
+        background-position: right 6px center; /* Tighter icon alignment */
+    } 
+
+    .gender-option {
+        padding:  10px; /* Reduced internal spacing */
+        font-size: 0.6rem; /* Smaller font */
+        height: 1.5em; /* Slightly shorter height */
+        border-radius: 0.8em; /* Rounded corners */
+    }
+
+    .gender-radio {
+        transform: scale(1); /* Normalize radio size for landscape */
+        margin-left: 6px; /* Slightly tighter spacing */
+        height: 1em; /* Adjusted height for radio button */
+    }
+
+    .gender-group {
+        gap: 12px; /* Reduce gap between gender options */
+        margin-top: -0.40rem;
+        margin-bottom: 0.25rem;
+    }
+
+
+.btn-wrapper .btn {
+    font-size: 0.7rem;
+    padding: 0 0.8em;  
+    height: 2.5em;              
+    line-height: 1;        
+    width: auto;
+    min-height: unset;
+    border-radius: 0.7em;
+}
+   
+.text-center a,
+.text-center span,
+.text-center {
+    font-size: 0.6rem !important;
+    line-height: 1.2em !important;
+    margin-top: 1 !important;
+    padding-top: 0 !important;
+}
+
+}

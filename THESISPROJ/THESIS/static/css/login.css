@@ -130,6 +130,7 @@ a:hover {
         width: 100vw;
         min-height: 500px;
         padding: 20px;
+        
     }
 
     .login-text {
@@ -137,88 +138,193 @@ a:hover {
     }
 
     .login-content {
-        padding: 20px;
         width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5em;
+        gap: 0.4em;
+        
     }
 
     .kid-input {
-        font-size: 0.95rem;
+        font-size: 1em;
+        padding-top: 0.5em; /* Add padding to the top to move the placeholder up */
+        padding-left: 0.5em; /* Add padding to the left to move the placeholder right */
+        height: 2.5em;
+        width: 17em;
+        border: 2px solid #D97706;
+        border-radius: 0.5em;
+        color: #5B3A29;
+        font-weight: 600;
+    
+        display: block;
+        margin: 0 auto; /* ⬅️ this centers it horizontally */
     }
 
-    button[type="submit"] {
-        font-size: 0.95rem;
+    .stay-signed-wrapper {
+        margin-left: 0.3em;     /* spacing from the left */
     }
+    
+    /* Checkbox */
+    #stay-signed-in {
+        width: 1em;
+        height: 1em;
+        accent-color: #D97706;
+        cursor: pointer;
+        margin-right: 0.4em;
+        margin-top: -0.4em;   /* adjust this to move it upward */
+    
+    }
+    
+    /* Label text */
+    label[for="stay-signed-in"] {
+        font-size: 0.8rem;
+        color: #5B3A29;
+        font-weight: 500;
+        line-height: 1em;
+        margin-bottom: 0;
+        cursor: pointer;
+        margin-top: -0.4em;   /* adjust this to move it upward */
+    
+    }
+
+    .btn-wrapper .btn {
+        font-size: 0.9rem;
+        height: 2.5em;              
+        line-height: 1;        
+        width: auto;
+        border-radius: 0.7em;
+    }
+
+    .text-center a,
+.text-center span,
+.text-center {
+    font-size: 0.8rem !important;
+    line-height: 1.2em !important;
+    margin-top: 1 !important;
+    padding-top: 0 !important;
 }
 
-/* Landscape view for phone screens */
+}
+
 @media screen and (max-width: 1024px) and (orientation: landscape) {
     html, body {
         height: 100vh;
         overflow: hidden;
     }
 
-    .wood-login-wrapper {
-        width: 100vw;
-        height: 100vh;
-        max-width: 100vw;
-        max-height: 100vh;
-        padding: 10px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
+/* Default styling for login text */
 
-    .login-content {
-        max-height: 70vh;
-        width: 90%;
-        padding: 20px;
-        overflow-y: auto;
-        scrollbar-width: none; /* Firefox */
-    }
 
-    .login-content::-webkit-scrollbar {
-        display: none; /* Chrome, Safari */
-    }
-
-    .login-text {
-        font-size: 2.5rem;
-    }
-
-    .kid-input {
-        font-size: 1rem;
-    }
-
-    button[type="submit"] {
-        font-size: 1rem;
-        padding: 12px;
-    }
+.wood-login-wrapper {
+    width: 100vw;
+    height: 100vh;
+    padding: 8px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    
+    max-width: 30vw;
+    max-height: 15vh;
+    font-size: unset;  /* Remove font size inheritance from this element */
 }
 
-/* Ultra-small screens (like older iPhones) */
-@media screen and (max-width: 400px) {
-    .login-text {
-        font-size: 1.8rem;
-    }
-
-    .kid-input {
-        font-size: 0.85rem;
-    }
-
-    button[type="submit"] {
-        font-size: 0.85rem;
-        padding: 8px;
-    }
-
+    
     .login-content {
-        padding: 8px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5em;
+        gap: 0.4em;
+        
     }
+    
+    .login-text {
+        font-size: 2em;
+        text-align: center;
+        position: relative;
+        top: 13px; /* move downward */
+        margin-top: -0.5em; /* Move the text down */
 
-    .wood-login-wrapper {
-        padding: 10px;
-        min-height: 90vh;
     }
+    
+    
+    .kid-input {
+        font-size: 1em;
+        padding-top: 0.5em; /* Add padding to the top to move the placeholder up */
+        padding-left: 0.5em; /* Add padding to the left to move the placeholder right */
+        height: 2em;
+        width: 13em;
+        border: 2px solid #D97706;
+        border-radius: 0.5em;
+        color: #5B3A29;
+        font-weight: 600;
+    
+        display: block;
+        margin: 0 auto; /* ⬅️ this centers it horizontally */
+    }
+    
+    .kid-input::placeholder {
+        color: #8b8b8b;
+        font-size: 0.6rem;
+        font-style: normal;
+    }
+    
+/* Wrapper for the checkbox and label */
+.stay-signed-wrapper {
+    margin-left: 0.3em;     /* spacing from the left */
+}
+
+/* Checkbox */
+#stay-signed-in {
+    width: 0.7em;
+    height: 0.7em;
+    accent-color: #D97706;
+    cursor: pointer;
+    margin-right: 0.4em;
+    margin-top: -0.6em;   /* adjust this to move it upward */
+
+}
+
+/* Label text */
+label[for="stay-signed-in"] {
+    font-size: 0.6rem;
+    color: #5B3A29;
+    font-weight: 500;
+    line-height: 1em;
+    margin-bottom: 0;
+    cursor: pointer;
+    margin-top: -0.7em;   /* adjust this to move it upward */
+
+}
+
+.btn-wrapper .btn {
+    font-size: 0.7rem;
+    padding: 0 0.8em;  
+    height: 2.5em;              
+    line-height: 1;        
+    width: auto;
+    min-height: unset;
+    border-radius: 0.7em;
+}
+   
+.text-center a,
+.text-center span,
+.text-center {
+    font-size: 0.6rem !important;
+    line-height: 1.2em !important;
+    margin-top: 1 !important;
+    padding-top: 0 !important;
+}
+
 }

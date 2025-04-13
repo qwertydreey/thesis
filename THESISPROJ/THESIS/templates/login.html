@@ -21,9 +21,11 @@
 <body class="bg-cover bg-center min-h-screen d-flex justify-content-center align-items-center" style="background-image: url('/static/images/login.jpg');">
 
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        
         <div class="wood-login-wrapper p-4">
             <div class="login-content">
-                <h1 class="login-text">LOG IN</h1>
+                <div class="login-text-wrapper">
+                    <h1 class="login-text">LOG IN</h1>
                 <form action="#" method="POST">
                     <div class="mb-3">
                         <input type="text" id="username" name="username" placeholder="🧙 Enter your username" class="kid-input">
@@ -32,16 +34,16 @@
                         <input type="password" id="password" name="password" placeholder="🔒 Enter your password" class="kid-input">
                     </div>
 
-                    <div class="d-flex align-items-center mb-3">
+                    <div class="stay-signed-wrapper d-flex align-items-center mb-3">
                         <input id="stay-signed-in" name="stay-signed-in" type="checkbox" class="form-check-input ms-1">
                         <label for="stay-signed-in" class="ms-2 text-sm text-white">Stay signed in</label>
                     </div>
 
-                    <div class="d-grid mb-3">
-                        <button type="submit" class="btn btn-success text-white">Login</button>
+                    <div class="btn-wrapper d-grid mb-3">
+                        <button type="submit" class="btn text-white">Login</button>
                     </div>
-
-                    <div class="text-center">
+                    
+                    <div class="text-center mt-0 mb-0">
                         <a href="#" class="text-sm text-white hover:text-purple-500">Forgot Password?</a>
                     </div>
                     <div class="text-center mt-2">

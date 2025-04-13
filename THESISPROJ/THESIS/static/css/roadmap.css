@@ -1,101 +1,121 @@
-/* Reset body and center the card */
+html {
+    scroll-behavior: smooth;
+  }
+  
 body {
     margin: 0;
     padding: 0;
     background-color: #1E273E;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Roadmap card container */
-.roadmap-card {
-    position: relative;
+    overflow: hidden; /* Prevent body from showing extra background */
+  }
+  
+  .roadmap-wrapper {
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
-}
-
-
-
-/* Background image stretched inside the card */
-.background-image {
-    position: absolute;
-    top: 0;
-    left: 0;
+    overflow-y: auto; /* Allow vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  /* Roadmap content scales with screen width */
+  .roadmap-content {
+    position: relative;
     width: 100%;
-    height: 100%;
-    object-fit: fill;
-    z-index: 0;
+    max-width: 1920px;
+  }
+  
+  /* Background image fits screen width, scrolls if too tall */
+  .bg-img {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    display: block;
+  }
+
+/* Generic button styling (acts like cutout image) */
+.roadmap-btn {
+  position: absolute;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  box-shadow: none;
+  transition: transform 0.3s ease;
 }
 
-/* All cutout images layered above */
-.cutout-image {
-    position: absolute;
-    z-index: 1;
-    transition: transform 0.3s ease;
+/* Hover effect */
+.roadmap-btn:hover {
+  transform: scale(1.05);
 }
 
-.cutout-image:hover {
-    transform: scale(1.1);
-}
-
+/* Button positions and sizes based on 1920x1080 */
 .addition-town {
-    top: 200px;
-    left: 1603px;
-    width: 195px;
-    height: 120px;
-}
-
-
-.comparison-cliffs {
-    top: 264px;
-    left: 1062px;
-    width: 296px;
-    height: 104px;
-}
-
-.place-value-village {
-    top: 708px;
-    left: 723px;
-    width: 238px;
-    height: auto;
-}
-
-.multiplication-oasis {
-    top: 744px;
-    left: 1089px;
-    width: 280px;
-    height: 110px;
-}
-
-
-.division-river {
-    top: 559px;
-    left: 1634px;
-    width: 236px;
-    height: 120px;
-}
-
-.roman-ruins {
-    top: 412px;
-    left: 686px;
-    width: 200px;
-    height: auto;
+    top: 23.2%;
+    left: 83.3%;
+    width: 10.5%;
+    height: 11.8%;
+  background-image: url('../images/gameimg/roadmap/Addition Town.png');
 }
 
 .subtraction-desert {
-    top: 737px;
-    left: 116px;
-    width: 210px;
-    height: 99px;
+    top: 81.4%;
+    left: 5.4%;
+    width: 11.9%;
+    height: 10.2%;
+  background-image: url('../images/gameimg/roadmap/subtraction desert.png');
+}
+
+/* Example buttons — Add the rest using same logic */
+.comparison-cliffs {
+    top: 29.1%;
+    left: 55.3%;
+    width: 15.4%;
+    height: 11.6%;
+  background-image: url('../images/gameimg/roadmap/Comparison Cliffs.png');
+}
+
+.place-value-village {
+    top: 78.5%;
+    left: 37.1%;
+    width: 13.4%;
+    height: 12.2%;
+  background-image: url('../images/gameimg/roadmap/Place Value Village.png');
+}
+
+.multiplication-oasis {
+    top: 82.5%;
+    left: 56.3%;
+    width: 15.6%;
+    height: 11.2%;
+  background-image: url('../images/gameimg/roadmap/multiplication oasis.png');
+}
+
+.division-river {
+    top: 62.5%;
+    left: 85.1%;
+    width: 12.3%;
+    height: 12.1%;
+  background-image: url('../images/gameimg/roadmap/division river.png');
+}
+
+.roman-ruins {
+    top: 45.7%;
+    left: 35.5%;
+    width: 10.70%;
+    height: 12%;
+  background-image: url('../images/gameimg/roadmap/roman ruins.png');
 }
 
 .skip-counting-springs {
-    top: 459px;
-    left: 60px;
-    width: 255px;
-    height: 90px;
+    top: 50.5%;
+    left: 2.7%;
+    width: 14.2%;
+    height: 9.3%;
+  background-image: url('../images/gameimg/roadmap/skip counting springs.png');
 }
