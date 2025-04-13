@@ -10,9 +10,14 @@
 /* Apply a background image to the body */
 body {
     background-size: cover;
-    font-family: 'Comic Sans MS', 'Arial', sans-serif, 'Squeid Gameis', cursive;
-
+    background-position: center;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
 }
+
+/* Login title text */
 .login-text {
     font-size: 5rem;
     font-weight: normal;
@@ -20,39 +25,40 @@ body {
     text-align: center;
     margin-bottom: 20px;
     font-family: 'Squeid Gameis';
-    letter-spacing: 5px; 
-}
-.wood-card {
-    position: absolute;
-    top: 170px;
-    width: 50vh;
-    height: auto;
+    letter-spacing: 5px;
 }
 
-
-
-/* Styles for the login card */
-.login-card {
-    padding: 60px;
-    width: 120%;
-    min-width: 450px;
-    height: auto;
-    text-align: center;
-    border: none;
+/* Wood login wrapper with hover effect */
+.wood-login-wrapper {
+    background-image: url('../images/wood.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 95vw;
+    max-width: 750px;
+    min-height: 600px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 30px;
     position: relative;
     z-index: 1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    flex-direction: column;
+    overflow: hidden;
 }
 
+/* Hover effect: scale and shadow */
+.wood-login-wrapper:hover {
+    transform: scale(1.03);
+}
 
-/* Styles for the content inside the login card */
+/* Login content inside the wood background */
 .login-content {
-    padding: 30px;
+    background-color: rgba(255, 255, 255, 0); /* transparent */
     width: 100%;
     max-width: 400px;
+    padding: 30px;
 }
 
 /* Fancy input styles for kids */
@@ -72,8 +78,8 @@ body {
 }
 
 .kid-input::placeholder {
-    color: #B45309;
-    font-size: 1.1rem;
+    color: #8b8b8b;
+    font-size: 1rem;
     font-style: normal;
 }
 
@@ -117,15 +123,102 @@ a:hover {
     color: #4b0082;
 }
 
-/* Responsive layout */
+/* Base responsive layout */
 @media (max-width: 768px) {
-    .login-card {
+    .wood-login-wrapper {
+        background-size: contain;
+        width: 100vw;
+        min-height: 500px;
         padding: 20px;
-        max-width: 90%;
+    }
+
+    .login-text {
+        font-size: 3rem;
     }
 
     .login-content {
         padding: 20px;
         width: 100%;
+    }
+
+    .kid-input {
+        font-size: 0.95rem;
+    }
+
+    button[type="submit"] {
+        font-size: 0.95rem;
+    }
+}
+
+/* Landscape view for phone screens */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+    html, body {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .wood-login-wrapper {
+        width: 100vw;
+        height: 100vh;
+        max-width: 100vw;
+        max-height: 100vh;
+        padding: 10px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .login-content {
+        max-height: 70vh;
+        width: 90%;
+        padding: 20px;
+        overflow-y: auto;
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .login-content::-webkit-scrollbar {
+        display: none; /* Chrome, Safari */
+    }
+
+    .login-text {
+        font-size: 2.5rem;
+    }
+
+    .kid-input {
+        font-size: 1rem;
+    }
+
+    button[type="submit"] {
+        font-size: 1rem;
+        padding: 12px;
+    }
+}
+
+/* Ultra-small screens (like older iPhones) */
+@media screen and (max-width: 400px) {
+    .login-text {
+        font-size: 1.8rem;
+    }
+
+    .kid-input {
+        font-size: 0.85rem;
+    }
+
+    button[type="submit"] {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+
+    .login-content {
+        padding: 8px;
+    }
+
+    .wood-login-wrapper {
+        padding: 10px;
+        min-height: 90vh;
     }
 }
