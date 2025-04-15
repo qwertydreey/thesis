@@ -16,7 +16,7 @@ login_manager.login_view = 'login'
 db = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="qweqwe", 
+    password="qweqwe",
     database="learning_game"
 )
 cursor = db.cursor(dictionary=True)
@@ -84,12 +84,10 @@ def register():
 def dashboard():
     return render_template('dashboard.html', username=current_user.username)
 
-
 @app.route('/roadmap')
 @login_required
 def roadmap():
     return render_template('roadmap.html')
-
 
 @app.route('/logout')
 @login_required
@@ -97,6 +95,10 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+# ✅ Forgot password route
+@app.route('/forgot-password')
+def forgot_password():
+    return render_template('forgot_password.html')  # Make sure this template exists
 
 @app.route('/game')
 @login_required
@@ -105,7 +107,6 @@ def game():
     cursor.execute("SELECT current_difficulty FROM user_progress WHERE user_id = %s", (current_user.id,))
     row = cursor.fetchone()
 
-    # If new player, add to progress
     if not row:
         cursor.execute("INSERT INTO user_progress (user_id) VALUES (%s)", (current_user.id,))
         db.commit()
@@ -113,7 +114,7 @@ def game():
     else:
         difficulty = row['current_difficulty']
 
-    # Fetch a random question from that difficulty
+    # Fetch a random question
     cursor.execute("SELECT * FROM questions WHERE difficulty = %s", (difficulty,))
     questions = cursor.fetchall()
     question = random.choice(questions) if questions else None
@@ -126,13 +127,11 @@ def submit_answer():
     user_answer = request.form['answer']
     question_id = request.form['question_id']
 
-    # Get the correct answer from DB
     cursor.execute("SELECT * FROM questions WHERE id = %s", (question_id,))
     question = cursor.fetchone()
 
     is_correct = user_answer.strip() == question['correct_answer'].strip()
 
-    # Update progress based on answer
     if is_correct:
         cursor.execute("""
             UPDATE user_progress 
@@ -145,14 +144,13 @@ def submit_answer():
             SET wrong_answers = wrong_answers + 1 
             WHERE user_id = %s
         """, (current_user.id,))
-    
-    # Fetch current stats
+
     cursor.execute("SELECT correct_answers, wrong_answers FROM user_progress WHERE user_id = %s", (current_user.id,))
     stats = cursor.fetchone()
     total = stats['correct_answers'] + stats['wrong_answers']
     accuracy = stats['correct_answers'] / total if total > 0 else 0
 
-    # Adjust difficulty
+    # Update difficulty
     if accuracy >= 0.8:
         new_diff = 'hard'
     elif accuracy >= 0.5:
@@ -164,9 +162,6 @@ def submit_answer():
     db.commit()
 
     return redirect(url_for('game'))
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

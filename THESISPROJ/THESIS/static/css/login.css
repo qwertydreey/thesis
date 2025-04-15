@@ -260,11 +260,11 @@ a:hover {
     
     
     .kid-input {
-        font-size: 1em;
-        padding-top: 0.5em; /* Add padding to the top to move the placeholder up */
-        padding-left: 0.5em; /* Add padding to the left to move the placeholder right */
-        height: 2em;
-        width: 13em;
+        font-size: 0.6rem;
+        padding-top: 1em; /* Add padding to the top to move the placeholder up */
+        padding-left:1em; /* Add padding to the left to move the placeholder right */
+        height: 3em;
+        width: 20em;
         border: 2px solid #D97706;
         border-radius: 0.5em;
         color: #5B3A29;

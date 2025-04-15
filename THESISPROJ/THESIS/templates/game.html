@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <!-- Tailwind CSS and Font Awesome Integration -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -6,229 +7,195 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
     <!-- Font Awesome Icons for heart and other icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Chewy&family=Fredoka:wght@300..700&family=Varela+Round&display=swap" rel="stylesheet">
   </head>
   <body>
-    
-<!-- Game container with background image -->
-<div class="gamebg w-full flex-1 bg-cover bg-center" style="background-image: url('static/images/gameimg/greenbg.jpg');">
+    <div class="game-wrapper flex flex-col w-full min-h-screen">
+      <!-- Game Background -->
+      <div class="game-bg w-full flex-1 bg-cover bg-center" style="background-image: url('static/images/gameimg/greenbg.jpg');">
+        <!-- Main Game Container (Player and Monster Section) -->
+        <div class="relative w-full h-full z-0">
+          <div class="flex justify-between items-center p-4 w-full">
+            <!-- Player Section -->
+            <div class="player-container flex items-center space-x-4 relative">
+              <img alt="Player Profile" class="player-image"
+                src="https://storage.googleapis.com/a1aa/image/raUbD71iFYq-U1Yml26Zcr8Ah8pGAFtfHBuPj5mjZ5w.jpg" />
+              <div class="health-box">
+                <p class="player-name">PLAYER NAME</p>
+                <div id="player-health" class="player-health-bar flex space-x-1"></div>
+              </div>
+            </div>
 
-
-  <!-- Player Section (with Profile Image, Name, and Health Bar) -->
-<div class="flex justify-between items-center p-4 w-full relative">
-
-<!-- Player Section -->
-<div class="player-container">
-    <div class="player-section flex items-center space-x-4">
-      <img alt="Player Profile" class="player-image" 
-           src="https://storage.googleapis.com/a1aa/image/raUbD71iFYq-U1Yml26Zcr8Ah8pGAFtfHBuPj5mjZ5w.jpg" />
-  
-      <!-- Name and Health Bar Section -->
-      <div class="name-health">
-        <div class="name-box">
-          <p class="player-name">Sample name</p>
-        </div>
-        <div class="player-health-bar space-x-1">
-          <div class="health-bar">
-            <img src="{{ url_for('static', filename='images/gameimg/heart.png') }}" alt="Heart" class="heart-image" />
-            <img src="{{ url_for('static', filename='images/gameimg/heart.png') }}" alt="Heart" class="heart-image" />
-            <img src="{{ url_for('static', filename='images/gameimg/heart.png') }}" alt="Heart" class="heart-image" />
-            <img src="{{ url_for('static', filename='images/gameimg/heart.png') }}" alt="Heart" class="heart-image" />
-            <img src="{{ url_for('static', filename='images/gameimg/heart.png') }}" alt="Heart" class="heart-image" />
+            <!-- Monster Section -->
+            <div class="monster-container flex items-center space-x-4 relative">
+              <div class="health-box text-right">
+                <p class="monster-name">MONSTER NAME</p>
+                <div id="monster-health" class="monster-health-bar flex space-x-1"></div>
+              </div>
+              <img alt="Monster Profile" class="monster-image"
+                src="https://storage.googleapis.com/a1aa/image/rRqKqcirVjsHBRYUKip0Q807MQFPzmCDhnZij_5kkzQ.jpg" />
+            </div>
           </div>
-          
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Main content section with question in the center 
-   
-  replaced    -->
-  
-  <!-- Main content section with question and answer form 
-   
-  replacedd   -->
-
-<!-- Just show the question -->
-<div class="question-container absolute text-center top-20 left-1/2 transform -translate-x-1/2">
+<!-- Question Section -->
+<div class="question-container">
   {% if question %}
-    <p class="text-4xl font-bold text-yellow-400">{{ question.question_text }}</p>
+    <p class="question-text">{{ question.question_text }}</p>
     <input type="hidden" id="question-id" value="{{ question.id }}">
   {% else %}
     <p class="text-2xl text-red-400">No questions available for this level.</p>
   {% endif %}
 </div>
-
-
-
-    <!-- Monster Section -->
-  <div class="monster-container">
-    <div class="monster-section flex items-center space-x-4">
-
-      <!-- Name and Health Bar Section -->
-      <div class="name-health">
-        <div class="name-box">
-          <p class="monster-name">Monster name</p>
-        </div>
-        <div class="monster-health-bar space-x-1">
-          <img src="{{ url_for('static', filename='images/gameimg/heart.png') }}" alt="Heart" class="heart-image" />
-          <img src="{{ url_for('static', filename='images/gameimg/heart.png') }}" alt="Heart" class="heart-image" />
-          <img src="{{ url_for('static', filename='images/gameimg/heart.png') }}" alt="Heart" class="heart-image" />
-          
-        </div>
       </div>
-      <img alt="Monster Profile" class="monster-image" 
-           src="https://storage.googleapis.com/a1aa/image/rRqKqcirVjsHBRYUKip0Q807MQFPzmCDhnZij_5kkzQ.jpg" />
-    </div>
-  </div>
+      <!-- Combined Ground and Characters Section -->
+      <div class="ground-container">
+        <!-- Character (Wizard) -->
+        <img src="{{ url_for('static', filename='images/gameimg/char/char.png') }}" alt="Wizard"
+          class="character wizard absolute z-20 left-1/4 transform -translate-x-1/2 bottom-10">
+        <!-- Monster Character -->
+        <img src="{{ url_for('static', filename='images/gameimg/mnstr/boss 1.png') }}" alt="Monster"
+          class="character monster absolute z-20 right-1/4 transform translate-x-1/2 bottom-10">
+        <!-- Ground (Platform) -->
+        <div class="ground"></div>
+      </div>
 
-</div>
+      <!-- Footer section for controls -->
+      <div class="game-control-box">
+        <!-- Main game bar split into 3 sections -->
+        <div class="grid grid-cols-3 gap-4">
+          <!-- Potion Section -->
+          <div class="potion-section p-4">
+            <button class="bg-green-500 text-white p-2 rounded-lg w-full">Potion 1</button>
+            <button class="bg-green-500 text-white p-2 rounded-lg w-full">Potion 2</button>
+            <button class="bg-green-500 text-white p-2 rounded-lg w-full">Potion 3</button>
+          </div>
 
-
-
-
-
-</div>
-<!-- Combined Ground and Characters Section -->
-<div class="ground-container w-full">
-    <!-- Character (Wizard) on the left -->
-    <img src="{{ url_for('static', filename='images/gameimg/char/char.png') }}" alt="Wizard"
-         class="character wizard absolute z-20">
-  
-    <!-- Monster Character on the right -->
-    <img src="{{ url_for('static', filename='images/gameimg/mnstr/boss 1.png') }}" alt="Monster"
-         class="character monster absolute z-20">
-  
-    <!-- Ground (Platform) -->
-    <div class="ground w-full"></div>
-  </div>
-  
-  
-
-
-    <!-- Footer section for controls and other sections -->
-    <div class="game-control-box p-4 w-full">
-      <!-- Main game bar split into 3 sections -->
-      <div class="grid grid-cols-3 gap-4">
-        
-        <!-- Potion Section -->
-        <div class="potion-section p-4">
-          <!-- Placeholder for potion buttons or items -->
-          <button class="bg-green-500 text-white p-2 rounded-lg w-full">Potion 1</button>
-          <button class="bg-green-500 text-white p-2 rounded-lg w-full">Potion 2</button>
-          <button class="bg-green-500 text-white p-2 rounded-lg w-full">Potion 3</button>
-        </div>
-
-        
-
-
-        
-
-        <div class="game-control-container">
-          
-          <div class="layout-wrapper">
-            <!-- Number Buttons Grid -->
-            <div class="button-grid">
-              <div class="button" onclick="addToInput(7)">7</div>
-              <div class="button" onclick="addToInput(8)">8</div>
-              <div class="button" onclick="addToInput(9)">9</div>
-              <div class="button" onclick="addToInput(4)">4</div>
-              <div class="button" onclick="addToInput(5)">5</div>
-              <div class="button" onclick="addToInput(6)">6</div>
-              <div class="button" onclick="addToInput(1)">1</div>
-              <div class="button" onclick="addToInput(2)">2</div>
-              <div class="button" onclick="addToInput(3)">3</div>
-              <div class="button backspace" onclick="backspace()">⌫</div>
-              
-              <div class="button" onclick="addToInput(0)">0</div>
-              <div class="button" onclick="addToInput('.')">.</div>
-            </div>
-        
-            <!-- Input and Attack Button Section -->
-            <div class="right-section">
-              <div class="placeholder-input">
-                <input 
-                  type="text" 
-                  class="input-field" 
-                  placeholder="Input number" 
-                  id="number-input"
-                />
+          <div class="game-control-container">
+            <div class="layout-wrapper">
+              <!-- Number Buttons Grid -->
+              <div class="button-grid grid grid-cols-3 gap-4">
+                <div class="button" onclick="addToInput(7)">7</div>
+                <div class="button" onclick="addToInput(8)">8</div>
+                <div class="button" onclick="addToInput(9)">9</div>
+                <div class="button" onclick="addToInput(4)">4</div>
+                <div class="button" onclick="addToInput(5)">5</div>
+                <div class="button" onclick="addToInput(6)">6</div>
+                <div class="button" onclick="addToInput(1)">1</div>
+                <div class="button" onclick="addToInput(2)">2</div>
+                <div class="button" onclick="addToInput(3)">3</div>
+                <div class="button backspace" onclick="backspace()">⌫</div>
+                <div class="button" onclick="addToInput(0)">0</div>
+                <div class="button" onclick="addToInput('.')">.</div>
               </div>
-              <div class="attack-button"> Attack</div>
+
+              <!-- Input and Attack Button Section -->
+              <div class="right-section">
+                <div class="placeholder-input">
+                  <input type="text" class="input-field" placeholder="Input number" id="number-input" />
+                </div>
+                <div class="attack-button">Attack</div>
+              </div>
             </div>
           </div>
         </div>
-
-
-        <!-- Chatbot Section -->
-        <div class="chatbot-section p-4 ">
-          <!-- Placeholder for chatbot interface -->
-
-          <button class="bg-blue-500 text-white p-2 rounded-lg mt-2 w-full">Send Mesage</button>
-        </div>
-
       </div>
     </div>
 
-
     <!-- JavaScript for handling button clicks and input -->
     <script>
-      // Function to add a number or symbol to the input
       function addToInput(value) {
         const inputField = document.getElementById('number-input');
         inputField.value += value;
       }
-    
-      // Function to remove the last character or clear selected text if present
+
       function backspace() {
         const inputField = document.getElementById('number-input');
-        // If text is selected, clear the whole input; otherwise, remove the last character.
         if (inputField.selectionStart !== inputField.selectionEnd) {
           inputField.value = '';
         } else {
           inputField.value = inputField.value.slice(0, -1);
         }
       }
-    
-      // Event listener for keyboard input
+
       document.addEventListener('keydown', function(event) {
         const inputField = document.getElementById('number-input');
-        
-        // If the Ctrl key is pressed...
         if (event.ctrlKey) {
-          // If it's Ctrl+A, prevent default and select all text.
           if (event.key.toLowerCase() === 'a') {
             event.preventDefault();
             inputField.select();
           }
-          // For any other Ctrl combination, let the event pass through.
           return;
         }
-        
-        // Optional: Ignore the event if it's a key repeat.
+
         if (event.repeat) return;
-        
-        // Check for backspace key and handle it.
+
         if (event.key === 'Backspace') {
           event.preventDefault();
           backspace();
           return;
         }
-        
-        // Process only single-character keys (ignore modifier keys, etc.)
+
         if (event.key.length === 1) {
-          // Allow only numbers (0–9) and the period.
           if ((event.key >= '0' && event.key <= '9') || event.key === '.') {
             event.preventDefault();
             addToInput(event.key);
           } else {
-            // For letters or any other character, block the input.
             event.preventDefault();
           }
         }
       });
     </script>
 
+    <script>
+      const fullHeart = "{{ url_for('static', filename='images/gameimg/heart.png') }}";
+      const maxPlayerHealth = 5;
+      let currentPlayerHealth = maxPlayerHealth;
+      const playerHealthBar = document.getElementById('player-health');
+      const maxMonsterHealth = 3;
+      let currentMonsterHealth = maxMonsterHealth;
+      const monsterHealthBar = document.getElementById('monster-health');
 
+      function renderHealth(bar, currentHealth) {
+        bar.innerHTML = '';
+        for (let i = 0; i < currentHealth; i++) {
+          const img = document.createElement('img');
+          img.src = fullHeart;
+          img.alt = 'Heart';
+          img.className = 'heart-image';
+          bar.appendChild(img);
+        }
+      }
+
+      function playerTakeDamage() {
+        if (currentPlayerHealth > 0) {
+          currentPlayerHealth--;
+          renderHealth(playerHealthBar, currentPlayerHealth);
+        }
+      }
+
+      function playerHeal(amount) {
+        currentPlayerHealth = Math.min(currentPlayerHealth + amount, maxPlayerHealth);
+        renderHealth(playerHealthBar, currentPlayerHealth);
+      }
+
+      function monsterTakeDamage() {
+        if (currentMonsterHealth > 0) {
+          currentMonsterHealth--;
+          renderHealth(monsterHealthBar, currentMonsterHealth);
+        }
+      }
+
+      function monsterHeal(amount) {
+        currentMonsterHealth = Math.min(currentMonsterHealth + amount, maxMonsterHealth);
+        renderHealth(monsterHealthBar, currentMonsterHealth);
+      }
+
+      renderHealth(playerHealthBar, currentPlayerHealth);
+      renderHealth(monsterHealthBar, currentMonsterHealth);
+    </script>
   </body>
 </html>

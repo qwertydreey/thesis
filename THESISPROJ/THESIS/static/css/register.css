@@ -248,13 +248,13 @@ a:hover {
     }
 
     .kid-input {
-        font-size: 1.1em;
-        padding-top: 0.6em;
-        padding-left: 0.6em;
-        height: 1.7em;
-        width: 16em;
+        font-size: 0.6rem;
+        padding-bottom: 1em; /* Add padding to the top to move the placeholder up */
+        padding-left:1em; /* Add padding to the left to move the placeholder right */
+        height: 3em;
+        width: 27em;
         border: 2px solid #D97706;
-        border-radius: 0.5em;
+        border-radius: 0.9em;
         color: #5B3A29;
         font-weight: 600;
         display: block;
@@ -376,13 +376,13 @@ a:hover {
     
     
     .kid-input {
-        font-size: 1em;
-        padding-top: 0.5em; /* Add padding to the top to move the placeholder up */
-        padding-left: 0.5em; /* Add padding to the left to move the placeholder right */
+        font-size: 0.6rem;
+        padding-bottom: 1em; /* Add padding to the top to move the placeholder up */
+        padding-left:1em; /* Add padding to the left to move the placeholder right */
         height: 1.5em;
-        width: 13em;
+        width: 22em;
         border: 2px solid #D97706;
-        border-radius: 0.4em;
+        border-radius: 0.7em;
         color: #5B3A29;
         font-weight: 600;
     
@@ -409,9 +409,9 @@ a:hover {
 
 .birthday-select {
         font-size: 0.6rem; /* Smaller font for landscape tablets or phones */
-        padding: 3px 7px; /* Top-Bottom: 6px | Left-Right: 10px */
+        padding: 2px 7px; /* Top-Bottom: 6px | Left-Right: 10px */
         width: 30%; /* Adjusted to fit better in landscape */
-        height: 2.4em; /* Smaller height for dropdown */
+        height: 2.2em; /* Smaller height for dropdown */
         border-radius: 0.8em; /* Rounded corners */
         background-size: 12px; /* Smaller arrow icon */
         background-position: right 6px center; /* Tighter icon alignment */
@@ -421,7 +421,7 @@ a:hover {
         padding:  10px; /* Reduced internal spacing */
         font-size: 0.6rem; /* Smaller font */
         height: 1.5em; /* Slightly shorter height */
-        border-radius: 0.8em; /* Rounded corners */
+        border-radius: 0.7em; /* Rounded corners */
     }
 
     .gender-radio {
@@ -440,7 +440,7 @@ a:hover {
 .btn-wrapper .btn {
     font-size: 0.7rem;
     padding: 0 0.8em;  
-    height: 2.5em;              
+    height: 2.4em;              
     line-height: 1;        
     width: auto;
     min-height: unset;
@@ -452,7 +452,7 @@ a:hover {
 .text-center {
     font-size: 0.6rem !important;
     line-height: 1.2em !important;
-    margin-top: 1 !important;
+    margin-top: -0.5em !important;
     padding-top: 0 !important;
 }
 
