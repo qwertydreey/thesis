@@ -54,7 +54,7 @@ body {
 }
 
 /* Hover effect only when the button is clicked */
-.roadmap-btn.clicked {
+.roadmap-btn:hover {
   transform: scale(1.03);
 }
 

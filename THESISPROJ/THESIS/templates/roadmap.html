@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Responsive Roadmap</title>
+  <title>Roadmap</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/roadmap.css') }}" />
 </head>
 <body>
@@ -15,85 +15,86 @@
       <!-- Image-Based Buttons -->
       <div class="roadmap-buttons">
       
-        <!-- Addition Village -->
-        <div class="roadmap-btn-wrapper">
-          <button class="roadmap-btn addition-village" onclick="startHoverEffect(this); window.location.href='#';"></button>
-          <div class="star-wrapper addition-village-stars">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-          </div>
-        </div>
-      
-        <!-- Subtraction Sands -->
-        <div class="roadmap-btn-wrapper">
-          <button class="roadmap-btn subtraction-sands" onclick="startHoverEffect(this); window.location.href='#';"></button>
-          <div class="star-wrapper subtraction-sands-stars">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-          </div>
-        </div>
-      
-        <!-- Comparison Cliffs -->
-        <div class="roadmap-btn-wrapper">
-          <button class="roadmap-btn comparison-cliffs" onclick="startHoverEffect(this); window.location.href='#';"></button>
-          <div class="star-wrapper comparison-cliffs-stars">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-          </div>
-        </div>
-      
-        <!-- Place Value Town -->
-        <div class="roadmap-btn-wrapper">
-          <button class="roadmap-btn place-value-town" onclick="startHoverEffect(this); window.location.href='#';"></button>
-          <div class="star-wrapper place-value-town-stars">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-          </div>
-        </div>
-      
-        <!-- Multiplication Mirage -->
-        <div class="roadmap-btn-wrapper">
-          <button class="roadmap-btn multiplication-mirage" onclick="startHoverEffect(this); window.location.href='#';"></button>
-          <div class="star-wrapper multiplication-mirage-stars">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-          </div>
-        </div>
-      
-        <!-- Division River -->
-        <div class="roadmap-btn-wrapper">
-          <button class="roadmap-btn division-river" onclick="startHoverEffect(this); window.location.href='#';"></button>
-          <div class="star-wrapper division-river-stars">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-          </div>
-        </div>
-      
-        <!-- Numeral Ruins -->
-        <div class="roadmap-btn-wrapper">
-          <button class="roadmap-btn numeral-ruins" onclick="startHoverEffect(this); window.location.href='#';"></button>
-          <div class="star-wrapper numeral-ruins-stars">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-          </div>
-        </div>
-      
-        <!-- Counting Springs -->
-        <div class="roadmap-btn-wrapper">
-          <button class="roadmap-btn counting-springs" onclick="startHoverEffect(this); window.location.href='#';"></button>
-          <div class="star-wrapper counting-springs-stars">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-            <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-          </div>
-        </div>
+              <!-- Adventure Map -->
+              <div class="roadmap-btn-wrapper"> <a href="#" class="roadmap-btn addition-village"></a>
+              </div>
+              <!-- Stars Progress -->
+              <div class="star-wrapper addition-village-stars">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
+              </div>
+
+              <!-- Subtraction Sands -->
+              <div class="roadmap-btn-wrapper">
+                <a href="#" class="roadmap-btn subtraction-sands"></a>
+              </div>
+              <div class="star-wrapper subtraction-sands-stars">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
+              </div>
+
+              <!-- Comparison Cliffs -->
+              <div class="roadmap-btn-wrapper">
+                <a href="#" class="roadmap-btn comparison-cliffs"></a>
+              </div>
+              <div class="star-wrapper comparison-cliffs-stars">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
+              </div>
+
+              <!-- Place Value Town -->
+              <div class="roadmap-btn-wrapper">
+                <a href="#" class="roadmap-btn place-value-town"></a>
+              </div>
+              <div class="star-wrapper place-value-town-stars">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
+              </div>
+
+              <!-- Multiplication Mirage -->
+              <div class="roadmap-btn-wrapper">
+                <a href="{{ url_for('multiplication_mirage') }}" class="roadmap-btn multiplication-mirage"></a>
+              </div>
+              <div class="star-wrapper multiplication-mirage-stars">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
+              </div>
+
+              <!-- Division River -->
+              <div class="roadmap-btn-wrapper">
+                <a href="#" class="roadmap-btn division-river"></a>
+              </div>
+              <div class="star-wrapper division-river-stars">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
+              </div>
+
+              <!-- Numeral Ruins -->
+              <div class="roadmap-btn-wrapper">
+                <a href="#" class="roadmap-btn numeral-ruins"></a>
+              </div>
+              <div class="star-wrapper numeral-ruins-stars">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
+              </div>
+
+              <!-- Counting Springs -->
+              <div class="roadmap-btn-wrapper">
+                <a href="#" class="roadmap-btn counting-springs"></a>
+              </div>
+              <div class="star-wrapper counting-springs-stars">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
+                <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
+              </div>
+
         
       </div> <!-- .roadmap-buttons -->
     </div> <!-- .roadmap-content -->
@@ -107,18 +108,6 @@
     });
   </script>
 
-  <!-- PAG NAG CLICK NG MAP MAG HOHOVER  -->
-  <script> 
-    function startHoverEffect(button) {
-      // Add the 'clicked' class to trigger the hover effect
-      button.classList.add('clicked');
-
-      // Optionally, remove the 'clicked' class after a set time (to stop the effect)
-      setTimeout(() => {
-        button.classList.remove('clicked');
-      }, 300);  // 300ms or adjust based on your preference
-    }
-  </script>
 
   <!-- SCRIPT TO NUNG STAR PADAGDAG PABAWAS PAG NA COMPLETE NA AYUSIN MO NALANG  -->
   <script>

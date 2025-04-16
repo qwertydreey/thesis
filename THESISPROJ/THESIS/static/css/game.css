@@ -11,6 +11,8 @@ body {
   box-sizing: border-box; /* Ensure consistent box sizing */
 }
 
+
+
 /* ========== PLAYER SECTION ========== */
 .player-container,
 .monster-container {
@@ -81,6 +83,8 @@ body {
   border-radius: 10px;
   overflow: hidden;
   position: absolute;
+  display: flex;
+  gap: 0.01rem; /* Space between flex items */
 }
 
 .player-health-bar {
@@ -115,7 +119,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  width: 40rem; /* Match image width */
+  width: 35rem; /* Match image width */
   height: 20rem; /* Match image height */
   text-align: center;
   padding: 0 10px;
@@ -128,8 +132,8 @@ body {
   color: #f4f4f4; /* Off-white */
   font-family: "Fredoka", sans-serif;
   position: absolute; 
-  top: 60%; 
-  left: 51%;
+  top: 62%; 
+  left: 50%;
   transform: translateX(-50%) translateY(-50%);
   z-index: 20; /* Ensure text is above other elements */
 }
@@ -172,6 +176,8 @@ body {
 }
 
 /* ========== CHARACTER SECTION ========== */
+
+
 .character {
   position: absolute;
   bottom: 10px;
@@ -179,7 +185,7 @@ body {
   animation: bobble 1s ease-in-out infinite;
 }
 
-.wizard {
+.player {
   left: 5%;
   height: 250px;
 }
@@ -224,36 +230,42 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
   box-sizing: border-box;
+  position: relative;
+  transform: none;
+  top: auto;
+  left: auto;
+  width: auto;
+  height: auto;
 }
 
-/* ========== BUTTON GRID ========== */
+/* ========== LAYOUT WRAPPER ========== */
 .layout-wrapper {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 15px;
-  height: 80%;
-  max-width: 600px;
-  width: 100%;
-  position: relative;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 100%; 
+  width: 100%; /* Ensure the layout wrapper uses the full width available */
+  flex-wrap: nowrap; /* Allow wrapping for smaller screens */
+  margin: 0 auto; /* Center the layout wrapper */
+  padding: 10px; /* Adjust the padding to prevent overlap */
+  box-sizing: border-box; /* Ensure padding is accounted for in total width */
 }
 
+/* ========== BUTTON GRID ========== */
 .button-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
-  width: 100%;
+  grid-template-columns: repeat(3, 1fr); /* Creates 3 equal columns */
+  gap: 10px; /* Gap equivalent to Tailwind's gap-4 (which is 1rem or 16px) */
+  width: 100%; /* Ensure the grid takes up full available width */
 }
+
 
 /* ========== BUTTON STYLES ========== */
 .button {
+  height: 5rem; /* 5 times the font size, scalable */
+  width: 8rem; /* 8 times the font size, scalable */
   background-color: #00b300;
   color: white;
   font-size: 1.5rem;
@@ -283,8 +295,10 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 10px;
+  gap: 9px;
   align-items: flex-start;
+  width: auto;
+  min-width: auto;
 }
 
 .input-field {
@@ -322,7 +336,7 @@ body {
   font-weight: bold;
   border-radius: 0.5rem;
   width: 180px;
-  height: 165px;
+  height: 150px;
   box-shadow: 0 4px #008000;
   text-align: center;
   display: flex;
@@ -334,4 +348,68 @@ body {
 .attack-button:active {
   box-shadow: 0 2px #008000;
   transform: translateY(2px);
+}
+
+
+
+
+
+.chatbot-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: flex-end; /* Ensure the chatbot is aligned to the right side */
+}
+
+.chatbot-img {
+  width: 13rem;
+  height: auto;
+  transition: transform 0.3s ease, filter 0.2s ease; /* Smooth transition for click effect */
+}
+
+.chatbot-img:active {
+  
+  transform: scale(1.03); /* Slightly zoom in on click */
+  filter: brightness(1.2); /* Slightly brighten the image on click */
+}
+
+
+.speech-bubble {
+  position: relative;
+  background: #fef3c7;
+  border: 3px solid #d97706;
+  border-radius: 15px;
+  padding: 20px 30px;
+  max-width: 390px;
+  max-height: 220px;
+  width: fit-content;
+  height: auto;
+  font-weight: bold;
+  color: #5B3A29;
+  font-size: clamp(0.75rem, 1vw, 1rem);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
+.speech-bubble::-webkit-scrollbar {
+  width: 6px; /* Slightly thicker scrollbar for a better grip */
+  
+}
+
+.speech-bubble::-webkit-scrollbar-track {
+  border-radius: 6px;
+}
+
+.speech-bubble::-webkit-scrollbar-thumb {
+  background: #5B3A29; /* Warm golden brown color */
+  border-radius: 6px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15); /* Light shadow for depth */
+}
+
+.speech-bubble::-webkit-scrollbar-thumb:hover {
+  background: #5B3A29; /* Darker golden color on hover */
 }

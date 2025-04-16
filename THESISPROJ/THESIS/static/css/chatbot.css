@@ -1,0 +1,80 @@
+/* static/chatbot.css */
+
+body {
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-container {
+    width: 80vw;
+    height: 95vh;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    max-width: 80vw;
+    max-height: 95vh;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #fafafa;
+    height: 90%;
+}
+
+.message-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.message-row.user {
+    justify-content: flex-end;
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.message-bubble {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 20px;
+    background-color: #e1e1e1;
+    word-wrap: break-word;
+}
+
+.message-row.user .message-bubble {
+    background-color: #d1e7dd;
+}
+
+.counticus-image {
+    position: absolute;
+    bottom: 150px;
+    right: 20px;
+    width: 25vw;
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 10px;
+    object-fit: cover;
+}

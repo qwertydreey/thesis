@@ -79,6 +79,16 @@ def register():
 
     return render_template('register.html')
 
+@app.route('/chatbot')
+@login_required
+def chatbot():
+    return render_template('chatbot.html')
+
+@app.route('/multiplication_mirage')
+@login_required
+def multiplication_mirage():
+    return render_template('multiplication_mirage.html', username=current_user.username)
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
