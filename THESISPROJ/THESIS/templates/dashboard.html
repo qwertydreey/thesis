@@ -15,6 +15,14 @@
       <!-- Image-Based Buttons -->
       <div class="dashboard-buttons">
 
+          <!-- LOGOUT BUTTON -->
+          <div class="dashboard-btn-wrapper">
+            <a href="{{ url_for('logout') }}">
+              <button class="dashboard-btn logout"></button>
+            </a>
+          </div>
+
+
         <!-- Subtraction Sands -->
         <div class="dashboard-btn-wrapper">
           <button class="dashboard-btn profile" onclick="startHoverEffect(this); window.location.href='#';"></button>

@@ -70,9 +70,9 @@
 
     <!-- Potion Section -->
     <div class="potion-section">
-      <button class="bg-green-500 text-white p-2 rounded-lg w-full">Potion 1</button>
-      <button class="bg-green-500 text-white p-2 rounded-lg w-full">Potion 2</button>
-      <button class="bg-green-500 text-white p-2 rounded-lg w-full">Potion 3</button>
+      <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="potion">
+      <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="potion">
+      <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="potion">
     </div>
 
     <!-- Game Controls -->
@@ -118,6 +118,22 @@
 
   </div>
 </div>
+
+<!-- POTION SCRIPT KAPAG NA CLICK NAG POPOPOUT -->
+<script>
+  document.querySelectorAll('.freeze-potion, .health-potion, .thunder-potion').forEach(potion => {
+    potion.addEventListener('click', () => {
+      potion.classList.remove('potion-clicked');
+      void potion.offsetWidth; // Force reflow to restart animation
+      potion.classList.add('potion-clicked');
+
+      setTimeout(() => {
+        potion.classList.remove('potion-clicked');
+      }, 300); // Match with pop animation duration
+    });
+  });
+</script>
+
 
       
     <!-- JavaScript for handling button clicks and input -->

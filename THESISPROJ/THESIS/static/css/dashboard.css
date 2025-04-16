@@ -57,7 +57,14 @@ body {
   transform: scale(1.03);
 }
 
-
+.logout {
+  position: absolute;
+  top: -7.9%;
+  left: 89.5%;
+  width: 9.5%;
+  height: 41.8%;
+  background-image: url('../images/dshbrdimg/Logout.png');
+}
 .profile {
   position: absolute;
   top: 54.2%;
