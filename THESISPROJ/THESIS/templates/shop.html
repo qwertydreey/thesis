@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roadmap</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/shop.css') }}" />
+</head>
+<body>
+  <div class="shop-wrapper">
+    <div class="shop-content">
+      <!-- Fullscreen Background Image -->
+      <img src="{{ url_for('static', filename='images/shopimg/shop.png') }}" alt="Shop Image" class="shop-img"/> 
+
+
+
+        <div class="shop-btn-wrapper">
+            <div class="shop-btn shopkeeper"></div>
+        </div>
+
+        <div class="back-btn-wrapper">
+            <a href="{{ url_for('dashboard') }}">
+              <button class="back-btn"></button>
+            </a>
+          </div>
+
+        <div class="shop-btn-wrapper">
+            <button class="shop-btn health"></button>
+          </div>
+          
+          <div class="shop-btn-wrapper">
+            <button class="shop-btn thunder"></button>
+          </div>
+          
+          <div class="shop-btn-wrapper">
+            <button class="shop-btn freeze"></button>
+          </div>
+          
+          <div class="shop-btn-wrapper">
+            <button class="shop-btn counticus"></button>
+          </div>
+          
+
+          <div class="speech-bubble" id="speechBubble">
+            <h2 id="speechTitle" class=""></h2>
+            <p id="speechText"></p>
+          </div>
+          
+
+          <script>
+            const speechBubble = document.getElementById("speechBubble");
+            const speechTitle = document.getElementById("speechTitle");
+            const speechText = document.getElementById("speechText");
+          
+            let timeoutId;
+          
+            function showSpeech(title, text, colorClass) {
+              // Clear old timeout and remove previous title color class
+              clearTimeout(timeoutId);
+              speechTitle.className = "";
+          
+              // Update content
+              speechTitle.textContent = title;
+              speechText.textContent = text;
+              speechTitle.classList.add(colorClass);
+          
+              // Show the bubble with fade in
+              speechBubble.classList.add("show");
+          
+              // Auto-hide after 1 minute
+              timeoutId = setTimeout(() => {
+                speechBubble.classList.remove("show");
+              }, 15000);
+            }
+          
+                document.querySelector(".health").addEventListener("click", () => {
+                showSpeech(
+                    "HEALTH POTION",
+                    "A sweet, red potion that heals your wounds after tough math battles with tricky monsters. Drink up to get back in the game!",
+                    "health-title"
+                );
+                });
+
+                document.querySelector(".thunder").addEventListener("click", () => {
+                showSpeech(
+                    "THUNDER POTION",
+                    "Crackles with electric energy! Use it to zap those pesky, number-stealing monsters with a spark of math power!",
+                    "thunder-title"
+                );
+                });
+
+                document.querySelector(".freeze").addEventListener("click", () => {
+                showSpeech(
+                    "FREEZE POTION",
+                    "An icy potion that freezes the enemy in place, giving you precious time to think and plan your next move!",
+                    "freeze-title"
+                );
+                });
+
+          </script>
+          
+          
+          
+          
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_bcrypt import Bcrypt
+from flask import jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import mysql.connector
 import random
@@ -99,6 +100,11 @@ def dashboard():
 def roadmap():
     return render_template('roadmap.html')
 
+@app.route('/shop')
+@login_required
+def shop():
+    return render_template('shop.html', username=current_user.username)
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -124,10 +130,17 @@ def game():
     else:
         difficulty = row['current_difficulty']
 
-    # Fetch a random question
+    # Fetch a random question based on difficulty
     cursor.execute("SELECT * FROM questions WHERE difficulty = %s", (difficulty,))
     questions = cursor.fetchall()
     question = random.choice(questions) if questions else None
+
+    if request.is_json:
+        return jsonify({
+            'question_text': question['question_text'] if question else 'No questions available',
+            'correct_answer': question['correct_answer'] if question else '',
+            'id': question['id'] if question else ''
+        })
 
     return render_template('game.html', question=question)
 
@@ -137,11 +150,13 @@ def submit_answer():
     user_answer = request.form['answer']
     question_id = request.form['question_id']
 
+    # Get the question details
     cursor.execute("SELECT * FROM questions WHERE id = %s", (question_id,))
     question = cursor.fetchone()
 
     is_correct = user_answer.strip() == question['correct_answer'].strip()
 
+    # Update user stats based on answer
     if is_correct:
         cursor.execute("""
             UPDATE user_progress 
@@ -155,12 +170,13 @@ def submit_answer():
             WHERE user_id = %s
         """, (current_user.id,))
 
+    # Calculate the new accuracy
     cursor.execute("SELECT correct_answers, wrong_answers FROM user_progress WHERE user_id = %s", (current_user.id,))
     stats = cursor.fetchone()
     total = stats['correct_answers'] + stats['wrong_answers']
     accuracy = stats['correct_answers'] / total if total > 0 else 0
 
-    # Update difficulty
+    # Update difficulty based on accuracy
     if accuracy >= 0.8:
         new_diff = 'hard'
     elif accuracy >= 0.5:
@@ -170,6 +186,9 @@ def submit_answer():
 
     cursor.execute("UPDATE user_progress SET current_difficulty = %s WHERE user_id = %s", (new_diff, current_user.id))
     db.commit()
+
+    if request.is_json:
+        return jsonify({'success': True})
 
     return redirect(url_for('game'))
 

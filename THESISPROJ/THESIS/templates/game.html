@@ -29,6 +29,10 @@
               </div>
             </div>
 
+
+
+
+
             <!-- Monster Section -->
             <div class="monster-container flex items-center space-x-4 relative">
               <div class="health-box text-right">
@@ -41,21 +45,91 @@
           </div>
         </div>
 
+
+        <div class="lightning-container">
+          <img src="{{ url_for('static', filename='images/anim/thunder/lightning_skill3_frame1.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/lightning_skill3_frame2.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/lightning_skill3_frame3.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/lightning_skill3_frame4.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/lightning_skill3_frame5.png') }}" class="sprite-lightning" />
+        </div>
+
+        
+
 <!-- Question Section -->
 <div class="question-container">
   {% if question %}
     <p class="question-text">{{ question.question_text }}</p>
     <input type="hidden" id="question-id" value="{{ question.id }}">
+    <input type="hidden" id="correct-answer" value="{{ question.correct_answer }}">
   {% else %}
     <p class="text-2xl text-red-400">No questions available for this level.</p>
   {% endif %}
+  
+  <!-- Freeze Turns Left -->
+  <div id="freeze-turn" class="freeze-turn"></div>
 </div>
+
+
+<div class="menu-btn-wrapper">
+  <button id="menuButton" class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+</div>
+
+<!-- Overlay that dims the background and holds the menu -->
+<div id="menuOverlay" class="menu-overlay hidden">
+  <div id="gameMenu" class="game-menu">
+    <button class="menu-item" data-lang="resume" onclick="resumeGame()">Resume</button>
+    <button class="menu-item" data-lang="restart" onclick="restartGame()">Restart</button>
+    <button class="menu-item" data-lang="settings" onclick="openSettings()">Settings</button>
+    <button class="menu-item" data-lang="quit" onclick="goToMainMenu()">Quit</button>
+  </div>
+
+  <!-- Settings Menu (Inside the game menu container) -->
+  <div id="settingsMenu" class="game-menu hidden">
+    <div class="settings-container">
+
+      <!-- Volume Settings -->
+      <div class="setting-option">
+        <label for="volume" data-lang="volumeLabel">Volume</label>
+        <input type="range" id="volume" min="0" max="100" value="50">
+      </div>
+
+      <!-- Mute Option aligned like Volume -->
+      <div class="setting-option mute-align">
+        <div class="mute-wrapper">
+          <input type="checkbox" id="muteCheckbox" onchange="toggleMuteCheckbox()">
+          <span class="mute-label" data-lang="muteLabel">Mute</span>
+        </div>
+      </div>
+
+      <!-- Language Settings -->
+      <div class="language-container">
+        <label for="language" data-lang="languageLabel">Language</label>
+        <div class="language-box">
+          <button id="prevLanguage" onclick="changeLanguage('prev')"> &lt; </button>
+          <span id="languageText">English</span>
+          <button id="nextLanguage" onclick="changeLanguage('next')"> &gt; </button>
+        </div>
+      </div>
+
+      <div class="settings-item-container">
+        <button class="settings-item" onclick="applySettings()" data-lang="apply">Apply</button>
+        <button class="settings-item" onclick="closeSettings()" data-lang="back">Back</button> <!-- Back button -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+                
+
       </div>
       <!-- Combined Ground and Characters Section -->
       <div class="ground-container">
         <!-- Character (Wizard) -->
         <img src="{{ url_for('static', filename='images/gameimg/char/char.png') }}" alt="Wizard"
-          class="character player">
+          class="character player ">
         <!-- Monster Character -->
         <img src="{{ url_for('static', filename='images/gameimg/mnstr/boss 1.png') }}" alt="Monster"
           class="character monster">
@@ -68,12 +142,13 @@
   <!-- Main game bar split into 3 sections -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-    <!-- Potion Section -->
-    <div class="potion-section">
-      <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="potion">
-      <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="potion">
-      <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="potion">
-    </div>
+<!-- Potion Section -->
+<div class="potion-section">
+  <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="useFreezePotion()">
+  <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="useHealthPotion()">
+  <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="Thunder Potion" onclick="useThunderPotion()">
+</div>
+
 
     <!-- Game Controls -->
     <div class="game-control-container">
@@ -99,7 +174,7 @@
           <div class="placeholder-input">
             <input type="text" class="input-field" placeholder="Input number" id="number-input" />
           </div>
-          <div class="attack-button">Attack</div>
+          <div class="attack-button" onclick="handleAttack()">Attack</div>
         </div>
       </div>
     </div>
@@ -116,8 +191,191 @@
       </a>
     </div>
 
+
+
+
+
+    
+
+
   </div>
 </div>
+
+
+
+
+
+
+
+
+
+<script>
+// ===== SETTINGS MENU HANDLING =====
+function openSettings() {
+  document.getElementById("settingsMenu").classList.remove("hidden");
+  document.getElementById("gameMenu").classList.add("hidden");
+}
+
+function closeSettings() {
+  currentLanguageIndex = savedLanguageIndex; // Revert to last applied language
+  updateLanguageText(); // Update the display to show correct language
+  document.getElementById("settingsMenu").classList.add("hidden");
+  document.getElementById("gameMenu").classList.remove("hidden");
+}
+
+
+// ===== VOLUME CONTROL =====
+const volumeSlider = document.getElementById("volume");
+
+function updateVolumeFill() {
+  const value = volumeSlider.value;
+  const percentage = (value / volumeSlider.max) * 100;
+  volumeSlider.style.background = `linear-gradient(to right, #4a90e2 ${percentage}%, #d3d3d3 ${percentage}%)`;
+}
+
+volumeSlider.addEventListener('input', updateVolumeFill);
+updateVolumeFill(); // Initialize on load
+
+// ===== MUTE FUNCTIONALITY =====
+let isMuted = false;
+let previousVolume = 50;
+
+function toggleMuteCheckbox() {
+  const muteCheckbox = document.getElementById("muteCheckbox");
+
+  if (muteCheckbox.checked) {
+    previousVolume = volumeSlider.value;
+    volumeSlider.value = 0;
+    isMuted = true;
+  } else {
+    volumeSlider.value = previousVolume;
+    isMuted = false;
+  }
+
+  updateVolumeFill();
+}
+
+// Apply settings without closing the menu
+function applySettings() {
+  const volume = volumeSlider.value;
+  const selectedLanguage = languages[currentLanguageIndex];
+
+  console.log("Volume:", volume);
+  console.log("Language:", selectedLanguage);
+
+  savedLanguageIndex = currentLanguageIndex; // Save the selected language
+  updateAllGameTexts(); // Apply language to game texts
+}
+
+
+// ===== GAME CONTROL =====
+function restartGame() {
+  location.reload();
+}
+
+function goToMainMenu() {
+  window.location.href = "{{ url_for('dashboard') }}"; // Adjust if needed
+}
+
+// ===== MENU OVERLAY HANDLING =====
+function toggleMenu() {
+  const overlay = document.getElementById("menuOverlay");
+  const menuButton = document.getElementById("menuButton");
+
+  overlay.classList.toggle("hidden");
+  menuButton.style.display = overlay.classList.contains("hidden") ? "block" : "none";
+}
+
+// Function to close the menu and resume the game
+function closeOverlayAndResume() {
+  const overlay = document.getElementById("menuOverlay");
+  const gameMenu = document.getElementById("gameMenu");
+  const menuButton = document.getElementById("menuButton");
+
+  overlay.classList.add("hidden");
+  gameMenu.classList.remove("hidden");
+  menuButton.style.display = "block";
+}
+
+// New function for resume functionality (same as closeOverlayAndResume)
+function resumeGame() {
+  closeOverlayAndResume(); // Reusing the function to close the menu and show the game menu
+}
+
+// ===== ESC KEY FUNCTIONALITY =====
+document.addEventListener('keydown', function(event) {
+  if (event.key === "Escape") {
+    resumeGame(); // Trigger the resumeGame function when ESC is pressed
+  }
+});
+
+// ===== LANGUAGE CHANGE FUNCTIONALITY =====
+// Change language based on direction
+function changeLanguage(direction) {
+  if (direction === 'prev') {
+    currentLanguageIndex = (currentLanguageIndex - 1 + languages.length) % languages.length;
+  } else if (direction === 'next') {
+    currentLanguageIndex = (currentLanguageIndex + 1) % languages.length;
+  }
+
+  updateLanguageText();
+}
+
+// Update the display text for the language
+function updateLanguageText() {
+  const languageText = document.getElementById('languageText');
+  languageText.textContent = languages[currentLanguageIndex];
+}
+
+// Update all text elements in the game
+function updateAllGameTexts() {
+  const language = languages[currentLanguageIndex];
+  
+  // Update specific buttons or elements
+  document.querySelectorAll('[data-lang]').forEach(element => {
+    const key = element.getAttribute('data-lang');
+    if (languageData[language] && languageData[language][key]) {
+      element.textContent = languageData[language][key];
+    }
+  });
+}
+
+let languages = ['English', 'Tagalog'];
+let currentLanguageIndex = 0;
+let savedLanguageIndex = 0; // <-- This stores the last applied language
+
+
+// Language texts (You can expand this object as needed)
+const languageData = {
+  English: {
+    resume: 'Resume',
+    restart: 'Restart',
+    settings: 'Settings',
+    quit: 'Quit',
+    volumeLabel: 'Volume',
+    muteLabel: 'Mute',
+    languageLabel: 'Language',
+    apply: 'Apply',
+    back: 'Back',
+  },
+  Tagalog: {
+    resume: 'Magpatuloy',
+    restart: 'Magsimula Muli',
+    settings: 'Mga Setting',
+    quit: 'Bumalik',
+    volumeLabel: 'Bolyum',
+    muteLabel: 'I-mute',
+    languageLabel: 'Wika',
+    apply: 'I-apply',
+    back: 'Bumalik',
+  },
+};
+
+</script>
+
+
+
+
 
 <!-- POTION SCRIPT KAPAG NA CLICK NAG POPOPOUT -->
 <script>
@@ -136,97 +394,316 @@
 
 
       
-    <!-- JavaScript for handling button clicks and input -->
-    <script>
-      function addToInput(value) {
-        const inputField = document.getElementById('number-input');
-        inputField.value += value;
+<script>
+  function addToInput(value) {
+    const inputField = document.getElementById('number-input');
+    inputField.value += value;
+  }
+
+  function backspace() {
+    const inputField = document.getElementById('number-input');
+    if (inputField.selectionStart !== inputField.selectionEnd) {
+      inputField.value = '';
+    } else {
+      inputField.value = inputField.value.slice(0, -1);
+    }
+  }
+
+  function handleAttack() {
+    // Your attack logic here
+    console.log("Attack triggered!");
+  }
+
+  document.addEventListener('keydown', function(event) {
+    const inputField = document.getElementById('number-input');
+    if (event.ctrlKey) {
+      if (event.key.toLowerCase() === 'a') {
+        event.preventDefault();
+        inputField.select();
       }
+      return;
+    }
 
-      function backspace() {
-        const inputField = document.getElementById('number-input');
-        if (inputField.selectionStart !== inputField.selectionEnd) {
-          inputField.value = '';
-        } else {
-          inputField.value = inputField.value.slice(0, -1);
-        }
+    if (event.repeat) return;
+
+    if (event.key === 'Backspace') {
+      event.preventDefault();
+      backspace();
+      return;
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleAttack();
+      return;
+    }
+
+    if (event.key.length === 1) {
+      if ((event.key >= '0' && event.key <= '9') || event.key === '.') {
+        event.preventDefault();
+        addToInput(event.key);
+      } else {
+        event.preventDefault();
       }
+    }
+  });
+</script>
 
-      document.addEventListener('keydown', function(event) {
-        const inputField = document.getElementById('number-input');
-        if (event.ctrlKey) {
-          if (event.key.toLowerCase() === 'a') {
-            event.preventDefault();
-            inputField.select();
-          }
-          return;
-        }
 
-        if (event.repeat) return;
+<script>
+  // Heart image paths
+  const fullHeart = "{{ url_for('static', filename='images/gameimg/heart.png') }}";
+  const emptyHeart = "{{ url_for('static', filename='images/gameimg/empty-heart.png') }}";
 
-        if (event.key === 'Backspace') {
-          event.preventDefault();
-          backspace();
-          return;
-        }
+  const maxPlayerHealth = 5;
+  let currentPlayerHealth = maxPlayerHealth;
+  const playerHealthBar = document.getElementById('player-health');
 
-        if (event.key.length === 1) {
-          if ((event.key >= '0' && event.key <= '9') || event.key === '.') {
-            event.preventDefault();
-            addToInput(event.key);
-          } else {
-            event.preventDefault();
-          }
-        }
-      });
-    </script>
+  const maxMonsterHealth = 3;
+  let currentMonsterHealth = maxMonsterHealth;
+  const monsterHealthBar = document.getElementById('monster-health');
 
-    <script>
-      const fullHeart = "{{ url_for('static', filename='images/gameimg/heart.png') }}";
-      const maxPlayerHealth = 5;
-      let currentPlayerHealth = maxPlayerHealth;
-      const playerHealthBar = document.getElementById('player-health');
-      const maxMonsterHealth = 3;
-      let currentMonsterHealth = maxMonsterHealth;
-      const monsterHealthBar = document.getElementById('monster-health');
+  const questionContainer = document.querySelector('.question-container');
+  let correctAnswer = null;
 
-      function renderHealth(bar, currentHealth) {
-        bar.innerHTML = '';
-        for (let i = 0; i < currentHealth; i++) {
-          const img = document.createElement('img');
-          img.src = fullHeart;
-          img.alt = 'Heart';
-          img.className = 'heart-image';
-          bar.appendChild(img);
-        }
-      }
+  // Freeze Potion variables
+  let freezePotionUsed = false;
+  let freezeTurns = 0;
+  const freezeTurnsDisplay = document.getElementById('freeze-turn'); // Element to display freeze turns
+  const monsterContainer = document.querySelector('.monster'); // Monster container for freeze effect
 
-      function playerTakeDamage() {
-        if (currentPlayerHealth > 0) {
-          currentPlayerHealth--;
-          renderHealth(playerHealthBar, currentPlayerHealth);
-        }
-      }
+  // Initially hide the freeze turns display
+  freezeTurnsDisplay.style.display = 'none';
 
-      function playerHeal(amount) {
-        currentPlayerHealth = Math.min(currentPlayerHealth + amount, maxPlayerHealth);
-        renderHealth(playerHealthBar, currentPlayerHealth);
-      }
+  // Inventory tracking for potions (unlimited)
+  let healthPotions = Infinity;  // Unlimited health potions
+  let thunderPotions = Infinity; // Unlimited thunder potions
+  let freezePotions = Infinity;  // Unlimited freeze potions
 
-      function monsterTakeDamage() {
-        if (currentMonsterHealth > 0) {
-          currentMonsterHealth--;
-          renderHealth(monsterHealthBar, currentMonsterHealth);
-        }
-      }
+  // Function to render health (for player and monster)
+  function renderHealth(bar, currentHealth, maxHealth, isPlayer = true) {
+    bar.innerHTML = '';
+    for (let i = 0; i < maxHealth; i++) {
+      const img = document.createElement('img');
+      img.src = i < currentHealth ? fullHeart : emptyHeart;
+      img.alt = 'Heart';
+      img.className = 'heart-image';
+      bar.appendChild(img);
+    }
+  }
 
-      function monsterHeal(amount) {
-        currentMonsterHealth = Math.min(currentMonsterHealth + amount, maxMonsterHealth);
-        renderHealth(monsterHealthBar, currentMonsterHealth);
-      }
+  // Function to handle player taking damage
+  function playerTakeDamage() {
+    if (currentPlayerHealth > 0 && !freezePotionUsed) {
+      currentPlayerHealth--;
+      renderHealth(playerHealthBar, currentPlayerHealth, maxPlayerHealth, true);
+    } else if (freezePotionUsed && freezeTurns > 0) {
+      freezeTurns--; // Decrease freeze turns on damage attempt
+      updateFreezeTurnsDisplay(); // Update the freeze turns display
+    }
 
-      renderHealth(playerHealthBar, currentPlayerHealth);
-      renderHealth(monsterHealthBar, currentMonsterHealth);
-    </script>
+    // Once freeze turns are finished, allow damage
+    if (freezeTurns <= 0) {
+      freezePotionUsed = false; // Allow damage after freeze turns end
+      removeFreezeEffect(); // Remove freeze effect from the monster
+      freezeTurnsDisplay.style.display = 'none'; // Hide freeze turns display when freeze is over
+    }
+  }
+
+  // Function to heal the player
+  function playerHeal(amount) {
+    currentPlayerHealth = Math.min(currentPlayerHealth + amount, maxPlayerHealth);
+    renderHealth(playerHealthBar, currentPlayerHealth, maxPlayerHealth, true);
+  }
+
+  // Function to handle monster taking damage
+  function monsterTakeDamage() {
+    if (currentMonsterHealth > 0) {
+      currentMonsterHealth--;
+      renderHealth(monsterHealthBar, currentMonsterHealth, maxMonsterHealth, false);
+    }
+    
+    // If monster's health reaches 0 or below, trigger victory
+    if (currentMonsterHealth <= 0) {
+      alert("🎉 Victory! You defeated the monster!");
+    }
+  }
+
+  // Function to handle the attack logic
+  function handleAttack() {
+    const inputField = document.getElementById('number-input');
+    const input = inputField.value.trim();
+
+    if (!correctAnswer) {
+      alert("No question loaded.");
+      return;
+    }
+
+    if (input === '') {
+      alert("Please enter an answer before attacking!");
+      return;
+    }
+
+    if (parseFloat(input) === parseFloat(correctAnswer)) {
+      monsterTakeDamage();
+      alert("✅ Correct! You hit the monster!");
+    } else {
+      playerTakeDamage();
+      alert("❌ Wrong! The monster hit you!");
+    }
+
+    inputField.value = '';
+    checkGameOver();
+    loadNewQuestion(); // Keep this call here so it works after external function is loaded
+  }
+
+  // Function to add to input field (for the user)
+  function addToInput(value) {
+    const inputField = document.getElementById('number-input');
+    inputField.value += value;
+  }
+
+  // Function for backspace in input
+  function backspace() {
+    const inputField = document.getElementById('number-input');
+    inputField.value = inputField.value.slice(0, -1);
+  }
+
+  // Function to check if the game is over
+  function checkGameOver() {
+    if (currentPlayerHealth <= 0) {
+      alert("💀 Game Over! You lost!");
+    }
+    if (currentMonsterHealth <= 0) {
+      alert("🎉 Victory! You defeated the monster!");
+    }
+  }
+
+  // 💉 Health Potion: Heals up to 4 HP but not beyond max
+  function useHealthPotion() {
+    if (healthPotions <= 0) {
+      alert("🧪 No Health Potions left!");
+      return;
+    }
+
+    if (currentPlayerHealth >= maxPlayerHealth) {
+      alert("🧪 You're already at full health!");
+      return;
+    }
+
+    const healAmount = Math.min(4, maxPlayerHealth - currentPlayerHealth);
+    playerHeal(healAmount);
+    healthPotions--;
+    alert(`🧪 Health Potion used! You healed ${healAmount}`);
+  }
+
+  // Function to apply Thunder effects (animation)
+  const frames = document.querySelectorAll('.sprite-lightning');
+  let currentFrame = 0;
+  let animationInterval;
+  const monsterElement = document.querySelector('.monster');
+
+  function resetFrames() {
+    frames.forEach(frame => frame.classList.remove('active'));
+    monsterElement.classList.remove('red'); // Remove red here as well
+  }
+
+  function changeFrame() {
+    resetFrames();
+    frames[currentFrame].classList.add('active');
+    currentFrame++;
+
+    if (currentFrame >= frames.length) {
+      clearInterval(animationInterval);
+      currentFrame = 0;
+      resetFrames();
+
+      // Add red flash effect
+      monsterElement.classList.add('red');
+
+      // ❗ Remove red effect after short delay
+      setTimeout(() => {
+        monsterElement.classList.remove('red');
+      }, 70); // Adjust timing if needed
+    }
+  }
+
+  // Function to use Thunder Potion (only once per turn)
+  function useThunderPotion() {
+    if (thunderPotions <= 0) {
+      alert("⚡ No Thunder Potions left!");
+      return;
+    }
+
+    resetFrames();
+    animationInterval = setInterval(changeFrame, 100); // Animation speed (every 0.1s)
+
+    if (currentMonsterHealth > 0) {
+      monsterTakeDamage();
+      thunderPotions--;
+    }
+  }
+
+  // Function to use freeze potion
+  function useFreezePotion() {
+    if (freezePotionUsed && freezeTurns > 0) {
+      alert(`❄️ You still have ${freezeTurns} freeze turn(s) remaining! Wait until it ends before using another Freeze Potion.`);
+      return;
+    }
+
+    freezePotionUsed = true;
+    freezeTurns = 3;
+    updateFreezeTurnsDisplay();
+    freezeTurnsDisplay.style.display = 'block'; // Show freeze turns display when freeze is active
+    applyFreezeEffect();
+  }
+
+  // Function to update freeze turns display
+  function updateFreezeTurnsDisplay() {
+    freezeTurnsDisplay.textContent = `Freeze Turns Left: ${freezeTurns}`;
+  }
+
+  // Function to apply freeze effect to monster
+  function applyFreezeEffect() {
+    monsterContainer.classList.add('frozen');
+  }
+
+  // Function to remove freeze effect
+  function removeFreezeEffect() {
+    monsterContainer.classList.remove('frozen');
+  }
+
+  // Initial setup
+  renderHealth(playerHealthBar, currentPlayerHealth, maxPlayerHealth, true);
+  renderHealth(monsterHealthBar, currentMonsterHealth, maxMonsterHealth, false);
+  updateFreezeTurnsDisplay();
+
+  // Function to load a new question
+  function loadNewQuestion() {
+    const questionText = document.querySelector('.question-text');
+    const correctAnswerInput = document.getElementById('correct-answer');
+    
+    if (questionText && correctAnswerInput && correctAnswerInput.value !== '') {
+      correctAnswer = correctAnswerInput.value;
+      questionText.textContent = "{{ question.question_text }}";
+    } else {
+      questionContainer.innerHTML = '<p class="text-2xl text-red-400">No questions available for this level.</p>';
+    }
+  }
+
+  loadNewQuestion(); // Initial question load
+</script>
+
+  
+
+
+  
+
+
+
+
+
+
+
   </body>
 </html>

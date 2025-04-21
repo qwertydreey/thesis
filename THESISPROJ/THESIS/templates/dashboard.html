@@ -46,10 +46,12 @@
           <button class="dashboard-btn monsters" onclick="startHoverEffect(this); window.location.href='#';"></button>
         </div>
 
-        <!-- Subtraction Sands -->
-        <div class="dashboard-btn-wrapper">
-          <button class="dashboard-btn shop" onclick="startHoverEffect(this); window.location.href='#';"></button>
-        </div>
+          <!-- SHOP -->
+          <div class="dashboard-btn-wrapper">
+            <a href="{{ url_for('shop') }}">
+              <button class="dashboard-btn shop"></button>
+            </a>
+          </div>
 
         <!-- Subtraction Sands -->
         <div class="dashboard-btn-wrapper">

@@ -32,6 +32,8 @@ body {
   background-image: url('../images/gameimg/monster.png');
 }
 
+
+
 .player-name,
 .monster-name {
   font-size: 1.5rem;
@@ -95,6 +97,8 @@ body {
 .monster-health-bar {
   top: 85px; /* Adjust Y position */
   right: 105px; /* Adjust X position */
+  direction: rtl; /* Makes the bar decrease from the right */
+
 }
 
 .heart-image {
@@ -107,6 +111,25 @@ body {
 .heart-image:hover {
   transform: scale(1.1);
 }
+@keyframes popFade {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.heart-damage {
+  animation: popFade 0.5s ease-out;
+}
+
 
 /* ========== QUESTION SECTION ========== */
 .question-container {
@@ -115,19 +138,19 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   position: absolute;
-  top: 10%;
+  top: 12%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  width: 35rem; /* Match image width */
-  height: 20rem; /* Match image height */
+  width: 34rem;
+  height: 20rem;
   text-align: center;
   padding: 0 10px;
 }
 
 
 .question-text {
-  font-size: 4.5rem;
+  font-size: 4rem;
   font-weight: 500;
   color: #f4f4f4; /* Off-white */
   font-family: "Fredoka", sans-serif;
@@ -135,8 +158,25 @@ body {
   top: 62%; 
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  z-index: 20; /* Ensure text is above other elements */
+  z-index: 999; /* Ensure text is above other elements */
 }
+
+/* Freeze Turns Display Styling */
+.freeze-turn {
+  font-weight: bold;
+  color: white;
+  background-color: rgba(135, 206, 250, 0.6); /* Ice blue with more transparency */
+  padding: 5px;
+  border-radius: 8px;
+  margin-top: 242px; /* Space between question text and freeze turns */
+  
+  text-align: center;
+  font-size: 1.1rem; /* Adjust font size as needed */
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 
 /* ========== GAME BACKGROUND ========== */
 .gamebg {
@@ -182,7 +222,6 @@ body {
   position: absolute;
   bottom: 10px;
   z-index: 20;
-  animation: bobble 1s ease-in-out infinite;
 }
 
 .player {
@@ -190,16 +229,43 @@ body {
   height: 250px;
 }
 
+
 .monster {
   right: 5%;
   height: 350px;
+  transition: filter 0.5s ease-out, transform 2s ease-out; /* Smooth transition */
 }
 
-@keyframes bobble {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-  100% { transform: translateY(0); }
+@keyframes freezeMonster {
+  0% { 
+    opacity: 0.5; 
+    transform: scale(1.1);
+    filter: hue-rotate(0deg) saturate(100%) contrast(100%) brightness(100%);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1);
+    filter: hue-rotate(220deg) saturate(130%) contrast(120%) brightness(90%);
+  }
 }
+
+.freeze-monster {
+  animation: freezeMonster 2s ease-out forwards;
+}
+
+.monster.frozen {
+  filter: hue-rotate(220deg) saturate(130%) contrast(120%) brightness(90%);
+}
+
+
+
+
+
+
+
+
+
+
 
 /* ========== GAME CONTROL BOX ========== */
 .game-control-box {
@@ -471,3 +537,403 @@ body {
 .speech-bubble::-webkit-scrollbar-thumb:hover {
   background: #5B3A29; /* Darker golden color on hover */
 }
+
+
+
+
+.sprite-lightning {
+  width: 340px;
+  height: 631px;
+  position: absolute;
+  top: -20px;
+  left: 1481px;
+
+  opacity: 0; /* Hide all frames initially */
+  transition: opacity 0.2s ease; /* Smooth transition */
+  z-index: -1; /* Initially place all frames behind each other */
+  image-rendering: pixelated; /* If it's pixel art */
+}
+
+.sprite-lightning.active {
+  opacity: 10; /* Fully visible when active */
+  z-index: 999; /* Bring the active frame in front */
+}
+
+.red {
+  filter: brightness(2.5) saturate(1.3) hue-rotate(3deg); /* Pure white glow effect */
+  transform: scale(1.06); /* Add a slight zoom-in effect for more intensity */
+  transition: filter 0.2s ease-in-out, transform 0.2s ease-out; /* Adjust transition speed of color change */
+}
+
+@keyframes lightningStrike {
+  0% {
+    display: block;
+  }
+  20% {
+    display: none;
+  }
+  40% {
+    display: block;
+  }
+  60% {
+    display: none;
+  }
+  80% {
+    display: block;
+  }
+  100% {
+    display: none;
+  }
+}
+
+
+
+  /* Overlay that dims the background */
+  .menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* dim effect */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 100px; /* adjust distance from top */
+    z-index: 998; /* slightly lower than gameMenu */
+    pointer-events: all;
+  }
+  /* Block clicks on overlay background but allow on menu */
+  .menu-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 998;
+    pointer-events: all; /* This absorbs all clicks outside the menu */
+  }
+
+  /* Menu Button Container */
+  /* Menu Button Container */
+  .menu-btn-wrapper {
+
+    position: absolute;
+    top: 13px; /* Adjust for desired vertical positioning (increase or decrease as needed) */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Keeps the button horizontally centered */
+    z-index: 999; /* Ensure it's above other elements */
+    transition: opacity 0.2s ease; /* Only apply opacity transition to wrapper */
+  }
+
+  /* Menu Button Styling */
+  .menu-btn {
+    background-image: url('../images/gameimg/menubg.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.4 s ease; /* Apply transition to the button itself */
+  }
+
+  .menu-btn:hover {
+    transform: scale(1.05); /* Scale only the button */
+  }
+
+
+  .game-menu {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-image: url('../images/gameimg/menudrop.png');
+    background-size: contain; /* Make image fill the area more prominently */
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    padding: 40px 20px; /* Increased padding for spacing */
+    z-index: 999;
+    width: 700px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center items vertically */
+  }
+
+
+  .menu-item {
+    width: 27rem;
+    margin: 0 auto 30px auto; /* Increased bottom margin to 40px for more space */
+    background-color: #2f855a; /* Deep emerald green */
+    color: #f0fff4; /* Mint white text */
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 12px;
+    border-radius: 50px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 5px rgba(255, 255, 255, 0.3); /* Stronger inner shadow */
+    transition: all 0.2s ease;
+    position: relative;
+    top: 30px; /* Adjusted position if needed */
+  }
+
+  /* Hover effect with slight lift */
+  .menu-item:hover {
+    background-color: #38a169; /* Brighter emerald */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 7px rgba(255, 255, 255, 0.4); /* Stronger embossed effect */
+  }
+
+  /* Press effect (must be placed AFTER hover) */
+  .menu-item:active {
+    background-color: #2f855a; /* Revert back to original when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.5); /* Slight inset shadow when pressed */
+    transform: translateY(2px); /* Pressed effect */
+  }
+
+/* Resume Button */
+.menu-item:nth-child(1) {
+  background-color: #2f855a; /* Darker green for resume */
+}
+
+.menu-item:nth-child(1):hover {
+  background-color: #276749; /* Even darker green on hover */
+}
+
+/* Restart Button */
+.menu-item:nth-child(2) {
+  background-color: #d97706; /* Darker orange for restart */
+}
+
+.menu-item:nth-child(2):hover {
+  background-color: #b45309; /* Slightly darker orange on hover */
+}
+
+/* Settings Button */
+.menu-item:nth-child(3) {
+  background-color: #2c5282; /* Darker blue for settings */
+}
+
+.menu-item:nth-child(3):hover {
+  background-color: #1e3a8a; /* Slightly darker blue on hover */
+}
+
+/* Quit Button */
+.menu-item:nth-child(4) {
+  background-color: #c53030; /* Darker red for quit */
+}
+
+.menu-item:nth-child(4):hover {
+  background-color: #9b2c2c; /* Slightly darker red on hover */
+}
+
+
+
+/* General Settings Container */
+.settings-container {
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 30px;
+
+}
+
+
+
+/* Each Setting Block */
+.setting-option {
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+/* Label Styles */
+.setting-option label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #e6ffe6; /* lighter green tone */
+}
+
+/* Volume Range */
+#volume {
+  width: 100%;
+  height: 8px; /* Thinner slider */
+  appearance: none;
+  background: #d3d3d3; /* Light gray background */
+  border-radius: 4px;
+  outline: none;
+  position: relative;
+  transition: background 0.3s ease;
+}
+
+/* Volume Slider Thumb */
+#volume::-webkit-slider-thumb {
+  appearance: none;
+  height: 20px;
+  width: 20px;
+  background: #4a90e2; /* Soft blue thumb */
+  border: 2px solid #1c5f94; /* Dark blue border */
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#volume::-webkit-slider-thumb:hover {
+  background: #1c5f94; /* Dark blue on hover */
+  transform: scale(1.2); /* Slightly enlarge thumb on hover */
+}
+
+#volume::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  background: #4a90e2; /* Soft blue thumb */
+  border: 2px solid #1c5f94; /* Dark blue border */
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#volume::-moz-range-thumb:hover {
+  background: #1c5f94; /* Dark blue on hover */
+  transform: scale(1.2); /* Slightly enlarge thumb on hover */
+}
+
+/* Mute Wrapper aligns checkbox and label horizontally */
+.mute-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+  margin-left: 12px; /* 👈 Adjust this value if needed */
+}
+/* Mute Checkbox Style */
+#muteCheckbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #4a90e2;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+}
+
+/* Show mute icon when checked, centered inside */
+#muteCheckbox:checked::before {
+  content: "🔇";
+  color: white;
+  font-size: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Mute Label Style */
+.mute-label {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+}
+
+
+/* Language Container */
+.language-container {
+  text-align: center;
+  font-weight: 600;
+  margin-top: -30px;
+}
+
+.language-container label {
+  display: block;
+  margin-bottom: 8px; /* 👈 Add space below the label */
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Language Box */
+.language-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffa726; /* orange for contrast */
+  padding: 10px 20px;
+  border-radius: 50px;
+  width: 250px;
+  height: 50px;
+  margin: 0 auto;
+}
+
+.language-box button {
+  background-color: transparent;
+  color: white;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.language-box button:hover {
+  transform: scale(1.1);
+}
+
+#languageText {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  flex-grow: 1;
+}
+
+/* Buttons Section */
+.settings-item-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+}
+
+/* Shared styles */
+.settings-item {
+  display: block;
+  width: 80%;
+  margin-bottom: 10px;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  color: white;
+  font-weight: 600;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+/* Apply Button - Green */
+.settings-item:first-child {
+  background-color: #38a169;
+}
+
+.settings-item:first-child:hover {
+  background-color: #2f855a;
+}
+
+/* Back Button - Default and Hover Colors */
+.settings-item:last-child {
+  background-color: #D32F2F; /* Darker Coral */
+}
+
+.settings-item:last-child:hover {
+  background-color: #B71C1C; /* Deeper Red */
+}
+
+
+

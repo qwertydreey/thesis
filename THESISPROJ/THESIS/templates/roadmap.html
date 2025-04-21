@@ -14,7 +14,14 @@
 
       <!-- Image-Based Buttons -->
       <div class="roadmap-buttons">
-      
+
+
+              <div class="roadmap-btn-wrapper">
+                <a href="{{ url_for('dashboard') }}">
+                  <button class="back-btn"></button>
+                </a>
+              </div>
+            
               <!-- Adventure Map -->
               <div class="roadmap-btn-wrapper"> <a href="#" class="roadmap-btn addition-village"></a>
               </div>
@@ -100,13 +107,6 @@
     </div> <!-- .roadmap-content -->
   </div> <!-- .roadmap-wrapper -->
 
-  <!-- START NG LOADING TO NAKA SET SA PINAKA BABA PARA MAKITA LAHAT MAPS -->
-  <script>
-    window.addEventListener('load', () => {
-      const wrapper = document.querySelector('.roadmap-wrapper');
-      wrapper.scrollTop = wrapper.scrollHeight;
-    });
-  </script>
 
 
   <!-- SCRIPT TO NUNG STAR PADAGDAG PABAWAS PAG NA COMPLETE NA AYUSIN MO NALANG  -->

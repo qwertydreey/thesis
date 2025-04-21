@@ -13,26 +13,31 @@ body {
 .roadmap-wrapper {
   width: 100vw;
   height: 100vh;
-  overflow-y: auto; /* Allow vertical scrolling */
-  overflow-x: hidden; /* Prevent horizontal scroll */
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  scroll-behavior: smooth; /* ✅ This line makes scroll smooth */
+  align-items: center;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
 }
 
 /* Roadmap content scales with screen width */
 .roadmap-content {
-  position: relative;
   width: 100%;
-  max-width: 1920px;
+  height: 100%;
+  position: relative;
+  max-width: none; /* remove max-width if you want full stretch */
 }
 
 /* Background image fits screen width, scrolls if too tall */
 .bg-img {
-  width: 100%;
-  height: auto; /* Maintain aspect ratio */
-  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: fill; /* Force stretching */
+  z-index: 0;
 }
 
 /* Generic button styling (acts like cutout image) */
@@ -110,13 +115,13 @@ body {
 /* Addition Village Stars */
 .addition-village-stars {
   position: absolute; /* Required for top/left to work */
-  top: 46.5%;
-  left: 82.3%;
+  top: 48.5%;
+  left: 82.1%;
   transform: rotate(1deg);
 }
 
 .subtraction-sands {
-  top: 56.4%;
+  top: 54.4%;
   left: 5.4%;
   width: 15.5%;
   height: 41.8%;
@@ -131,8 +136,8 @@ body {
 }
 
 .comparison-cliffs {
-  top: 8.1%;
-  left: 53.3%;
+  top: 4.1%;
+  left: 54.3%;
   width: 15.5%;
   height: 41.8%;
   background-image: url('../images/gameimg/roadmap/Cliff of Comparison.png');
@@ -140,14 +145,14 @@ body {
 
 .comparison-cliffs-stars {
   position: absolute;
-  top: 41.1%;
-  left: 59.9%;
+  top: 39.1%;
+  left: 60.6%;
   transform: rotate(1deg);
 }
 
 .place-value-town {
-  top: 13.5%;
-  left: 31.1%;
+  top: 7.5%;
+  left: 32.1%;
   width: 15.5%;
   height: 41.8%;
   background-image: url('../images/gameimg/roadmap/Place Value Town.png');
@@ -155,14 +160,14 @@ body {
 
 .place-value-town-stars {
   position: absolute;
-  top: 46.7%;
-  left: 37.5%;
+  top: 42.7%;
+  left: 38.4%;
   transform: rotate(-1.5deg);
 }
 
 .multiplication-mirage {
-  top: 16.5%;
-  left: 8.3%;
+  top: 13.5%;
+  left: 10.3%;
   width: 14.5%;
   height: 41.8%;
   background-image: url('../images/gameimg/roadmap/Multiplication Mirage.png');
@@ -170,14 +175,14 @@ body {
 
 .multiplication-mirage-stars {
   position: absolute;
-  top: 49.3%;
-  left: 14.3%;
-  transform: rotate(0deg);
+  top: 48.3%;
+  left: 16.2%;
+  transform: rotate(-1deg)
 }
 
 .division-river {
-  top: 54.5%;
-  left: 69.1%;
+  top: 49.5%;
+  left: 64.1%;
   width: 14.5%;
   height: 41.8%;
   background-image: url('../images/gameimg/roadmap/Divide River.png');
@@ -185,14 +190,14 @@ body {
 
 .division-river-stars {
   position: absolute;
-  top: 87%;
-  left: 75.1%;
+  top: 84%;
+  left: 69.9%;
   transform: rotate(0.5deg);
 }
 
 .numeral-ruins {
-  top: 56.7%;
-  left: 46.5%;
+  top: 49.7%;
+  left: 43.5%;
   width: 15.5%;
   height: 41.8%;
   background-image: url('../images/gameimg/roadmap/Numeral ruins.png');
@@ -200,8 +205,8 @@ body {
 
 .numeral-ruins-stars {
   position: absolute;
-  top: 89.7%;
-  left: 52.8%;
+  top: 85.2%;
+  left: 49.8%;
   transform: rotate(0deg);
 }
 
@@ -215,7 +220,35 @@ body {
 
 .counting-springs-stars {
   position: absolute;
-  top: 83.7%;
-  left: 32%;
+  top: 85.7%;
+  left: 31.9%;
   transform: rotate(-3.5deg);
+}
+
+.back-btn {
+  position: absolute;
+  top: 3.1%;
+  left: 89.1%;
+  width: 11%;
+  height: 12.8%;
+  background: transparent center/contain no-repeat; /* Same layout (image background) */
+  background-image: url('../images/shopimg/back.png'); /* Image as background */
+  border: none; /* No border */
+  padding: 0; /* No padding */
+  margin: 0; /* No margin */
+  outline: none; /* Remove outline */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: transform 0.5s ease; /* Smooth transition */
+  z-index: 999; /* Ensure it's on top */
+}
+
+.back-btn:hover {
+  transform: scale(1.03); /* Scale up on hover */
+}
+
+/* Shadow Border */
+.back-btn {
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.8)) /* Stronger shadow with higher opacity */
+          drop-shadow(0 0 12px rgba(0, 0, 0, 0.6)) /* Slightly larger shadow */
+          drop-shadow(0 0 18px rgba(0, 0, 0, 0.4)); /* Even larger shadow for deeper effect */
 }
