@@ -15,7 +15,7 @@
   <body>
     <div class="game-wrapper flex flex-col w-full min-h-screen">
       <!-- Game Background -->
-      <div class="game-bg w-full flex-1 bg-cover bg-center" style="background-image: url('static/images/gameimg/greenbg.jpg');">
+      <div class="game-bg w-full bg-cover bg-center" style="background-image: url('static/images/gameimg/gamebg/Place Value Town.png');">
         <!-- Main Game Container (Player and Monster Section) -->
         <div class="relative w-full h-full z-0">
           <div class="flex justify-between items-center p-4 w-full">
@@ -23,36 +23,33 @@
             <div class="player-container flex items-center space-x-4 relative">
               <img alt="Player Profile" class="player-image"
                 src="https://storage.googleapis.com/a1aa/image/raUbD71iFYq-U1Yml26Zcr8Ah8pGAFtfHBuPj5mjZ5w.jpg" />
-              <div class="health-box">
                 <p class="player-name">PLAYER NAME</p>
-                <div id="player-health" class="player-health-bar"></div>
+                <div id="player-health" class="player-health-bar">
               </div>
             </div>
 
-
+            <div class="lightning-container">
+              <img src="{{ url_for('static', filename='images/anim/thunder/11.png') }}" class="sprite-lightning" />
+              <img src="{{ url_for('static', filename='images/anim/thunder/22.png') }}" class="sprite-lightning" />
+              <img src="{{ url_for('static', filename='images/anim/thunder/33.png') }}" class="sprite-lightning" />
+              <img src="{{ url_for('static', filename='images/anim/thunder/44.png') }}" class="sprite-lightning" />
+              <img src="{{ url_for('static', filename='images/anim/thunder/55.png') }}" class="sprite-lightning" />
+            </div>
 
 
 
             <!-- Monster Section -->
             <div class="monster-container flex items-center space-x-4 relative">
-              <div class="health-box text-right">
-                <p class="monster-name">MONSTER NAME</p>
-                <div id="monster-health" class="monster-health-bar"></div>
-              </div>
               <img alt="Monster Profile" class="monster-image"
                 src="https://storage.googleapis.com/a1aa/image/rRqKqcirVjsHBRYUKip0Q807MQFPzmCDhnZij_5kkzQ.jpg" />
+                <p class="monster-name">MONSTER NAME</p>
+                <div id="monster-health" class="monster-health-bar">
             </div>
           </div>
         </div>
 
 
-        <div class="lightning-container">
-          <img src="{{ url_for('static', filename='images/anim/thunder/11.png') }}" class="sprite-lightning" />
-          <img src="{{ url_for('static', filename='images/anim/thunder/22.png') }}" class="sprite-lightning" />
-          <img src="{{ url_for('static', filename='images/anim/thunder/33.png') }}" class="sprite-lightning" />
-          <img src="{{ url_for('static', filename='images/anim/thunder/44.png') }}" class="sprite-lightning" />
-          <img src="{{ url_for('static', filename='images/anim/thunder/55.png') }}" class="sprite-lightning" />
-        </div>
+
 
         
 
@@ -124,7 +121,7 @@
 
                 
 
-      </div>
+
 <!-- Combined Ground and Characters Section -->
 <div class="game-container">
   <!-- Ground Section -->
@@ -147,59 +144,62 @@
 <!-- Footer section for controls -->
 <div class="game-control-box">
   <!-- Main game bar split into 3 sections -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="gamecontent">
 
 <!-- Potion Section -->
 <div class="potion-section">
   <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="useFreezePotion()">
+  <img src="{{ url_for('static', filename='images/gameimg/freeze box.png') }}" class="freeze-box">
   <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="useHealthPotion()">
+  <img src="{{ url_for('static', filename='images/gameimg/health box.png') }}" class="health-box">
   <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="Thunder Potion" onclick="useThunderPotion()">
+  <img src="{{ url_for('static', filename='images/gameimg/thunder box.png') }}" class="thunder-box">
+
 </div>
 
 
-    <!-- Game Controls -->
-    <div class="game-control-container">
-      <div class="layout-wrapper">
-        <!-- Number Buttons Grid -->
-        <div class="button-grid">
-          <div class="button" onclick="addToInput(7)">7</div>
-          <div class="button" onclick="addToInput(8)">8</div>
-          <div class="button" onclick="addToInput(9)">9</div>
-          <div class="button" onclick="addToInput(4)">4</div>
-          <div class="button" onclick="addToInput(5)">5</div>
-          <div class="button" onclick="addToInput(6)">6</div>
-          <div class="button" onclick="addToInput(1)">1</div>
-          <div class="button" onclick="addToInput(2)">2</div>
-          <div class="button" onclick="addToInput(3)">3</div>
-          <div class="button backspace" onclick="backspace()">⌫</div>
-          <div class="button" onclick="addToInput(0)">0</div>
-          <div class="button" onclick="addToInput('.')">.</div>
-        </div>
+<!-- Game Controls -->
+<div class="game-control-container">
+  <!-- Number Buttons Grid -->
+  <div class="button-grid">
+    <div class="button" onclick="addToInput(7)"></div>
+    <div class="button" onclick="addToInput(8)"></div>
+    <div class="button" onclick="addToInput(9)"></div>
+    <div class="button" onclick="addToInput(4)"></div>
+    <div class="button" onclick="addToInput(5)"></div>
+    <div class="button" onclick="addToInput(6)"></div>
+    <div class="button" onclick="addToInput(1)"></div>
+    <div class="button" onclick="addToInput(2)"></div>
+    <div class="button" onclick="addToInput(3)"></div>
+    <div class="button backspace" onclick="backspace()"></div>
+    <div class="button" onclick="addToInput(0)"></div>
+    <div class="button" onclick="addToInput('.')"></div>
+  </div>
 
-        <!-- Input and Attack -->
-        <div class="right-section">
-          <div class="placeholder-input">
-            <input type="text" class="input-field" placeholder="Input number" id="number-input" />
-          </div>
-          <div class="attack-button" onclick="handleAttack()">Attack</div>
-        </div>
-      </div>
+  <!-- Input and Attack -->
+  <div class="right-section">
+    <div class="placeholder-input">
+      <input type="text" class="input-field"  id="number-input" />
     </div>
+    <div class="attack-button" onclick="handleAttack()"></div>
+  </div>
+</div>
+
 
     <!-- Chatbot Section -->
-    <div class="chatbot-container">
-      <div class="speech-bubble">
-        <p><strong>Need help solving?</strong></p>
-        <p>Start by identifying the key numbers in the problem. If it's an addition problem, look for the + sign and the numbers on either side. Try breaking the problem into smaller steps to make it easier to solve. Don't forget to check your work!</p>
-        <p>Feel free to ask for a hint or solution step if you're stuck!</p>
+        <div class="chatbot-container">
+          <div class="speech-bubble">
+            <p><strong>Need help solving?</strong></p>
+            <p>Start by identifying the key numbers in the problem. If it's an addition problem, look for the + sign and the numbers on either side. Try breaking the problem into smaller steps to make it easier to solve. Don't forget to check your work!</p>
+            <p>Feel free to ask for a hint or solution step if you're stuck!</p>
+          </div>
+          <a href="{{ url_for('chatbot') }}">
+            <img src="{{ url_for('static', filename='images/gameimg/counticus.png') }}" alt="Wizard Counticus" class="chatbot-img">
+          </a>
+        </div>
+
+
       </div>
-      <a href="{{ url_for('chatbot') }}">
-        <img src="{{ url_for('static', filename='images/gameimg/counticus.png') }}" alt="Wizard Counticus" class="chatbot-img">
-      </a>
-    </div>
-
-
-
 
 
     
@@ -708,10 +708,10 @@ function useThunderPotion() {
   if (sessionStorage.getItem('fireballTriggered')) return;
 
   const attackEffects = [
-    "{{ url_for('static', filename='images/anim/charattack/greenball.png') }}",
-    "{{ url_for('static', filename='images/anim/charattack/iceball.png') }}",
-    "{{ url_for('static', filename='images/anim/charattack/lavaball.png') }}",
-    "{{ url_for('static', filename='images/anim/charattack/fireball.png') }}"
+    "{{ url_for('static', filename='images/anim/charattack/Addition Attack.png') }}",
+    "{{ url_for('static', filename='images/anim/charattack/Subtraction Attack.png') }}",
+    "{{ url_for('static', filename='images/anim/charattack/Multiplication Attack.png') }}",
+    "{{ url_for('static', filename='images/anim/charattack/Division Attack.png') }}",
   ];
 
   const selectedAttack = attackEffects[Math.floor(Math.random() * attackEffects.length)];

@@ -1,3 +1,14 @@
+@font-face {
+  font-family: "FSP DEMO - Merlo Neue Bold";
+  src: url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.eot");
+  src: url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.eot?#iefix")format("embedded-opentype"),
+  url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.woff2")format("woff2"),
+  url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.woff")format("woff"),
+  url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.ttf")format("truetype"),
+  url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.svg#FSP DEMO - Merlo Neue Bold")format("svg");
+}
+
+
 /* Body styles - change the background color and layout */
 body {
   background-color: #bfdbfe; /* Tailwind bg-blue-100 - change the background color */
@@ -9,6 +20,8 @@ body {
   font-family: 'Poppins', sans-serif; /* Use the custom font */
   margin: 0; /* Ensure no default margin */
   box-sizing: border-box; /* Ensure consistent box sizing */
+  overflow: hidden; /* Disable scrollbars globally */
+
 }
 
 
@@ -22,14 +35,28 @@ body {
   width: 350px;
   height: 100px;
   position: relative;
+  z-index: 999;
+
+  
 }
 
 .player-container {
   background-image: url('../images/gameimg/player.png');
+  
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
 .monster-container {
   background-image: url('../images/gameimg/monster.png');
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
 
@@ -43,7 +70,10 @@ body {
   font-family: "Fredoka", sans-serif;
   font-weight: bold;
   letter-spacing: 1.5px;
+
+  white-space: nowrap; /* Prevent line break */
 }
+
 
 .player-image {
   width: 100px;
@@ -53,6 +83,11 @@ body {
   left: 0;
   border: 5px solid #000000; /* Add a golden border */
   border-radius: 10%; /* Make the border follow the rounded shape */
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
 .monster-image {
@@ -63,6 +98,11 @@ body {
   right: 0;
   border: 5px solid #000000; /* Add an orange-red border */
   border-radius: 10%; /* Make the border follow the rounded shape */
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
 
@@ -76,27 +116,42 @@ body {
   right: 105px;
 }
 
+.health-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0; /* Prevent from shrinking */
+  min-width: 0;   /* Allow content to define width */
+}
+
+
 .player-health-bar,
 .monster-health-bar {
-  background: rgba(0, 0, 0, 0.589); /* semi-transparent black */
-  padding: 1px;
-  height: auto;
-  width: auto;
+  background: rgba(0, 0, 0, 0.589); /* Semi-transparent black */
+  padding: 4px 6px;
+  height: 40px;
+  width: fit-content;              /* Auto-expands with heart count */
+  min-width: auto;                /* Optional: prevent it from being too small */
   border-radius: 10px;
   overflow: hidden;
-  position: absolute;
   display: flex;
-  gap: 0.01rem; /* Space between flex items */
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;                  /* Prevent shrinking */
+  position: relative;             /* Can still position if needed */
 }
 
+
+
 .player-health-bar {
-  top: 85px; /* Adjust Y position */
-  left: 105px; /* Adjust X position */
+  top: 60px;
+  left: 90px;
+  
 }
 
 .monster-health-bar {
-  top: 85px; /* Adjust Y position */
-  right: 105px; /* Adjust X position */
+  top: 60px;
+  right: -95px; /* Adjust X position */
   direction: rtl; /* Makes the bar decrease from the right */
 
 }
@@ -106,6 +161,13 @@ body {
   height: 35px;
   transition: transform 0.2s ease, opacity 0.2s ease;
   filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
+  flex-shrink: 0;
+
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
 .heart-image:hover {
@@ -133,33 +195,45 @@ body {
 
 /* ========== QUESTION SECTION ========== */
 .question-container {
-  background-image: url('../images/gameimg/question wood.png');
+  background-image: url('../images/gameimg/question wood2.png');
   background-size: contain; /* Scale image to fit container */
   background-position: center;
   background-repeat: no-repeat;
   position: absolute;
-  top: 12%;
+  top: 29%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  width: 34rem;
-  height: 20rem;
+  width: 43rem;
+  height: 24rem;
   text-align: center;
   padding: 0 10px;
+
 }
 
 
 .question-text {
   font-size: 4rem;
-  font-weight: 500;
-  color: #f4f4f4; /* Off-white */
+  font-weight: 700;
+  color: #f4f4f4;
   font-family: "Fredoka", sans-serif;
-  position: absolute; 
-  top: 62%; 
+  position: absolute;
+  top: 66%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  z-index: 999; /* Ensure text is above other elements */
+  z-index: 999;
+  white-space: nowrap;
+  max-width: 90vw;
+  text-align: center;
+  letter-spacing: 2px;
+
+  text-shadow:
+    1px 1px 2px #a76e2e,   /* soft bronze stroke */
+    2px 2px 6px #e6b44b,   /* golden glow */
+    0 0 2px #c58e3d;       /* subtle blend */
 }
+
+
 
 /* Freeze Turns Display Styling */
 .freeze-turn {
@@ -168,7 +242,7 @@ body {
   background-color: rgba(135, 206, 250, 0.6); /* Ice blue with more transparency */
   padding: 5px;
   border-radius: 8px;
-  margin-top: 242px; /* Space between question text and freeze turns */
+  margin-top: 305px; /* Space between question text and freeze turns */
   
   text-align: center;
   font-size: 1.1rem; /* Adjust font size as needed */
@@ -185,25 +259,29 @@ body {
   background-position: center;
   height: 200px;
   width: 100%;
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
-/* ========== GAME CONTAINER ========== */
+
 .game-container {
-  position: relative;
-  width: 100%;
-  height: 100%; /* Adjust if you need a specific height */
+  position: relative; /* Make sure the container is positioned */
+  height: 100%; /* or set a specific height depending on your setup */
+  width: 100%; /* or set a specific width */
 }
 
 /* ========== GROUND SECTION ========== */
 .ground-container {
-  position: relative;
+  position: absolute;
+  bottom: 93px;
   width: 100%;
   height: 40px;
 }
 
 .ground {
-  position: absolute;
-  bottom: 0;
   width: 100%;
   height: 40px;
   background-color: #1c1c1c;
@@ -220,95 +298,26 @@ body {
   height: 2px;
   background: rgba(255, 255, 255, 0.05);
   box-shadow: 0 0 30px rgba(255, 253, 253, 0.15);
+  
 }
 
 /* ========== CHARACTER SECTION ========== */
 .character {
   position: absolute;
   bottom: 10px;
-  z-index: 20;
+  z-index: 10;
   animation: subtleStretchIdle 1s ease-in-out infinite;
   transform-origin: center bottom; /* Make it stretch from the bottom */
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  filter: 
+    drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))  /* Light shadow */
+    drop-shadow(3px 3px 4px rgba(0, 0, 0, 0.4))  /* Bottom-right shadow */
+    drop-shadow(-3px -3px 4px rgba(0, 0, 0, 0.4));  /* Top-left shadow */
 }
-
-/* Player Wizard */
-.character.player {
-  left: 50px; /* Position the player character */
-}
-
-/* Monster */
-.character.monster {
-  right: 50px; /* Position the monster */
-}
-
-/* ========== FIREBALL SECTION ========== */
-.fireball {
-  position: absolute;
-  bottom: 120px; /* Adjust based on the player's position */
-  width: 200px;
-  height: auto;
-  animation: fireball-move 0.8s linear forwards;
-  z-index: 999;
-  display: block; /* Ensure it is visible */
-}
-
-/* Fireball movement animation */
-@keyframes fireball-move {
-  0% {
-    left: 100px; /* Start position (adjust as necessary) */
-    opacity: 1; /* Fully visible at start */
-  }
-  60% {
-    opacity: 0.9; /* Fading starts here with more opacity */
-  }
-  90% {
-    opacity: 0.7; /* Fading continues */
-  }
-  100% {
-    left: 85%; /* Fireball moves to 80% of the screen width */
-    opacity: 0; /* Fully fade out at the end */
-  }
-}
-
-
-
-
-
-
-
-/* Impact Style */
-.impact {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  background-image: url('/static/images/gameimg/impact.gif'); /* Impact effect image */
-  background-size: cover;
-  z-index: 6;
-  animation: impactAnimation 0.3s ease-out forwards;
-  display: none; /* Initially hidden */
-}
-
-@keyframes impactAnimation {
-  0% {
-    transform: scale(0.5); /* Start small */
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1); /* Scale to normal size */
-    opacity: 0; /* Fade out the impact effect */
-  }
-}
-
-/* Position impact at the center of the monster */
-.impact.centered {
-  left: 50%; /* Adjust to center horizontally */
-  transform: translateX(-50%);
-  bottom: 120px; /* Adjust to the position of the monster */
-}
-
-
-
-
 
 @keyframes subtleStretchIdle {
   0%, 100% {
@@ -324,6 +333,55 @@ body {
     transform: scaleY(1.05); /* Stretch down again, but still subtle */
   }
 }
+
+/* Player Wizard */
+.character.player {
+  height: 300px; /* Adjust height as necessary */
+  left: 100px; /* Position the player character */
+}
+
+/* Monster */
+.character.monster {
+  height: 300px; /* Adjust height as necessary */
+  right: 100px; /* Position the monster */
+}
+
+/* ========== FIREBALL SECTION ========== */
+.fireball {
+  position: absolute;
+  top: -300px; /* Adjust this value to move the fireball up or down */
+  right: 50%; /* Center it horizontally relative to its parent container */
+  transform: translateX(-50%); /* Ensures the fireball is centered */
+  width: 200px;
+  height: auto;
+  animation: fireball-move 0.8s linear forwards;
+  z-index: 999;
+  display: block; /* Ensure it is visible */
+}
+
+
+
+@keyframes fireball-move {
+  0% {
+    right: 55%; /* Start horizontally centered */
+    top: -300px; /* Start vertically at the specified position */
+    opacity: 1; /* Fully visible at start */
+  }
+  60% {
+    opacity: 0.9; /* Fading starts here with more opacity */
+  }
+  90% {
+    opacity: 0.7; /* Fading continues */
+  }
+  100% {
+    left: 85%; /* Fireball moves to 85% of the screen width */
+    opacity: 0; /* Fully fade out at the end */
+  }
+}
+
+
+
+
 
 
 .player {
@@ -369,7 +427,7 @@ body {
   }
   30% {
     transform: scale(1.08);
-    filter: brightness(1.5) saturate(1.5);
+    filter: brightness(1.5) saturate(3) hue-rotate(-100deg); /* Stronger red tint */
   }
   60% {
     transform: scale(1);
@@ -380,6 +438,7 @@ body {
     filter: none;
   }
 }
+
 
 /* Shake animation */
 @keyframes shake {
@@ -400,7 +459,7 @@ body {
 
 
 .player.charging {
-  animation: chargeUp 0.5s ease-in-out;
+  animation: chargeUp 0.4s ease-in-out;
 }
 
 @keyframes chargeUp {
@@ -418,7 +477,7 @@ body {
   }
 }
 .attack {
-  animation: attackAnimation 1s ease-out;
+  animation: attackAnimation 0.5s ease-out;
   transform-origin: center center;
 }
 
@@ -441,35 +500,47 @@ body {
   }
 }
 
+.game-bg {
+  height: 65vh; /* or any value you want */
+}
 
 
 
-
+.gamecontent {
+  justify-items: center;
+  align-items: center;
+  height: auto;
+  margin-top: 44px; /* Move it down */
+}
 
 
 /* ========== GAME CONTROL BOX ========== */
 .game-control-box {
-  background-color: #1E273E;
+  background-image: url('../images/gameimg/gamecontrolbox.png');
+  background-repeat: no-repeat;
+  background-size: cover;
   padding: 1rem;
-  height: 260px;
+  height: 333px;
   width: 100vw;
-  margin: 0 auto;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
+  top: 98%;
+  position: absolute;
+  overflow: visible;
+  z-index: 999;
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
 /* ========== POTION SECTION ========== */
 .potion-section {
-  background-image: url('../images/gameimg/potionsec.png');
-  background-repeat: no-repeat;
   padding: 1rem;
-  width: 100%;
-  height: 100%;
+
 }
 
-.freeze-potion, .health-potion, .thunder-potion {
-  width: 6%;
+.freeze-box, .health-box, .thunder-box {
+  width: 7.5%;
   height: auto;
   position: absolute;
   background: transparent center/contain no-repeat;
@@ -478,34 +549,107 @@ body {
   margin: 0;
   outline: none;
   box-shadow: none;
+}
+  /* Background images */
+.freeze-box {
+  top: 70%;
+  left: 4.3%;
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+}
+
+.health-box {
+  top: 70%;
+  left: 13.8%;
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+}
+
+.thunder-box {
+  top: 70%;
+  left: 23.8%;
+
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+}
+
+.freeze-potion, .health-potion, .thunder-potion {
+  width: 7.5%;
+  height: auto;
+  position: absolute;
+  background: transparent center/contain no-repeat;
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
   cursor: pointer;
   transition: transform 0.1s ease;
-  animation: bobble 1s ease-in-out infinite;
+  animation: bobble 1s ease-in-out infinite, shadowEffect 1s ease-in-out infinite;
+  z-index: 1; /* Ensure potion is in front */
 }
+
+
+
 
 
 /* Background images */
 .freeze-potion {
-  top: 36%;
+  top: 25%;
   left: 4.3%;
-  background: url('../images/gameimg/freeze.png') center/contain no-repeat;
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
 .health-potion {
-  top: 36%;
+  top: 25%;
   left: 13.8%;
-  background: url('../images/gameimg/health.png') center/contain no-repeat;
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
 .thunder-potion {
-  top: 36%;
+  top: 25%;
   left: 23.8%;
-  background: url('../images/gameimg/thunder.png') center/contain no-repeat;
+
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
+
 
 /* Popping effect */
 .potion-clicked {
   animation: pop 0.3s ease !important;
+}
+
+/* Darker shadow beneath the potion */
+@keyframes shadowEffect {
+  0% {
+    filter: drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.8)); /* Darker shadow beneath potion */
+  }
+  50% {
+    filter: drop-shadow(0px 15px 25px rgba(0, 0, 0, 0.9)); /* Larger and darker shadow beneath */
+  }
+  100% {
+    filter: drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.8)); /* Reset to darker shadow */
+  }
 }
 
 @keyframes bobble {
@@ -531,161 +675,275 @@ body {
 
 /* ========== GAME CONTROL CONTAINER ========== */
 .game-control-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  position: relative;
-  transform: none;
-  top: auto;
-  left: auto;
-  width: auto;
-  height: auto;
-}
-
-/* ========== LAYOUT WRAPPER ========== */
-.layout-wrapper {
-  display: flex;
+  background-image: url('../images/gameimg/buttons/bookbg.png');
+  background-repeat: no-repeat;
+  background-size: contain; /* Make sure the entire image fits */
+  z-index: 0;
+  background-position: center;
+  display: inline-flex;
   justify-content: center;
   align-items: flex-start;
+  box-sizing: border-box;
+  position: relative;
+  bottom: 123px;
+  left: 43.65rem;
   gap: 10px;
-  max-width: 100%; 
-  width: 100%; /* Ensure the layout wrapper uses the full width available */
-  flex-wrap: nowrap; /* Allow wrapping for smaller screens */
-  margin: 0 auto; /* Center the layout wrapper */
-  padding: 10px; /* Adjust the padding to prevent overlap */
-  box-sizing: border-box; /* Ensure padding is accounted for in total width */
+  flex-wrap: wrap;
+  padding: 20px;
+  margin: 0 auto;
+  width: 600px;
+  height: 363px;
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+
 }
+
+
+
+
 
 /* ========== BUTTON GRID ========== */
 .button-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Creates 3 equal columns */
-  gap: 10px; /* Gap equivalent to Tailwind's gap-4 (which is 1rem or 16px) */
-  width: 100%; /* Ensure the grid takes up full available width */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0px;
 }
 
-
 /* ========== BUTTON STYLES ========== */
+
+
+/* General Button Style */
 .button {
-  height: 5rem; /* 5 times the font size, scalable */
-  width: 8rem; /* 8 times the font size, scalable */
-  background-color: #00b300;
-  color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  height: 47px;
-  box-shadow: 0 4px #008000;
+  width: 55px;
+  height: 55px;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: transform 0.1s ease;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  position: relative;
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
+/* Press down effect */
 .button:active {
-  box-shadow: 0 2px #008000;
-  transform: translateY(2px);
+  transform: scale(0.94); /* Slightly shrinks on click */
 }
 
-/* ========== BACKSPACE BUTTON ========== */
-.button.backspace {
-  background-color: #00b300;
+/* Individual Button Adjustments */
+.button:nth-child(1) {
+  background-image: url('../images/gameimg/buttons/7.png');
+  top: 43px;
+  left: 79px;
+  
 }
+
+.button:nth-child(2) {
+  background-image: url('../images/gameimg/buttons/8.png');
+  top: 49px;
+  left: 82px;
+}
+
+.button:nth-child(3) {
+  background-image: url('../images/gameimg/buttons/9.png');
+  top: 61px;
+  left: 88px;
+}
+
+.button:nth-child(4) {
+  background-image: url('../images/gameimg/buttons/4.png');
+  top: 36px;
+  left: 67px;
+}
+
+.button:nth-child(5) {
+  background-image: url('../images/gameimg/buttons/5.png');
+  top: 44px;
+  left: 70px;
+}
+
+.button:nth-child(6) {
+  background-image: url('../images/gameimg/buttons/6.png');
+  top: 54px;
+  left: 77px;
+}
+
+.button:nth-child(7) {
+  background-image: url('../images/gameimg/buttons/1.png');
+  top: 32px;
+  left: 51px;
+}
+
+.button:nth-child(8) {
+  background-image: url('../images/gameimg/buttons/2.png');
+  top: 40px;
+  left: 57px;
+}
+
+.button:nth-child(9) {
+  background-image: url('../images/gameimg/buttons/3.png');
+  top: 52px;
+  left: 64px;
+}
+
+.button:nth-child(11) {
+  background-image: url('../images/gameimg/buttons/0.png');
+  top: 40px;
+  left: 44px;
+}
+
+.button:nth-child(12) {
+  background-image: url('../images/gameimg/buttons/point.png');
+  top: 49px;
+  left: 51px;
+}
+
+/* Backspace Button */
+.button.backspace {
+  background-image: url('../images/gameimg/buttons/backspace.png');
+  top: 31px;
+  left: 38px;
+}
+
 
 /* ========== RIGHT SECTION LAYOUT ========== */
 .right-section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 9px;
-  align-items: flex-start;
-  width: auto;
-  min-width: auto;
+  gap: 12px;
+  align-items: center;
+  min-width: 180px;
+
 }
 
+
+
+/* ========== INPUT FIELD ========== */
 .input-field {
-  width: 180px;
-  padding: 10px;
+  width: 120px;
+  height: 63px;
+  padding: 10px 15px;
   font-size: 1.5rem;
   text-align: center;
-  border: 1px solid #e0caff;
-  border-radius: 8px;
-  background-color: #f4f0ff;
-  color: #4a3f77;
-  transition: 0.2s ease all;
-}
-
-.input-field::placeholder {
-  font-size: 1.3rem;
-  color: #b6a6d6;
-}
-
-.input-field:hover {
-  border-color: #c1a4ff;
+  color: #fff7e8;
+  background-color: transparent;
+  position: relative;
+  top: 218px;
+  left: 66px;
+  transform: rotate(7deg); /* Rotate the text */
+  border: none; /* Remove border by default */
+  outline: none; /* Remove the outline on focus */
 }
 
 .input-field:focus {
-  border-color: #a374f1;
-  box-shadow: 0 0 0 3px rgba(163, 116, 241, 0.2);
-  outline: none;
+  border: none; /* Ensure border stays removed when focused */
+  outline: none; /* Ensure outline doesn't appear */
 }
+
+
+
+
+
+
+
+
+
+
 
 /* ========== ATTACK BUTTON STYLING ========== */
 .attack-button {
-  background-color: #00b300;
-  color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  width: 180px;
-  height: 150px;
-  box-shadow: 0 4px #008000;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-image: url('../images/gameimg/buttons/attack button.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  width: 132px;
+  height: 135px;
   cursor: pointer;
+  position: relative;
+  top: 4px;
+  left: 88px;
+  transition: transform 0.1s ease;
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+
 }
 
 .attack-button:active {
-  box-shadow: 0 2px #008000;
-  transform: translateY(2px);
+  transform: translateY(1px); /* Moves up slightly on click */
 }
+
+
 
 
 
 
 
 .chatbot-container {
+  position: absolute;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  justify-content: flex-end; /* Ensure the chatbot is aligned to the right side */
+  justify-content: flex-start; /* Aligns items to the left */
+  right: 415px;
+  top: -27px;
 }
 
+
 .chatbot-img {
-  width: 13rem;
+  width: 17.2rem;
   height: auto;
   transition: transform 0.3s ease, filter 0.2s ease; /* Smooth transition for click effect */
+
+  filter: drop-shadow(0 0 5px rgba(255, 255, 150, 0.6))
+          drop-shadow(0 0 10px rgba(255, 255, 150, 0.4))
+          drop-shadow(0 0 15px rgba(255, 255, 150, 0.2));
+
+
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  
+  
 }
 
 .chatbot-img:active {
   
   transform: scale(1.03); /* Slightly zoom in on click */
-  filter: brightness(1.2); /* Slightly brighten the image on click */
+  filter: drop-shadow(0 0 5px rgba(255, 255, 150, 0.6))
+  drop-shadow(0 0 10px rgba(255, 255, 150, 0.4))
+  drop-shadow(0 0 15px rgba(255, 255, 150, 0.2));
+  
 }
 
 
 .speech-bubble {
-  position: relative;
+  user-select: text;
+  position: relative; /* changed from absolute */
+  top: 30px; /* keep as-is */
+  right: 20px; /* keep as-is */
   background: #fef3c7;
   border: 3px solid #d97706;
   border-radius: 15px;
   padding: 20px 30px;
-  max-width: 390px;
-  max-height: 220px;
+  max-width: 517px;
+  max-height: 243px;
   width: fit-content;
   height: auto;
   font-weight: bold;
@@ -699,24 +957,23 @@ body {
 }
 
 
-.speech-bubble::-webkit-scrollbar {
-  width: 6px; /* Slightly thicker scrollbar for a better grip */
-  
-}
 
+/* Scrollbar styling */
+.speech-bubble::-webkit-scrollbar {
+  width: 6px;
+}
 .speech-bubble::-webkit-scrollbar-track {
   border-radius: 6px;
 }
-
 .speech-bubble::-webkit-scrollbar-thumb {
-  background: #5B3A29; /* Warm golden brown color */
+  background: #5B3A29;
   border-radius: 6px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15); /* Light shadow for depth */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15);
+}
+.speech-bubble::-webkit-scrollbar-thumb:hover {
+  background: #5B3A29;
 }
 
-.speech-bubble::-webkit-scrollbar-thumb:hover {
-  background: #5B3A29; /* Darker golden color on hover */
-}
 
 
 
@@ -730,13 +987,12 @@ body {
 
   opacity: 0; /* Hide all frames initially */
   transition: opacity 0.1s ease; /* Smooth transition */
-  z-index: -1; /* Initially place all frames behind each other */
+  z-index: 999; /* Ensures it's above other elements */
   image-rendering: pixelated; /* If it's pixel art */
 }
 
 .sprite-lightning.active {
   opacity: 10; /* Fully visible when active */
-  z-index: 999; /* Bring the active frame in front */
 }
 
 .red {
@@ -780,7 +1036,7 @@ body {
     justify-content: center;
     align-items: flex-start;
     padding-top: 100px; /* adjust distance from top */
-    z-index: 998; /* slightly lower than gameMenu */
+    z-index: 9999; /* slightly lower than gameMenu */
     pointer-events: all;
   }
   /* Block clicks on overlay background but allow on menu */
@@ -806,20 +1062,36 @@ body {
 
   /* Menu Button Styling */
   .menu-btn {
-    background-image: url('../images/gameimg/menubg.png');
+    background-image: url('../images/gameimg/menubg2.png');
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+    margin-top: 5px;
+    width: 386px;
+    height: 117px;
+    font-size: 2.5rem;
     color: white;
     font-weight: bold;
-    padding: 10px 20px;
+    padding: 10px 20px; /* You can reduce this if it overflows the image */
     border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.4 s ease; /* Apply transition to the button itself */
+    letter-spacing: 3px;
+    font-family: "Fredoka", sans-serif; 
+    transition: transform 0.3s ease; /* Fixed typo: spacing in '0.4 s' */
+    user-select: none;
+    -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+    -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
+
+  text-shadow:
+      -1px -1px 0 #b1862f,         /* Bottom-right shadow for depth */
+    -2px -2px 1px rgba(0, 0, 0, 0.2); /* Soft deeper edge */
   }
+  
 
   .menu-btn:hover {
-    transform: scale(1.05); /* Scale only the button */
+    transform: scale(1.01); /* Scale only the button */
   }
 
 
@@ -841,6 +1113,12 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center; /* Center items vertically */
+    user-select: none;
+    -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+    -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
+
   }
 
 
