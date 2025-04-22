@@ -187,6 +187,13 @@ body {
   width: 100%;
 }
 
+/* ========== GAME CONTAINER ========== */
+.game-container {
+  position: relative;
+  width: 100%;
+  height: 100%; /* Adjust if you need a specific height */
+}
+
 /* ========== GROUND SECTION ========== */
 .ground-container {
   position: relative;
@@ -216,13 +223,108 @@ body {
 }
 
 /* ========== CHARACTER SECTION ========== */
-
-
 .character {
   position: absolute;
   bottom: 10px;
   z-index: 20;
+  animation: subtleStretchIdle 1s ease-in-out infinite;
+  transform-origin: center bottom; /* Make it stretch from the bottom */
 }
+
+/* Player Wizard */
+.character.player {
+  left: 50px; /* Position the player character */
+}
+
+/* Monster */
+.character.monster {
+  right: 50px; /* Position the monster */
+}
+
+/* ========== FIREBALL SECTION ========== */
+.fireball {
+  position: absolute;
+  bottom: 120px; /* Adjust based on the player's position */
+  width: 200px;
+  height: auto;
+  animation: fireball-move 0.8s linear forwards;
+  z-index: 999;
+  display: block; /* Ensure it is visible */
+}
+
+/* Fireball movement animation */
+@keyframes fireball-move {
+  0% {
+    left: 100px; /* Start position (adjust as necessary) */
+    opacity: 1; /* Fully visible at start */
+  }
+  60% {
+    opacity: 0.9; /* Fading starts here with more opacity */
+  }
+  90% {
+    opacity: 0.7; /* Fading continues */
+  }
+  100% {
+    left: 85%; /* Fireball moves to 80% of the screen width */
+    opacity: 0; /* Fully fade out at the end */
+  }
+}
+
+
+
+
+
+
+
+/* Impact Style */
+.impact {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background-image: url('/static/images/gameimg/impact.gif'); /* Impact effect image */
+  background-size: cover;
+  z-index: 6;
+  animation: impactAnimation 0.3s ease-out forwards;
+  display: none; /* Initially hidden */
+}
+
+@keyframes impactAnimation {
+  0% {
+    transform: scale(0.5); /* Start small */
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1); /* Scale to normal size */
+    opacity: 0; /* Fade out the impact effect */
+  }
+}
+
+/* Position impact at the center of the monster */
+.impact.centered {
+  left: 50%; /* Adjust to center horizontally */
+  transform: translateX(-50%);
+  bottom: 120px; /* Adjust to the position of the monster */
+}
+
+
+
+
+
+@keyframes subtleStretchIdle {
+  0%, 100% {
+    transform: scaleY(1); /* Original size */
+  }
+  25% {
+    transform: scaleY(1.05); /* Slight stretch down */
+  }
+  50% {
+    transform: scaleY(1.03); /* Slight contraction after stretch */
+  }
+  75% {
+    transform: scaleY(1.05); /* Stretch down again, but still subtle */
+  }
+}
+
 
 .player {
   left: 5%;
@@ -259,7 +361,85 @@ body {
 
 
 
+/* Damage animation for the monster */
+@keyframes monsterDamage {
+  0% {
+    transform: scale(1);
+    filter: none;
+  }
+  30% {
+    transform: scale(1.08);
+    filter: brightness(1.5) saturate(1.5);
+  }
+  60% {
+    transform: scale(1);
+    filter: none;
+  }
+  100% {
+    transform: scale(1);
+    filter: none;
+  }
+}
 
+/* Shake animation */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+/* When the monster takes damage */
+.monster.damaged {
+  animation: monsterDamage 0.4s ease-out, shake 0.4s ease-out;
+}
+
+
+
+
+.player.charging {
+  animation: chargeUp 0.5s ease-in-out;
+}
+
+@keyframes chargeUp {
+  0% {
+    filter: brightness(1) drop-shadow(0 0 0px yellow);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(1.5) drop-shadow(0 0 10px yellow);
+    transform: scale(1.05);
+  }
+  100% {
+    filter: brightness(1) drop-shadow(0 0 0px yellow);
+    transform: scale(1);
+  }
+}
+.attack {
+  animation: attackAnimation 1s ease-out;
+  transform-origin: center center;
+}
+
+/* Attack animation: scale and move forward then back */
+@keyframes attackAnimation {
+  0% {
+    transform: scaleY(1) translateY(0) translateX(0);
+  }
+  25% {
+    transform: scaleY(1.02) translateY(-2px) translateX(6px);
+  }
+  50% {
+    transform: scaleY(1) translateY(0) translateX(12px);
+  }
+  75% {
+    transform: scaleY(1.01) translateY(-1px) translateX(6px);
+  }
+  100% {
+    transform: scaleY(1) translateY(0) translateX(0);
+  }
+}
 
 
 
@@ -542,14 +722,14 @@ body {
 
 
 .sprite-lightning {
-  width: 340px;
-  height: 631px;
+  width: 429px;
+  height: auto;
   position: absolute;
-  top: -20px;
-  left: 1481px;
+  top: -29px;
+  left: 1484px;
 
   opacity: 0; /* Hide all frames initially */
-  transition: opacity 0.2s ease; /* Smooth transition */
+  transition: opacity 0.1s ease; /* Smooth transition */
   z-index: -1; /* Initially place all frames behind each other */
   image-rendering: pixelated; /* If it's pixel art */
 }

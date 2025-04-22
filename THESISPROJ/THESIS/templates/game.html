@@ -47,11 +47,11 @@
 
 
         <div class="lightning-container">
-          <img src="{{ url_for('static', filename='images/anim/thunder/lightning_skill3_frame1.png') }}" class="sprite-lightning" />
-          <img src="{{ url_for('static', filename='images/anim/thunder/lightning_skill3_frame2.png') }}" class="sprite-lightning" />
-          <img src="{{ url_for('static', filename='images/anim/thunder/lightning_skill3_frame3.png') }}" class="sprite-lightning" />
-          <img src="{{ url_for('static', filename='images/anim/thunder/lightning_skill3_frame4.png') }}" class="sprite-lightning" />
-          <img src="{{ url_for('static', filename='images/anim/thunder/lightning_skill3_frame5.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/11.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/22.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/33.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/44.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/55.png') }}" class="sprite-lightning" />
         </div>
 
         
@@ -125,17 +125,24 @@
                 
 
       </div>
-      <!-- Combined Ground and Characters Section -->
-      <div class="ground-container">
-        <!-- Character (Wizard) -->
-        <img src="{{ url_for('static', filename='images/gameimg/char/char.png') }}" alt="Wizard"
-          class="character player ">
-        <!-- Monster Character -->
-        <img src="{{ url_for('static', filename='images/gameimg/mnstr/boss 1.png') }}" alt="Monster"
-          class="character monster">
-        <!-- Ground (Platform) -->
-        <div class="ground"></div>
-      </div>
+<!-- Combined Ground and Characters Section -->
+<div class="game-container">
+  <!-- Ground Section -->
+  <div class="ground-container">
+    <!-- Character (Wizard) -->
+    <img src="{{ url_for('static', filename='images/gameimg/char/char.png') }}" alt="Wizard" class="character player">
+    
+    <!-- Monster Character -->
+    <img src="{{ url_for('static', filename='images/gameimg/mnstr/mob 6.png') }}" alt="Monster" class="character monster">
+    
+    <!-- Fireball (added here inside the container) -->
+        <div class="fireball"></div>
+    
+    <!-- Ground (Platform) -->
+    <div class="ground"></div>
+  </div>
+</div>
+
 
 <!-- Footer section for controls -->
 <div class="game-control-box">
@@ -451,6 +458,7 @@ const languageData = {
 
 
 <script>
+  
   // Heart image paths
   const fullHeart = "{{ url_for('static', filename='images/gameimg/heart.png') }}";
   const emptyHeart = "{{ url_for('static', filename='images/gameimg/empty-heart.png') }}";
@@ -469,18 +477,17 @@ const languageData = {
   // Freeze Potion variables
   let freezePotionUsed = false;
   let freezeTurns = 0;
-  const freezeTurnsDisplay = document.getElementById('freeze-turn'); // Element to display freeze turns
-  const monsterContainer = document.querySelector('.monster'); // Monster container for freeze effect
+  const freezeTurnsDisplay = document.getElementById('freeze-turn');
+  const monsterContainer = document.querySelector('.monster');
 
-  // Initially hide the freeze turns display
   freezeTurnsDisplay.style.display = 'none';
 
-  // Inventory tracking for potions (unlimited)
-  let healthPotions = Infinity;  // Unlimited health potions
-  let thunderPotions = Infinity; // Unlimited thunder potions
-  let freezePotions = Infinity;  // Unlimited freeze potions
+  // Inventory tracking (unlimited)
+  let healthPotions = Infinity;
+  let thunderPotions = Infinity;
+  let freezePotions = Infinity;
 
-  // Function to render health (for player and monster)
+  // Function to render health bars
   function renderHealth(bar, currentHealth, maxHealth, isPlayer = true) {
     bar.innerHTML = '';
     for (let i = 0; i < maxHealth; i++) {
@@ -492,47 +499,62 @@ const languageData = {
     }
   }
 
-  // Function to handle player taking damage
-  function playerTakeDamage() {
-    if (currentPlayerHealth > 0 && !freezePotionUsed) {
-      currentPlayerHealth--;
-      renderHealth(playerHealthBar, currentPlayerHealth, maxPlayerHealth, true);
-    } else if (freezePotionUsed && freezeTurns > 0) {
-      freezeTurns--; // Decrease freeze turns on damage attempt
-      updateFreezeTurnsDisplay(); // Update the freeze turns display
-    }
-
-    // Once freeze turns are finished, allow damage
-    if (freezeTurns <= 0) {
-      freezePotionUsed = false; // Allow damage after freeze turns end
-      removeFreezeEffect(); // Remove freeze effect from the monster
-      freezeTurnsDisplay.style.display = 'none'; // Hide freeze turns display when freeze is over
-    }
-  }
-
-  // Function to heal the player
+  // Heal function
   function playerHeal(amount) {
     currentPlayerHealth = Math.min(currentPlayerHealth + amount, maxPlayerHealth);
     renderHealth(playerHealthBar, currentPlayerHealth, maxPlayerHealth, true);
   }
 
-  // Function to handle monster taking damage
-  function monsterTakeDamage() {
-    if (currentMonsterHealth > 0) {
-      currentMonsterHealth--;
-      renderHealth(monsterHealthBar, currentMonsterHealth, maxMonsterHealth, false);
+  // Player damage handling
+  function playerTakeDamage() {
+    if (freezePotionUsed && freezeTurns > 0) {
+      freezeTurns--;
+      updateFreezeTurnsDisplay();
+    } else if (currentPlayerHealth > 0) {
+      currentPlayerHealth--;
+      renderHealth(playerHealthBar, currentPlayerHealth, maxPlayerHealth, true);
     }
-    
-    // If monster's health reaches 0 or below, trigger victory
-    if (currentMonsterHealth <= 0) {
-      alert("🎉 Victory! You defeated the monster!");
+
+    if (freezeTurns <= 0) {
+      freezePotionUsed = false;
+      removeFreezeEffect();
+      freezeTurnsDisplay.style.display = 'none';
     }
   }
 
-  // Function to handle the attack logic
+  function monsterTakeDamage() {
+  if (currentMonsterHealth > 0) {
+    currentMonsterHealth--;
+    renderHealth(monsterHealthBar, currentMonsterHealth, maxMonsterHealth, false);
+
+    if (currentMonsterHealth <= 0) {
+      setTimeout(() => {
+        alert("🎉 Victory! You defeated the monster!");
+      }, 1700); // Delay victory message
+    }
+  }
+  checkGameOver();
+}
+
+  function checkGameOver() {
+  if (currentPlayerHealth <= 0) {
+    setTimeout(() => {
+      alert("💀 Game Over! You lost!");
+    }, 1700); // Delay game over message
+  }
+}
+
+
+  function gameLoop() {
+    checkGameOver();
+  }
+
+  // Main attack logic
   function handleAttack() {
     const inputField = document.getElementById('number-input');
     const input = inputField.value.trim();
+    const correctAnswerInput = document.getElementById('correct-answer');
+    correctAnswer = correctAnswerInput.value.trim();
 
     if (!correctAnswer) {
       alert("No question loaded.");
@@ -545,41 +567,41 @@ const languageData = {
     }
 
     if (parseFloat(input) === parseFloat(correctAnswer)) {
+      fireballAttack();
+      console.log("✅ Correct! You hit the monster!");
+      console.log(`Monster's current health: ${currentMonsterHealth}`);
+
       monsterTakeDamage();
-      alert("✅ Correct! You hit the monster!");
+
+      if (freezePotionUsed) {
+        freezePotionUsed = false;
+        freezeTurns = 0;
+        removeFreezeEffect();
+        freezeTurnsDisplay.style.display = 'none';
+      }
     } else {
       playerTakeDamage();
-      alert("❌ Wrong! The monster hit you!");
+      console.log(`Player's current health: ${currentPlayerHealth}`);
+      console.log("❌ Wrong! The monster hit you!");
     }
 
     inputField.value = '';
     checkGameOver();
-    loadNewQuestion(); // Keep this call here so it works after external function is loaded
+    loadNewQuestion();
   }
 
-  // Function to add to input field (for the user)
+  // Input functions
   function addToInput(value) {
     const inputField = document.getElementById('number-input');
     inputField.value += value;
   }
 
-  // Function for backspace in input
   function backspace() {
     const inputField = document.getElementById('number-input');
     inputField.value = inputField.value.slice(0, -1);
   }
 
-  // Function to check if the game is over
-  function checkGameOver() {
-    if (currentPlayerHealth <= 0) {
-      alert("💀 Game Over! You lost!");
-    }
-    if (currentMonsterHealth <= 0) {
-      alert("🎉 Victory! You defeated the monster!");
-    }
-  }
-
-  // 💉 Health Potion: Heals up to 4 HP but not beyond max
+  // Health potion logic
   function useHealthPotion() {
     if (healthPotions <= 0) {
       alert("🧪 No Health Potions left!");
@@ -597,92 +619,160 @@ const languageData = {
     alert(`🧪 Health Potion used! You healed ${healAmount}`);
   }
 
-  // Function to apply Thunder effects (animation)
-  const frames = document.querySelectorAll('.sprite-lightning');
-  let currentFrame = 0;
-  let animationInterval;
-  const monsterElement = document.querySelector('.monster');
+const frames = document.querySelectorAll('.sprite-lightning');
+let currentFrame = 0;
+let animationInterval = null;
+const monsterElement = document.querySelector('.monster');
 
-  function resetFrames() {
-    frames.forEach(frame => frame.classList.remove('active'));
-    monsterElement.classList.remove('red'); // Remove red here as well
-  }
+function resetFrames() {
+  frames.forEach(frame => frame.classList.remove('active'));
+  monsterElement.classList.remove('red');
+}
 
-  function changeFrame() {
+function changeFrame() {
+  resetFrames();
+  frames[currentFrame].classList.add('active');
+  currentFrame++;
+
+  if (currentFrame >= frames.length) {
+    clearInterval(animationInterval); // Stop the animation
+    currentFrame = 0;
     resetFrames();
-    frames[currentFrame].classList.add('active');
-    currentFrame++;
+    monsterElement.classList.add('red');
+    setTimeout(() => {
+      monsterElement.classList.remove('red');
+    }, 70);
+  }
+}
 
-    if (currentFrame >= frames.length) {
-      clearInterval(animationInterval);
-      currentFrame = 0;
-      resetFrames();
-
-      // Add red flash effect
-      monsterElement.classList.add('red');
-
-      // ❗ Remove red effect after short delay
-      setTimeout(() => {
-        monsterElement.classList.remove('red');
-      }, 70); // Adjust timing if needed
-    }
+function useThunderPotion() {
+  if (thunderPotions <= 0) {
+    alert("⚡ No Thunder Potions left!");
+    return;
   }
 
-  // Function to use Thunder Potion (only once per turn)
-  function useThunderPotion() {
-    if (thunderPotions <= 0) {
-      alert("⚡ No Thunder Potions left!");
-      return;
-    }
-
+  // Stop previous animation if any
+  if (animationInterval !== null) {
+    clearInterval(animationInterval);
     resetFrames();
-    animationInterval = setInterval(changeFrame, 100); // Animation speed (every 0.1s)
-
-    if (currentMonsterHealth > 0) {
-      monsterTakeDamage();
-      thunderPotions--;
-    }
   }
 
-  // Function to use freeze potion
+  console.log("Thunder Potion used!");
+  thunderPotions--;
+
+  // Start thunder animation loop (if applicable)
+  animationInterval = setInterval(changeFrame, 100);
+
+  // Delay the monster damage animation and health reduction
+  setTimeout(() => {
+    const monster = document.querySelector(".monster");
+    monster.classList.add("damaged");
+
+    // Remove the damage effect after animation duration
+    setTimeout(() => {
+      monster.classList.remove("damaged");
+
+      // Apply actual health reduction *after* the animation
+      if (currentMonsterHealth > 0) {
+        monsterTakeDamage();
+      }
+    }, 400); // CSS animation duration (0.4s)
+  }, 660); // Delay before monster gets hit (simulate thunder landing)
+}
+
+
+
+
+  // Freeze potion logic
   function useFreezePotion() {
-    if (freezePotionUsed && freezeTurns > 0) {
-      alert(`❄️ You still have ${freezeTurns} freeze turn(s) remaining! Wait until it ends before using another Freeze Potion.`);
-      return;
-    }
-
     freezePotionUsed = true;
     freezeTurns = 3;
     updateFreezeTurnsDisplay();
-    freezeTurnsDisplay.style.display = 'block'; // Show freeze turns display when freeze is active
+    freezeTurnsDisplay.style.display = 'block';
     applyFreezeEffect();
   }
 
-  // Function to update freeze turns display
   function updateFreezeTurnsDisplay() {
     freezeTurnsDisplay.textContent = `Freeze Turns Left: ${freezeTurns}`;
   }
 
-  // Function to apply freeze effect to monster
   function applyFreezeEffect() {
     monsterContainer.classList.add('frozen');
   }
 
-  // Function to remove freeze effect
   function removeFreezeEffect() {
     monsterContainer.classList.remove('frozen');
   }
 
-  // Initial setup
+  function fireballAttack() {
+  if (sessionStorage.getItem('fireballTriggered')) return;
+
+  const attackEffects = [
+    "{{ url_for('static', filename='images/anim/charattack/greenball.png') }}",
+    "{{ url_for('static', filename='images/anim/charattack/iceball.png') }}",
+    "{{ url_for('static', filename='images/anim/charattack/lavaball.png') }}",
+    "{{ url_for('static', filename='images/anim/charattack/fireball.png') }}"
+  ];
+
+  const selectedAttack = attackEffects[Math.floor(Math.random() * attackEffects.length)];
+
+  const fireball = document.createElement("img");
+  fireball.src = selectedAttack;
+  fireball.classList.add("fireball");
+
+  const groundContainer = document.querySelector(".ground-container");
+  const player = document.querySelector(".player");
+  const monster = document.querySelector(".monster");
+
+  fireball.style.left = `${player.offsetLeft + player.offsetWidth}px`;
+  fireball.style.bottom = "120px";
+
+  // 🔋 1. Add CHARGING class first
+  player.classList.add("charging");
+
+  setTimeout(() => {
+    // 🔥 2. Remove charging, start ATTACK
+    player.classList.remove("charging");
+    player.classList.add("attack");
+
+    setTimeout(() => {
+      player.classList.remove("attack");
+    }, 1000);
+
+    // 🟢 3. Append the fireball after charge
+    groundContainer.appendChild(fireball);
+    sessionStorage.setItem('fireballTriggered', true);
+
+    // 💥 4. Monster hit timing synced with fireball
+    setTimeout(() => {
+      monster.classList.add("damaged", "shake");
+      setTimeout(() => {
+        monster.classList.remove("damaged", "shake");
+      }, 600);
+    }, 800);
+
+    // 🧼 5. Remove fireball and reset
+    setTimeout(() => {
+      fireball.remove();
+      sessionStorage.removeItem('fireballTriggered');
+    }, 1000);
+
+  }, 600); // charging duration before attack
+}
+
+
+
+
+
+  // Initial UI setup
   renderHealth(playerHealthBar, currentPlayerHealth, maxPlayerHealth, true);
   renderHealth(monsterHealthBar, currentMonsterHealth, maxMonsterHealth, false);
   updateFreezeTurnsDisplay();
 
-  // Function to load a new question
   function loadNewQuestion() {
     const questionText = document.querySelector('.question-text');
     const correctAnswerInput = document.getElementById('correct-answer');
-    
+
     if (questionText && correctAnswerInput && correctAnswerInput.value !== '') {
       correctAnswer = correctAnswerInput.value;
       questionText.textContent = "{{ question.question_text }}";
@@ -690,9 +780,9 @@ const languageData = {
       questionContainer.innerHTML = '<p class="text-2xl text-red-400">No questions available for this level.</p>';
     }
   }
-
-  loadNewQuestion(); // Initial question load
 </script>
+
+
 
   
 
