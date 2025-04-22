@@ -1,7 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_bcrypt import Bcrypt
-from flask import jsonify
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import mysql.connector
 import random
 
@@ -10,8 +8,6 @@ app.config['SECRET_KEY'] = 'your_secret_key'  # change this later
 
 # Initialize extensions
 bcrypt = Bcrypt(app)
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
 
 # Connect to MySQL
 db = mysql.connector.connect(
@@ -21,22 +17,6 @@ db = mysql.connector.connect(
     database="learning_game"
 )
 cursor = db.cursor(dictionary=True)
-
-# User class for Flask-Login
-class User(UserMixin):
-    def __init__(self, id, username, password):
-        self.id = id
-        self.username = username
-        self.password = password
-
-# Load user from DB
-@login_manager.user_loader
-def load_user(user_id):
-    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
-    user = cursor.fetchone()
-    if user:
-        return User(user['id'], user['username'], user['password'])
-    return None
 
 # Routes
 
@@ -54,7 +34,7 @@ def login():
         user = cursor.fetchone()
 
         if user and bcrypt.check_password_hash(user['password'], password):
-            login_user(User(user['id'], user['username'], user['password']))
+            # You can implement login logic here (session, cookies)
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid username or password.', 'danger')
@@ -81,50 +61,46 @@ def register():
     return render_template('register.html')
 
 @app.route('/chatbot')
-@login_required
 def chatbot():
     return render_template('chatbot.html')
 
 @app.route('/multiplication_mirage')
-@login_required
 def multiplication_mirage():
-    return render_template('multiplication_mirage.html', username=current_user.username)
+    return render_template('multiplication_mirage.html')
 
 @app.route('/dashboard')
-@login_required
 def dashboard():
-    return render_template('dashboard.html', username=current_user.username)
+    return render_template('dashboard.html')
 
 @app.route('/roadmap')
-@login_required
 def roadmap():
     return render_template('roadmap.html')
 
 @app.route('/shop')
-@login_required
 def shop():
-    return render_template('shop.html', username=current_user.username)
+    return render_template('shop.html')
 
 @app.route('/logout')
-@login_required
 def logout():
-    logout_user()
+    # Implement logout logic (session, cookies)
     return redirect(url_for('login'))
 
-# ✅ Forgot password route
+# Forgot password route
 @app.route('/forgot-password')
 def forgot_password():
-    return render_template('forgot_password.html')  # Make sure this template exists
+    return render_template('forgot_password.html')
 
-@app.route('/game')
-@login_required
+# The route that renders the initial game page with a question
+@app.route('/game', methods=['GET'])
 def game():
-    # Get current difficulty
-    cursor.execute("SELECT current_difficulty FROM user_progress WHERE user_id = %s", (current_user.id,))
+    user_id = 1  # Use a hardcoded user ID for now (skip login part)
+    
+    # Get current difficulty for the user
+    cursor.execute("SELECT current_difficulty FROM user_progress WHERE user_id = %s", (user_id,))
     row = cursor.fetchone()
 
     if not row:
-        cursor.execute("INSERT INTO user_progress (user_id) VALUES (%s)", (current_user.id,))
+        cursor.execute("INSERT INTO user_progress (user_id, current_difficulty) VALUES (%s, 'easy')", (user_id,))
         db.commit()
         difficulty = 'easy'
     else:
@@ -135,62 +111,105 @@ def game():
     questions = cursor.fetchall()
     question = random.choice(questions) if questions else None
 
-    if request.is_json:
-        return jsonify({
-            'question_text': question['question_text'] if question else 'No questions available',
-            'correct_answer': question['correct_answer'] if question else '',
-            'id': question['id'] if question else ''
-        })
-
+    # Render the game page and pass the question to the template
     return render_template('game.html', question=question)
 
+
 @app.route('/submit-answer', methods=['POST'])
-@login_required
 def submit_answer():
-    user_answer = request.form['answer']
-    question_id = request.form['question_id']
+    try:
+        data = request.get_json()
+        user_answer = data.get('answer')
+        question_id = data.get('question_id')
 
-    # Get the question details
-    cursor.execute("SELECT * FROM questions WHERE id = %s", (question_id,))
-    question = cursor.fetchone()
+        if not user_answer or not question_id:
+            return jsonify({'error': 'Missing required fields'}), 400
 
-    is_correct = user_answer.strip() == question['correct_answer'].strip()
+        user_id = 1  # Hardcoded user ID
 
-    # Update user stats based on answer
-    if is_correct:
-        cursor.execute("""
-            UPDATE user_progress 
-            SET correct_answers = correct_answers + 1 
-            WHERE user_id = %s
-        """, (current_user.id,))
+        cursor.execute("SELECT * FROM questions WHERE id = %s", (question_id,))
+        question = cursor.fetchone()
+
+        if not question:
+            return jsonify({'error': 'Question not found'}), 404
+
+        is_correct = user_answer.strip() == question['correct_answer'].strip()
+
+        if is_correct:
+            cursor.execute(""" 
+                UPDATE user_progress 
+                SET correct_answers = correct_answers + 1 
+                WHERE user_id = %s
+            """, (user_id,))
+        else:
+            cursor.execute(""" 
+                UPDATE user_progress 
+                SET wrong_answers = wrong_answers + 1 
+                WHERE user_id = %s
+            """, (user_id,))
+
+        cursor.execute("SELECT correct_answers, wrong_answers FROM user_progress WHERE user_id = %s", (user_id,))
+        stats = cursor.fetchone()
+        total = stats['correct_answers'] + stats['wrong_answers']
+        accuracy = stats['correct_answers'] / total if total > 0 else 0
+
+        if accuracy >= 0.8:
+            new_diff = 'hard'
+        elif accuracy >= 0.5:
+            new_diff = 'medium'
+        else:
+            new_diff = 'easy'
+
+        cursor.execute("UPDATE user_progress SET current_difficulty = %s WHERE user_id = %s", (new_diff, user_id))
+        db.commit()
+
+        # Return the new question
+        return jsonify({'success': True, 'new_question': get_new_question_data(user_id)})
+
+    except Exception as e:
+        return jsonify({'error': 'There was a problem submitting your answer.'}), 500
+
+
+def get_new_question_data(user_id):
+    cursor.execute("SELECT current_difficulty FROM user_progress WHERE user_id = %s", (user_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        cursor.execute("INSERT INTO user_progress (user_id, current_difficulty) VALUES (%s, 'easy')", (user_id,))
+        db.commit()
+        difficulty = 'easy'
     else:
-        cursor.execute("""
-            UPDATE user_progress 
-            SET wrong_answers = wrong_answers + 1 
-            WHERE user_id = %s
-        """, (current_user.id,))
+        difficulty = row['current_difficulty']
 
-    # Calculate the new accuracy
-    cursor.execute("SELECT correct_answers, wrong_answers FROM user_progress WHERE user_id = %s", (current_user.id,))
-    stats = cursor.fetchone()
-    total = stats['correct_answers'] + stats['wrong_answers']
-    accuracy = stats['correct_answers'] / total if total > 0 else 0
+    cursor.execute("SELECT * FROM questions WHERE difficulty = %s", (difficulty,))
+    questions = cursor.fetchall()
+    question = random.choice(questions) if questions else None
 
-    # Update difficulty based on accuracy
-    if accuracy >= 0.8:
-        new_diff = 'hard'
-    elif accuracy >= 0.5:
-        new_diff = 'medium'
+    if question:
+        return {
+            'question_text': question['question_text'],
+            'correct_answer': question['correct_answer'],
+            'id': question['id']
+        }
     else:
-        new_diff = 'easy'
+        return {'error': 'No questions available for this level.'}
 
-    cursor.execute("UPDATE user_progress SET current_difficulty = %s WHERE user_id = %s", (new_diff, current_user.id))
-    db.commit()
 
-    if request.is_json:
-        return jsonify({'success': True})
+@app.route('/get-new-question', methods=['GET'])
+def get_new_question():
+    try:
+        user_id = 1  # Hardcoded user ID
+        
+        # Fetch new question for the current user
+        question_data = get_new_question_data(user_id)
 
-    return redirect(url_for('game'))
+        if 'error' in question_data:
+            return jsonify({'error': question_data['error']}), 404
+
+        return jsonify(question_data)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

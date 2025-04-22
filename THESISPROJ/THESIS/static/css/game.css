@@ -1394,4 +1394,22 @@ body {
 }
 
 
+#feedback {
+  position: absolute; /* Allows you to position it relative to the parent container */
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  font-size: 55px;
+  color: white;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+  word-wrap: normal; /* Prevent word break */
+  overflow-wrap: normal; /* Prevent word break */
+
+  z-index: 100; /* Ensure it's on top of other content */
+  font-family: "Fredoka", sans-serif; 
+
+}
 

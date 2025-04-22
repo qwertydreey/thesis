@@ -52,16 +52,18 @@
 
 
         
+        <p id="feedback"></p> <!-- Feedback area to show if answer is correct or incorrect -->
 
 <!-- Question Section -->
 <div class="question-container">
   {% if question %}
-    <p class="question-text">{{ question.question_text }}</p>
+    <p id="question-text" class="question-text" data-question-id="{{ question.id }}">{{ question.question_text }}</p>
     <input type="hidden" id="question-id" value="{{ question.id }}">
     <input type="hidden" id="correct-answer" value="{{ question.correct_answer }}">
   {% else %}
     <p class="text-2xl text-red-400">No questions available for this level.</p>
   {% endif %}
+
   
   <!-- Freeze Turns Left -->
   <div id="freeze-turn" class="freeze-turn"></div>
@@ -179,13 +181,13 @@
   <!-- Input and Attack -->
   <div class="right-section">
     <div class="placeholder-input">
-      <input type="text" class="input-field"  id="number-input" />
+      <input type="text" class="input-field" id="number-input" />
     </div>
     <div class="attack-button" onclick="handleAttack()"></div>
   </div>
+  
+
 </div>
-
-
     <!-- Chatbot Section -->
         <div class="chatbot-container">
           <div class="speech-bubble">
@@ -416,10 +418,7 @@ const languageData = {
     }
   }
 
-  function handleAttack() {
-    // Your attack logic here
-    console.log("Attack triggered!");
-  }
+
 
   document.addEventListener('keydown', function(event) {
     const inputField = document.getElementById('number-input');
@@ -550,45 +549,102 @@ const languageData = {
   }
 
   // Main attack logic
-  function handleAttack() {
-    const inputField = document.getElementById('number-input');
-    const input = inputField.value.trim();
-    const correctAnswerInput = document.getElementById('correct-answer');
-    correctAnswer = correctAnswerInput.value.trim();
+// Main attack logic (Handle the submission of the user's answer)
+// Main attack logic
+// Main attack logic
+function handleAttack() {
+  const inputField = document.getElementById('number-input');
+  const input = inputField.value.trim();
+  const correctAnswerInput = document.getElementById('correct-answer');
+  const correctAnswer = correctAnswerInput.value.trim();
 
-    if (!correctAnswer) {
-      alert("No question loaded.");
-      return;
-    }
-
-    if (input === '') {
-      alert("Please enter an answer before attacking!");
-      return;
-    }
-
-    if (parseFloat(input) === parseFloat(correctAnswer)) {
-      fireballAttack();
-      console.log("✅ Correct! You hit the monster!");
-      console.log(`Monster's current health: ${currentMonsterHealth}`);
-
-      monsterTakeDamage();
-
-      if (freezePotionUsed) {
-        freezePotionUsed = false;
-        freezeTurns = 0;
-        removeFreezeEffect();
-        freezeTurnsDisplay.style.display = 'none';
-      }
-    } else {
-      playerTakeDamage();
-      console.log(`Player's current health: ${currentPlayerHealth}`);
-      console.log("❌ Wrong! The monster hit you!");
-    }
-
-    inputField.value = '';
-    checkGameOver();
-    loadNewQuestion();
+  // Check if no question is loaded
+  if (!correctAnswer) {
+    alert("No question loaded.");
+    return;
   }
+
+  // Validate if input is empty
+  if (input === '') {
+    document.getElementById('feedback').innerText = 'Please enter a number!';
+    return;
+  }
+
+  // Compare the player's answer to the correct answer
+  if (parseFloat(input) === parseFloat(correctAnswer)) {
+    // Correct answer: perform the attack on the monster
+    fireballAttack();
+    console.log(`✅ Correct! You hit the monster!`);
+    console.log(`Monster's current health: ${currentMonsterHealth}`);
+
+    monsterTakeDamage();
+
+    // Handle effects like freeze potion
+    if (freezePotionUsed) {
+      freezePotionUsed = false;
+      freezeTurns = 0;
+      removeFreezeEffect();
+      freezeTurnsDisplay.style.display = 'none';
+    }
+    
+    // Display feedback for correct answer
+    fetchNewQuestion();  // Call to fetch the new question
+
+  } else {
+    // Incorrect answer: take damage
+    playerTakeDamage();
+    console.log(`Player's current health: ${currentPlayerHealth}`);
+    console.log("❌ Wrong! The monster hit you!");
+
+    // Provide feedback for wrong answer
+     displayFeedback('Incorrect! Try again.');
+  }
+
+  // Clear input field
+  inputField.value = '';
+
+  // Check for game-over state after each turn
+  checkGameOver();
+}
+
+// Function to fetch a new question if the answer was correct
+function fetchNewQuestion() {
+  fetch('/get-new-question')
+    .then(response => response.json())
+    .then(data => {
+      if (data.question_text) {
+        // Update the question text and correct answer for the next round
+        document.getElementById('question-text').innerText = data.question_text;
+        document.getElementById('correct-answer').value = data.correct_answer;  // Update correct answer input
+        document.getElementById('question-text').setAttribute('data-question-id', data.id);  // Set the new question ID
+        document.getElementById('feedback').innerText = '';  // Clear feedback message
+      } else {
+        document.getElementById('feedback').innerText = 'No new question available.';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching new question:', error);
+      document.getElementById('feedback').innerText = 'There was an error fetching the next question.';
+    });
+}
+
+
+
+function displayFeedback(message) {
+    const feedbackElement = document.getElementById('feedback');
+    
+    // Set the feedback message
+    feedbackElement.innerText = message;
+
+    // Show the feedback message
+    feedbackElement.style.display = 'block';
+
+    // Hide it after 3 seconds (3000 milliseconds)
+    setTimeout(function() {
+        feedbackElement.style.display = 'none';
+    }, 2000); // You can adjust the time (in milliseconds) if needed
+}
+
 
   // Input functions
   function addToInput(value) {
@@ -760,26 +816,17 @@ function useThunderPotion() {
   }, 600); // charging duration before attack
 }
 
-
-
-
-
   // Initial UI setup
   renderHealth(playerHealthBar, currentPlayerHealth, maxPlayerHealth, true);
   renderHealth(monsterHealthBar, currentMonsterHealth, maxMonsterHealth, false);
   updateFreezeTurnsDisplay();
 
-  function loadNewQuestion() {
-    const questionText = document.querySelector('.question-text');
-    const correctAnswerInput = document.getElementById('correct-answer');
 
-    if (questionText && correctAnswerInput && correctAnswerInput.value !== '') {
-      correctAnswer = correctAnswerInput.value;
-      questionText.textContent = "{{ question.question_text }}";
-    } else {
-      questionContainer.innerHTML = '<p class="text-2xl text-red-400">No questions available for this level.</p>';
-    }
-  }
+
+
+
+
+
 </script>
 
 
