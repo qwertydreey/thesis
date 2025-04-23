@@ -25,7 +25,16 @@ body {
 }
 
 
-
+.game-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
 /* ========== PLAYER SECTION ========== */
 .player-container,
 .monster-container {
@@ -41,7 +50,7 @@ body {
 }
 
 .player-container {
-  background-image: url('../images/gameimg/player.png');
+  background-image: url('../images/gameimg/playerborder.png');
   
   user-select: none;
   -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
@@ -51,7 +60,7 @@ body {
 }
 
 .monster-container {
-  background-image: url('../images/gameimg/monster.png');
+  background-image: url('../images/gameimg/monsterborder.png');
   user-select: none;
   -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
   -webkit-user-select: none; /* Prevents text/image selection in WebKit */
@@ -63,17 +72,26 @@ body {
 
 .player-name,
 .monster-name {
-  font-size: 1.5rem;
   position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  
+  font-size: 1.5rem;
   color: #ffffff;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,
+               -1px 1px 0 #000, 1px 1px 0 #000;
   font-family: "Fredoka", sans-serif;
   font-weight: bold;
   letter-spacing: 1.5px;
-
-  white-space: nowrap; /* Prevent line break */
+  white-space: nowrap;
 }
+.player-name {
+  left: 35%;
 
+}
+.monster-name {
+  right: -20%;
+}
 
 .player-image {
   width: 100px;
@@ -106,91 +124,23 @@ body {
 }
 
 
-.player-name {
-  bottom: 4vh;
-  left: 105px;
-}
-
-.monster-name {
-  bottom: 4vh;
-  right: 105px;
-}
-
-.health-box {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex-shrink: 0; /* Prevent from shrinking */
-  min-width: 0;   /* Allow content to define width */
-}
 
 
-.player-health-bar,
-.monster-health-bar {
-  background: rgba(0, 0, 0, 0.589); /* Semi-transparent black */
-  padding: 4px 6px;
-  height: 40px;
-  width: fit-content;              /* Auto-expands with heart count */
-  min-width: auto;                /* Optional: prevent it from being too small */
-  border-radius: 10px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  flex-shrink: 0;                  /* Prevent shrinking */
-  position: relative;             /* Can still position if needed */
+/* HP Bar Container */
+.hp-bar-container {
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 350px;
+  height: 100px;
+  position: relative;
+  z-index: 999;
+  top:11vh;
 }
 
 
 
-.player-health-bar {
-  top: 60px;
-  left: 90px;
-  
-}
 
-.monster-health-bar {
-  top: 60px;
-  right: -95px; /* Adjust X position */
-  direction: rtl; /* Makes the bar decrease from the right */
-
-}
-
-.heart-image {
-  width: 37px;
-  height: 35px;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
-  flex-shrink: 0;
-
-  user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
-}
-
-.heart-image:hover {
-  transform: scale(1.1);
-}
-@keyframes popFade {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  20% {
-    transform: scale(1.4);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0;
-  }
-}
-
-.heart-damage {
-  animation: popFade 0.5s ease-out;
-}
 
 
 /* ========== QUESTION SECTION ========== */
@@ -200,12 +150,12 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   position: absolute;
-  top: 29%;
-  left: 50%;
+  top: 18vh;    /* 18% of the viewport height */
+  left: 50vw;   /* 50% of the viewport width */  
   transform: translate(-50%, -50%);
   z-index: 10;
-  width: 43rem;
-  height: 24rem;
+  width: 70vh;
+  height: 38vh;
   text-align: center;
   padding: 0 10px;
 
@@ -213,13 +163,13 @@ body {
 
 
 .question-text {
-  font-size: 4rem;
+  font-size: 7vh; /* Make font-size responsive to viewport height */
   font-weight: 700;
   color: #f4f4f4;
   font-family: "Fredoka", sans-serif;
   position: absolute;
   top: 66%;
-  left: 50%;
+  left: 51%;
   transform: translateX(-50%) translateY(-50%);
   z-index: 999;
   white-space: nowrap;
@@ -253,12 +203,14 @@ body {
 
 
 /* ========== GAME BACKGROUND ========== */
-.gamebg {
-  background-image: url('../images/gameimg/greenbg.jpg');
-  background-size: cover;
-  background-position: center;
-  height: 200px;
-  width: 100%;
+.game-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  z-index: 0;
   user-select: none;
   -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
   -webkit-user-select: none; /* Prevents text/image selection in WebKit */
@@ -276,7 +228,7 @@ body {
 /* ========== GROUND SECTION ========== */
 .ground-container {
   position: absolute;
-  bottom: 93px;
+  top: 47vh;
   width: 100%;
   height: 40px;
 }
@@ -284,22 +236,18 @@ body {
 .ground {
   width: 100%;
   height: 40px;
-  background-color: #1c1c1c;
-  box-shadow: inset 0 -4px 12px rgba(0, 0, 0, 0.7);
-  border-top: 3px solid #121212;
+
 }
 
-.ground::before {
-  content: '';
-  position: absolute;
-  top: 5px;
-  left: 0;
+.additionground {
+  background-size: contain;
+  background-position: center;
   width: 100%;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 30px rgba(255, 253, 253, 0.15);
-  
+  position: absolute;
+  bottom: -50px; /* Align to the bottom of the container */
+  z-index: -1; /* Ensure it's behind other elements */
 }
+
 
 /* ========== CHARACTER SECTION ========== */
 .character {
@@ -336,15 +284,18 @@ body {
 
 /* Player Wizard */
 .character.player {
-  height: 300px; /* Adjust height as necessary */
-  left: 100px; /* Position the player character */
+  height: 35vh; /* Full screen height */
+  width: auto;
+  left: 10%;   /* 100px of 1000px width */
 }
 
 /* Monster */
 .character.monster {
-  height: 300px; /* Adjust height as necessary */
-  right: 100px; /* Position the monster */
+  height: 35vh; /* Full screen height */
+  width: auto;
+  right: 10%;  /* 100px of 1000px width */
 }
+
 
 /* ========== FIREBALL SECTION ========== */
 .fireball {
@@ -419,6 +370,11 @@ body {
 
 
 
+/* When the monster takes damage */
+.monster.damaged {
+  animation: monsterDamage 0.4s ease-out, shake 0.4s ease-out;
+}
+
 /* Damage animation for the monster */
 @keyframes monsterDamage {
   0% {
@@ -450,12 +406,51 @@ body {
   100% { transform: translateX(0); }
 }
 
-/* When the monster takes damage */
-.monster.damaged {
-  animation: monsterDamage 0.4s ease-out, shake 0.4s ease-out;
+/* Player damage animation */
+.player-damaged {
+  animation: playerDamageAnimation 0.5s ease-out, playerShake 0.5s ease-out;
 }
 
+/* Keyframes for player damage: red flash effect */
+@keyframes playerDamageAnimation {
+  0% {
+    filter: none; /* No effect */
+  }
+  25% {
+    filter: brightness(1.5) saturate(2) hue-rotate(-100deg); /* Stronger red tint */
+  }
+  50% {
+    filter: none; /* Back to normal */
+  }
+  75% {
+    filter: brightness(1.5) saturate(2) hue-rotate(-100deg); /* Stronger red tint */
+  }
+  100% {
+    filter: none; /* Back to normal */
+  }
+}
 
+/* Shake animation */
+@keyframes playerShake {
+  0% {
+    transform: translateX(0); /* No shake */
+  }
+  20% {
+    transform: translateX(-6px); /* Shake left */
+  }
+  40% {
+    transform: translateX(6px); /* Shake right */
+  }
+  60% {
+    transform: translateX(-4px); /* Shake left */
+  }
+  80% {
+    transform: translateX(4px); /* Shake right */
+  }
+  100% {
+    transform: translateX(0); /* End shake */
+  }
+}
 
 
 .player.charging {
@@ -500,19 +495,46 @@ body {
   }
 }
 
-.game-bg {
-  height: 65vh; /* or any value you want */
+/* Smooth attack animation with a higher jump and more forward movement for reversed monster */
+.monster-attack {
+  animation: monsterAttackAnimation 0.7s ease-out;
+  transform-origin: center center;
+}
+
+/* Keyframes for monster attack animation with higher jump and more forward movement */
+@keyframes monsterAttackAnimation {
+  0% {
+    transform: scaleY(1) translateY(0) translateX(0); /* Start from the original position */
+  }
+  25% {
+    transform: scaleY(1.02) translateY(-2px) translateX(-6px); /* Move towards the player */
+  }
+  50% {
+    transform: scaleY(1) translateY(0) translateX(-12px); /* Closer to the player */
+  }
+  60% {
+    transform: scaleY(1.05) translateY(-40px) translateX(-35px); /* Higher jump with forward movement */
+  }
+  75% {
+    transform: scaleY(1.02) translateY(-20px) translateX(-19px); /* Monster descending with forward motion */
+  }
+  100% {
+    transform: scaleY(1) translateY(0) translateX(0); /* Final position */
+  }
 }
 
 
 
+
+
+
+/* ========== GAME CONTENT ========== */
 .gamecontent {
   justify-items: center;
   align-items: center;
   height: auto;
-  margin-top: 44px; /* Move it down */
+  margin-top: 4vh; /* Adjusted to viewport height */
 }
-
 
 /* ========== GAME CONTROL BOX ========== */
 .game-control-box {
@@ -520,9 +542,9 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   padding: 1rem;
-  height: 333px;
-  width: 100vw;
-  top: 98%;
+  height: 36vh; /* Adjust height based on viewport height */
+  width: 100vw; /* Full viewport width */
+  top: 64vh; /* Adjusted to viewport height */
   position: absolute;
   overflow: visible;
   z-index: 999;
@@ -536,11 +558,10 @@ body {
 /* ========== POTION SECTION ========== */
 .potion-section {
   padding: 1rem;
-
 }
 
 .freeze-box, .health-box, .thunder-box {
-  width: 7.5%;
+  width: 7.5vw; /* Adjust width based on viewport width */
   height: auto;
   position: absolute;
   background: transparent center/contain no-repeat;
@@ -549,41 +570,32 @@ body {
   margin: 0;
   outline: none;
   box-shadow: none;
-}
-  /* Background images */
-.freeze-box {
-  top: 70%;
-  left: 4.3%;
   user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Background images */
+.freeze-box {
+  top: 25vh; /* Adjust top position based on viewport height */
+  left: 4.3vw; /* Adjust left position based on viewport width */
 }
 
 .health-box {
-  top: 70%;
-  left: 13.8%;
-  user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
+  top: 25vh; /* Adjust top position based on viewport height */
+  left: 13.8vw; /* Adjust left position based on viewport width */
 }
 
 .thunder-box {
-  top: 70%;
-  left: 23.8%;
-
-  user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
+  top: 25vh; /* Adjust top position based on viewport height */
+  left: 23.8vw; /* Adjust left position based on viewport width */
 }
 
+/* ========== POTION IMAGES ========== */
 .freeze-potion, .health-potion, .thunder-potion {
-  width: 7.5%;
+  width: 7.5vw; /* Adjust width based on viewport width */
   height: auto;
   position: absolute;
   background: transparent center/contain no-repeat;
@@ -595,43 +607,29 @@ body {
   transition: transform 0.1s ease;
   animation: bobble 1s ease-in-out infinite, shadowEffect 1s ease-in-out infinite;
   z-index: 1; /* Ensure potion is in front */
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
-
-
-
-
 
 /* Background images */
 .freeze-potion {
-  top: 25%;
-  left: 4.3%;
-  user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
+  top: 9vh; /* Adjust top position based on viewport height */
+  left: 4.3vw; /* Adjust left position based on viewport width */
 }
 
 .health-potion {
-  top: 25%;
-  left: 13.8%;
-  user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
+  top: 9vh; /* Adjust top position based on viewport height */
+  left: 13.8vw; /* Adjust left position based on viewport width */
 }
 
 .thunder-potion {
-  top: 25%;
-  left: 23.8%;
-
-  user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
+  top: 9vh; /* Adjust top position based on viewport height */
+  left: 23.8vw; /* Adjust left position based on viewport width */
 }
+
 
 
 /* Popping effect */
@@ -685,21 +683,21 @@ body {
   align-items: flex-start;
   box-sizing: border-box;
   position: relative;
-  bottom: 123px;
-  left: 43.65rem;
-  gap: 10px;
+  bottom: 13vh;
+  left: 36.48vw;
+  gap: 0.52vw;
   flex-wrap: wrap;
-  padding: 20px;
+  padding: 1.04vw;
   margin: 0 auto;
-  width: 600px;
-  height: 363px;
+  width: 27vw;
+  height: 40vh;
   user-select: none;
   -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
   -webkit-user-select: none; /* Prevents text/image selection in WebKit */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE/Edge */
-
 }
+
 
 
 
@@ -709,16 +707,17 @@ body {
 .button-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0px;
+  gap: 0vw; /* Converted gap from px to vw */
+  margin-top: 2vh;
+  margin-left: 1vw;
 }
 
 /* ========== BUTTON STYLES ========== */
 
-
 /* General Button Style */
 .button {
-  width: 55px;
-  height: 55px;
+  width: 2.86vw; /* Converted width from px to vw */
+  height: 2.86vw; /* Converted height from px to vw */
   text-align: center;
   display: flex;
   align-items: center;
@@ -744,105 +743,100 @@ body {
 /* Individual Button Adjustments */
 .button:nth-child(1) {
   background-image: url('../images/gameimg/buttons/7.png');
-  top: 43px;
-  left: 79px;
-  
+  top: 2.7vh;
+  left: 3.59vw;
 }
 
 .button:nth-child(2) {
   background-image: url('../images/gameimg/buttons/8.png');
-  top: 49px;
-  left: 82px;
+  top: 3.5vh;
+  left: 3.81vw;
 }
 
 .button:nth-child(3) {
   background-image: url('../images/gameimg/buttons/9.png');
-  top: 61px;
-  left: 88px;
+  top: 4.7vh;
+  left: 4vw;
 }
 
 .button:nth-child(4) {
   background-image: url('../images/gameimg/buttons/4.png');
-  top: 36px;
-  left: 67px;
+  top: 2vh;
+  left: 3vw;
 }
 
 .button:nth-child(5) {
   background-image: url('../images/gameimg/buttons/5.png');
-  top: 44px;
-  left: 70px;
+  top: 3vh;
+  left: 3.2vw;
 }
 
 .button:nth-child(6) {
   background-image: url('../images/gameimg/buttons/6.png');
-  top: 54px;
-  left: 77px;
+  top: 4vh;
+  left: 3.5vw;
 }
 
 .button:nth-child(7) {
   background-image: url('../images/gameimg/buttons/1.png');
-  top: 32px;
-  left: 51px;
+  top: 1.5vh;
+  left: 2.2vw;
 }
 
 .button:nth-child(8) {
   background-image: url('../images/gameimg/buttons/2.png');
-  top: 40px;
-  left: 57px;
+  top: 2.5vh;
+  left: 2.5vw;
 }
 
 .button:nth-child(9) {
   background-image: url('../images/gameimg/buttons/3.png');
-  top: 52px;
-  left: 64px;
+  top: 3.7vh;
+  left: 2.9vw;
 }
 
 .button:nth-child(11) {
   background-image: url('../images/gameimg/buttons/0.png');
-  top: 40px;
-  left: 44px;
+  top: 2.3vh;
+  left: 1.8vw;
 }
 
 .button:nth-child(12) {
   background-image: url('../images/gameimg/buttons/point.png');
-  top: 49px;
-  left: 51px;
+  top: 3.6vh;
+  left: 2.2vw;
 }
 
 /* Backspace Button */
 .button.backspace {
   background-image: url('../images/gameimg/buttons/backspace.png');
-  top: 31px;
-  left: 38px;
+  top: 1.3vh;
+  left: 1.5vw;
 }
-
 
 /* ========== RIGHT SECTION LAYOUT ========== */
 .right-section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 0.62vw; /* Converted gap from px to vw */
   align-items: center;
-  min-width: 180px;
-
+  min-width: 9.38vw; /* Converted min-width from px to vw */
 }
-
-
 
 /* ========== INPUT FIELD ========== */
 .input-field {
-  width: 120px;
-  height: 63px;
-  padding: 10px 15px;
-  font-size: 1.5rem;
+  width: 6vw;  /* Converted width from px to vw */
+  height: 3.29vh; /* Converted height from px to vh */
+  padding: 0.52vw 0.78vw; /* Converted padding from px to vw */
+  font-size: 1.4vw; /* Converted font-size from rem to vw */
   text-align: center;
   color: #fff7e8;
   background-color: transparent;
   position: relative;
-  top: 218px;
-  left: 66px;
-  transform: rotate(7deg); /* Rotate the text */
+  top: 26vh;
+  left: 3vw;
+  transform: rotate(9deg);
   border: none; /* Remove border by default */
   outline: none; /* Remove the outline on focus */
 }
@@ -854,37 +848,28 @@ body {
 
 
 
-
-
-
-
-
-
-
-
 /* ========== ATTACK BUTTON STYLING ========== */
 .attack-button {
   background-image: url('../images/gameimg/buttons/attack button.png');
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
-  width: 132px;
-  height: 135px;
+  width: 6.88vw;  /* Converted width from px to vw */
+  height: 7.03vw; /* Converted height from px to vw */
   cursor: pointer;
   position: relative;
-  top: 4px;
-  left: 88px;
+  top: 4vh;  /* Converted top from px to vh */
+  left: 4vw; /* Converted left from px to vw */
   transition: transform 0.1s ease;
   user-select: none;
   -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
   -webkit-user-select: none; /* Prevents text/image selection in WebKit */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE/Edge */
-
 }
 
 .attack-button:active {
-  transform: translateY(1px); /* Moves up slightly on click */
+  transform: translateY(0.09vh); /* Slight movement on click */
 }
 
 
@@ -897,53 +882,45 @@ body {
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  justify-content: flex-start; /* Aligns items to the left */
-  right: 415px;
-  top: -27px;
+  gap: 0.625vw;
+  justify-content: flex-start;
+  right: 23vw; /* Converted 415px to approx 21.6vw */
+  top: -1.4vh;   /* Converted -27px to approx -1.4vh */
 }
-
 
 .chatbot-img {
-  width: 17.2rem;
+  width: 14vw; /* Converted 17.2rem (approx 275px) to 14.3vw */
   height: auto;
-  transition: transform 0.3s ease, filter 0.2s ease; /* Smooth transition for click effect */
-
-  filter: drop-shadow(0 0 5px rgba(255, 255, 150, 0.6))
-          drop-shadow(0 0 10px rgba(255, 255, 150, 0.4))
-          drop-shadow(0 0 15px rgba(255, 255, 150, 0.2));
-
-
+  transition: transform 0.3s ease, filter 0.2s ease;
+  filter: drop-shadow(0 0 0.26vw rgba(255, 255, 150, 0.6))
+          drop-shadow(0 0 0.52vw rgba(255, 255, 150, 0.4))
+          drop-shadow(0 0 0.78vw rgba(255, 255, 150, 0.2));
   user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
-  
-  
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
+
 
 .chatbot-img:active {
-  
-  transform: scale(1.03); /* Slightly zoom in on click */
-  filter: drop-shadow(0 0 5px rgba(255, 255, 150, 0.6))
-  drop-shadow(0 0 10px rgba(255, 255, 150, 0.4))
-  drop-shadow(0 0 15px rgba(255, 255, 150, 0.2));
-  
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 0.26vw rgba(255, 255, 150, 0.6))
+          drop-shadow(0 0 0.52vw rgba(255, 255, 150, 0.4))
+          drop-shadow(0 0 0.78vw rgba(255, 255, 150, 0.2));
 }
-
 
 .speech-bubble {
   user-select: text;
-  position: relative; /* changed from absolute */
-  top: 30px; /* keep as-is */
-  right: 20px; /* keep as-is */
+  position: relative;
+  top: 1.56vh;    /* Converted 30px to 1.56vh */
+  right: 1.04vw;  /* Converted 20px to 1.04vw */
   background: #fef3c7;
-  border: 3px solid #d97706;
-  border-radius: 15px;
-  padding: 20px 30px;
-  max-width: 517px;
-  max-height: 243px;
+  border: 0.16vw solid #d97706; /* Converted 3px to 0.16vw */
+  border-radius: 0.78vw;        /* 15px -> 0.78vw */
+  padding: 1.04vh 1.56vw;       /* 20px 30px */
+  max-width: 26.9vw;            /* 517px -> 26.9vw */
+  max-height: 23vh;           /* 243px -> 44.8vh */
   width: fit-content;
   height: auto;
   font-weight: bold;
@@ -956,19 +933,17 @@ body {
   overflow-x: hidden;
 }
 
-
-
 /* Scrollbar styling */
 .speech-bubble::-webkit-scrollbar {
-  width: 6px;
+  width: 0.31vw; /* 6px */
 }
 .speech-bubble::-webkit-scrollbar-track {
-  border-radius: 6px;
+  border-radius: 0.31vw;
 }
 .speech-bubble::-webkit-scrollbar-thumb {
   background: #5B3A29;
-  border-radius: 6px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15);
+  border-radius: 0.31vw;
+  box-shadow: inset 0 0 0.26vw rgba(0, 0, 0, 0.15);
 }
 .speech-bubble::-webkit-scrollbar-thumb:hover {
   background: #5B3A29;
@@ -978,12 +953,13 @@ body {
 
 
 
+
 .sprite-lightning {
-  width: 429px;
+  width: 22.34vw;  /* Converted width from px to vw */
   height: auto;
   position: absolute;
-  top: -29px;
-  left: 1484px;
+  top: -3vh;    /* Converted top from px to vh */
+  left: 75vw;   /* Converted left from px to vw */
 
   opacity: 0; /* Hide all frames initially */
   transition: opacity 0.1s ease; /* Smooth transition */
@@ -1050,55 +1026,56 @@ body {
 
   /* Menu Button Container */
   /* Menu Button Container */
-  .menu-btn-wrapper {
+/* Menu Button Wrapper */
+.menu-btn-wrapper {
+  position: absolute;
+  top: 1.3vh; /* Convert 13px to vh */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Keeps the button horizontally centered */
+  z-index: 999; /* Ensure it's above other elements */
+  transition: opacity 0.2s ease; /* Only apply opacity transition to wrapper */
+}
 
-    position: absolute;
-    top: 13px; /* Adjust for desired vertical positioning (increase or decrease as needed) */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Keeps the button horizontally centered */
-    z-index: 999; /* Ensure it's above other elements */
-    transition: opacity 0.2s ease; /* Only apply opacity transition to wrapper */
-  }
-
-  /* Menu Button Styling */
-  .menu-btn {
-    background-image: url('../images/gameimg/menubg2.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    margin-top: 5px;
-    width: 386px;
-    height: 117px;
-    font-size: 2.5rem;
-    color: white;
-    font-weight: bold;
-    padding: 10px 20px; /* You can reduce this if it overflows the image */
-    border-radius: 10px;
-    cursor: pointer;
-    letter-spacing: 3px;
-    font-family: "Fredoka", sans-serif; 
-    transition: transform 0.3s ease; /* Fixed typo: spacing in '0.4 s' */
-    user-select: none;
-    -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-    -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE/Edge */
+/* Menu Button Styling */
+.menu-btn {
+  background-image: url('../images/gameimg/menubg2.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-top: 0.8vh; /* Convert 8px to vh */
+  width: 38.6vw; /* Convert 386px to vw (approximately) */
+  height: 11.7vh; /* Convert 117px to vh (approximately) */
+  font-size: 4vh;  /* Responsive font size based on viewport height */
+  color: white;
+  font-weight: bold;
+  padding: 1vh 2vw; /* Adjust padding to be more responsive */
+  border-radius: 1rem; /* Use rem for rounded corners */
+  cursor: pointer;
+  letter-spacing: 0.3rem;
+  font-family: "Fredoka", sans-serif;
+  transition: transform 0.3s ease; /* Fixed typo: spacing in '0.4 s' */
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 
   text-shadow:
-      -1px -1px 0 #b1862f,         /* Bottom-right shadow for depth */
-    -2px -2px 1px rgba(0, 0, 0, 0.2); /* Soft deeper edge */
-  }
-  
+    -0.1vh -0.1vh 0  #b1862f,        /* Adjusted shadow for depth */
+    -0.2vh -0.2vh 1px rgba(0, 0, 0, 0.2); /* Soft deeper edge */
+}
 
-  .menu-btn:hover {
-    transform: scale(1.01); /* Scale only the button */
-  }
+/* Hover Effect */
+.menu-btn:hover {
+  transform: scale(1.01); /* Scale only the button */
+}
+
 
 
   .game-menu {
     position: absolute;
-    top: 80px;
-    left: 50%;
+    top: 8vh;        /* 80px / 10 */
+    left: 50%;       /* stays as % for horizontal centering */
     transform: translateX(-50%);
     background-image: url('../images/gameimg/menudrop.png');
     background-size: contain; /* Make image fill the area more prominently */
@@ -1107,8 +1084,8 @@ body {
     border-radius: 10px;
     padding: 40px 20px; /* Increased padding for spacing */
     z-index: 999;
-    width: 700px;
-    height: 500px;
+    width: 70vh;     /* 700px / 10 */
+    height: 50vh;    /* 500px / 10 */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1123,8 +1100,9 @@ body {
 
 
   .menu-item {
-    width: 27rem;
-    margin: 0 auto 30px auto; /* Increased bottom margin to 40px for more space */
+    width: 22vw; /* or adjust as needed */
+    height: 5.5vh; /* 55px / 10 */
+    margin: 0 auto 4vh auto; /* Increased bottom margin to 40px as vh */
     background-color: #2f855a; /* Deep emerald green */
     color: #f0fff4; /* Mint white text */
     font-weight: bold;
@@ -1139,7 +1117,7 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 5px rgba(255, 255, 255, 0.3); /* Stronger inner shadow */
     transition: all 0.2s ease;
     position: relative;
-    top: 30px; /* Adjusted position if needed */
+    top: 3vh; /* Adjusted position if needed */
   }
 
   /* Hover effect with slight lift */
@@ -1195,21 +1173,18 @@ body {
 
 /* General Settings Container */
 .settings-container {
-  padding: 20px;
+  padding: 2vh;
   text-align: center;
   width: 100%;
-  max-width: 400px;
+  max-width: 40vh; /* 400px */
   color: white;
   font-family: 'Poppins', sans-serif;
-  margin-top: 30px;
-
+  margin-top: 3vh; /* 30px */
 }
-
-
 
 /* Each Setting Block */
 .setting-option {
-  margin-bottom: 25px;
+  margin-bottom: 2.5vh; /* 25px */
   text-align: left;
 }
 
@@ -1217,17 +1192,17 @@ body {
 .setting-option label {
   display: block;
   font-weight: 600;
-  margin-bottom: 10px;
-  color: #e6ffe6; /* lighter green tone */
+  margin-bottom: 1vh; /* 10px */
+  color: #e6ffe6;
 }
 
 /* Volume Range */
 #volume {
   width: 100%;
-  height: 8px; /* Thinner slider */
+  height: 0.8vh; /* 8px */
   appearance: none;
-  background: #d3d3d3; /* Light gray background */
-  border-radius: 4px;
+  background: #d3d3d3;
+  border-radius: 0.4vh;
   outline: none;
   position: relative;
   transition: background 0.3s ease;
@@ -1236,59 +1211,60 @@ body {
 /* Volume Slider Thumb */
 #volume::-webkit-slider-thumb {
   appearance: none;
-  height: 20px;
-  width: 20px;
-  background: #4a90e2; /* Soft blue thumb */
-  border: 2px solid #1c5f94; /* Dark blue border */
+  height: 2vh;
+  width: 2vh;
+  background: #4a90e2;
+  border: 0.2vh solid #1c5f94;
   border-radius: 50%;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
 #volume::-webkit-slider-thumb:hover {
-  background: #1c5f94; /* Dark blue on hover */
-  transform: scale(1.2); /* Slightly enlarge thumb on hover */
+  background: #1c5f94;
+  transform: scale(1.2);
 }
 
 #volume::-moz-range-thumb {
-  height: 20px;
-  width: 20px;
-  background: #4a90e2; /* Soft blue thumb */
-  border: 2px solid #1c5f94; /* Dark blue border */
+  height: 2vh;
+  width: 2vh;
+  background: #4a90e2;
+  border: 0.2vh solid #1c5f94;
   border-radius: 50%;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
 #volume::-moz-range-thumb:hover {
-  background: #1c5f94; /* Dark blue on hover */
-  transform: scale(1.2); /* Slightly enlarge thumb on hover */
+  background: #1c5f94;
+  transform: scale(1.2);
 }
 
 /* Mute Wrapper aligns checkbox and label horizontally */
 .mute-wrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 5px;
-  margin-left: 12px; /* 👈 Adjust this value if needed */
+  gap: 1vh;
+  margin-top: 0.5vh;
+  margin-left: 1.2vh;
 }
+
 /* Mute Checkbox Style */
 #muteCheckbox {
   appearance: none;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #4a90e2;
-  border-radius: 4px;
+  width: 2vh;
+  height: 2vh;
+  border: 0.2vh solid #4a90e2;
+  border-radius: 0.4vh;
   position: relative;
   cursor: pointer;
 }
 
-/* Show mute icon when checked, centered inside */
+/* Show mute icon when checked */
 #muteCheckbox:checked::before {
   content: "🔇";
   color: white;
-  font-size: 14px;
+  font-size: 1.4vh;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1297,22 +1273,21 @@ body {
 
 /* Mute Label Style */
 .mute-label {
-  font-size: 16px;
+  font-size: 1.6vh;
   color: #fff;
   font-weight: 600;
 }
-
 
 /* Language Container */
 .language-container {
   text-align: center;
   font-weight: 600;
-  margin-top: -30px;
+  margin-top: -3vh;
 }
 
 .language-container label {
   display: block;
-  margin-bottom: 8px; /* 👈 Add space below the label */
+  margin-bottom: 0.8vh;
   font-weight: 600;
   color: #fff;
 }
@@ -1322,11 +1297,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #ffa726; /* orange for contrast */
-  padding: 10px 20px;
-  border-radius: 50px;
-  width: 250px;
-  height: 50px;
+  background-color: #ffa726;
+  padding: 1vh 2vh;
+  border-radius: 5vh;
+  width: 25vh;
+  height: 5vh;
   margin: 0 auto;
 }
 
@@ -1334,9 +1309,9 @@ body {
   background-color: transparent;
   color: white;
   border: none;
-  font-size: 18px;
+  font-size: 1.8vh;
   cursor: pointer;
-  padding: 5px 10px;
+  padding: 0.5vh 1vh;
 }
 
 .language-box button:hover {
@@ -1345,7 +1320,7 @@ body {
 
 #languageText {
   color: white;
-  font-size: 18px;
+  font-size: 1.8vh;
   font-weight: bold;
   text-align: center;
   flex-grow: 1;
@@ -1356,18 +1331,18 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 30px;
+  margin-top: 3vh;
 }
 
 /* Shared styles */
 .settings-item {
   display: block;
   width: 80%;
-  margin-bottom: 10px;
-  padding: 12px 25px;
-  border-radius: 8px;
+  margin-bottom: 1vh;
+  padding: 1.2vh 2.5vh;
+  border-radius: 0.8vh;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1.6vh;
   text-align: center;
   color: white;
   font-weight: 600;
@@ -1384,32 +1359,32 @@ body {
   background-color: #2f855a;
 }
 
-/* Back Button - Default and Hover Colors */
+/* Back Button */
 .settings-item:last-child {
-  background-color: #D32F2F; /* Darker Coral */
+  background-color: #D32F2F;
 }
 
 .settings-item:last-child:hover {
-  background-color: #B71C1C; /* Deeper Red */
+  background-color: #B71C1C;
 }
+
 
 
 #feedback {
-  position: absolute; /* Allows you to position it relative to the parent container */
-  top: 70%;
-  left: 50%;
+  position: absolute;
+  top: 40vh; /* 70% of viewport height */
+  left: 50vw; /* 50% of viewport width */
   transform: translate(-50%, -50%);
-  padding: 20px;
-  font-size: 55px;
+  padding: 2.6vh 3vw; /* Scaled padding for responsiveness */
+  font-size: 4.5vh; /* Scaled font size relative to height */
   color: white;
-  border-radius: 10px;
+  border-radius: 1vh;
   text-align: center;
   font-weight: bold;
-  word-wrap: normal; /* Prevent word break */
-  overflow-wrap: normal; /* Prevent word break */
-
-  z-index: 100; /* Ensure it's on top of other content */
-  font-family: "Fredoka", sans-serif; 
-
+  word-wrap: normal;
+  overflow-wrap: normal;
+  z-index: 100;
+  font-family: "Fredoka", sans-serif;
 }
+
 
