@@ -58,7 +58,8 @@
   {% else %}
     <p class="text-2xl text-red-400">No questions available for this level.</p>
   {% endif %}
-  <button onclick="showVictoryScreen()">Show Victory Popup</button>
+
+  <!-- <button onclick="showVictoryScreen()">Show Victory Popup</button> -->
   
   <!-- Freeze Turns Left -->
   <div id="freeze-turn" class="freeze-turn"></div>
@@ -232,9 +233,18 @@
   
 
 
-
-  <!-- Optional sound effect -->
-  <!-- <audio id="potion-sfx" src="" preload="auto"></audio> -->
+  <div id="gameover-screen" class="gameover-screen">
+    <div class="gameover-box">
+      <h1 class="gameover-text">Game Over!</h1>
+  
+      <div class="gameover-buttons">
+        <button id="retry-btn" class="gameover-btn">Retry</button>
+        <button id="home-btn" class="gameover-btn">Home</button>
+      </div>
+    </div>
+  </div>
+  
+  
   
   
 </div>
@@ -595,12 +605,15 @@ const languageData = {
 
 
 
-  // ======= GAME OVER =======
-  function checkGameOver() {
-    if (currentPlayerHealth <= 0) {
-      setTimeout(() => alert("💀 Game Over! You lost!"), 1700);
-    }
+// ======= GAME OVER =======
+function checkGameOver() {
+  if (currentPlayerHealth <= 0) {
+    setTimeout(() => {
+      showGameOverScreen(); // This will show your custom Game Over screen
+    }, 1000); // Delay to allow any final animation to finish
   }
+}
+
 
 
   // ======= ATTACK & QUESTION =======
@@ -1033,6 +1046,53 @@ function showVictoryScreen() {
     window.location.href = "{{ url_for('dashboard') }}";
     closeVictoryScreen();
   };
+}
+
+function showGameOverScreen() {
+  const gameContainer = document.querySelector('.game-container');
+  if (!gameContainer) {
+    console.error('Game container not found!');
+    return;
+  }
+
+  const gameoverScreen = document.getElementById('gameover-screen');
+  const gameoverBox = gameoverScreen.querySelector('.gameover-box');
+  const gameoverButtons = document.querySelector('.gameover-buttons');
+  const retryBtn = gameoverButtons.querySelector('#retry-btn');
+  const homeBtn = gameoverButtons.querySelector('#home-btn');
+
+  // ❌ Remove monsters
+  document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => {
+    el.remove();
+  });
+
+  // Pause game
+  gameContainer.classList.add('paused');
+
+  // Show screen
+  gameoverScreen.style.visibility = 'visible';
+  gameoverScreen.classList.add('visible');
+
+  // Animation
+  gameoverBox.classList.add('box-animation');
+
+  // Button events
+  retryBtn.onclick = () => {
+    window.location.reload();
+    closeGameOverScreen();
+  };
+
+  homeBtn.onclick = () => {
+    window.location.href = "{{ url_for('dashboard') }}";
+    closeGameOverScreen();
+  };
+
+  function closeGameOverScreen() {
+    gameoverScreen.style.visibility = 'hidden';
+    gameoverScreen.classList.remove('visible');
+    gameContainer.classList.remove('paused');
+    gameoverBox.classList.remove('box-animation');
+  }
 }
 
 

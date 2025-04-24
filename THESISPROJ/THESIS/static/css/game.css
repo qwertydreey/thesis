@@ -1676,11 +1676,12 @@ body {
   margin-bottom: 0;
   animation: popIn 0.4s ease-out forwards;
   border-radius: 1.2vh;
+  background-image: contain;
 }
 
 /* Hover effect for potion images */
 #bonus-potion-img-container img:hover {
-  transform: scale(1.1);
+  transform: scale(1.04);
 }
 
 /* Quantity label */
@@ -1691,6 +1692,102 @@ body {
   margin-top: 0.5vh;
   text-align: center;
 }
+
+
+/* Main screen (Game Over Background) */
+.gameover-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  visibility: hidden;
+  animation: bounceFadeIn 0.8s ease-out forwards;
+}
+
+/* Popup box for Game Over */
+.gameover-box {
+  background-image: url('../images/gameimg/victorybox.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-top: -11vh;
+  width: 42vw;
+  height: 58vh;
+  border-radius: 2vh;
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Game Over text */
+.gameover-text {
+  font-size: 9vh;
+  font-weight: bold;
+  margin-top: 7vh;
+  color: #dc2626; /* Crimson Red */
+  text-shadow: 0.5vh 0.5vh 1vh rgba(0, 0, 0, 0.3);
+}
+
+/* Button container for Game Over */
+.gameover-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4vh;
+  align-items: center;
+  margin-top: 3vh;
+  margin-bottom: 3vh; /* Adjust as needed for spacing */
+}
+
+/* Button base styles */
+.gameover-btn {
+  padding: 0 5vw; /* Adjust width padding for larger buttons */
+  color: white;
+  border: none;
+  border-radius: 4vh;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 2.5vh; /* Increased font size for better visibility */
+  text-transform: uppercase;
+  letter-spacing: 0.2vw;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  height: 7vh; /* Adjusted height for bigger buttons */
+  width: 28vw; /* Increased width for larger buttons */
+  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4);
+}
+
+
+/* Retry button (Crimson Red) */
+#retry-btn {
+  background-color: #dc2626;
+}
+#retry-btn:hover {
+  background-color: #ef4444;
+  transform: translateY(-0.5vh);
+  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Home button (Fresh Green) */
+#home-btn {
+  background-color: #3e9a2d;
+}
+#home-btn:hover {
+  background-color: #47b533;
+  transform: translateY(-0.5vh);
+  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+
+
+
+
 
 .paused .monster, 
 .paused .monster-spawn, 
