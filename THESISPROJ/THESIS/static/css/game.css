@@ -73,9 +73,7 @@ body {
 .player-name,
 .monster-name {
   position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  
+  top: 28%;
   font-size: 1.5rem;
   color: #ffffff;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,
@@ -85,13 +83,18 @@ body {
   letter-spacing: 1.5px;
   white-space: nowrap;
 }
-.player-name {
-  left: 35%;
 
+.player-name {
+  left: 25px;
+  text-align: left;
 }
+
 .monster-name {
-  right: -20%;
+  right: 25px;
+  text-align: right;
 }
+
+
 
 .player-image {
   width: 100px;
@@ -289,12 +292,6 @@ body {
   left: 10%;   /* 100px of 1000px width */
 }
 
-/* Monster */
-.character.monster {
-  height: 35vh; /* Full screen height */
-  width: auto;
-  right: 10%;  /* 100px of 1000px width */
-}
 
 
 /* ========== FIREBALL SECTION ========== */
@@ -341,11 +338,108 @@ body {
 }
 
 
+/* Base class for all monsters */
 .monster {
   right: 5%;
-  height: 350px;
-  transition: filter 0.5s ease-out, transform 2s ease-out; /* Smooth transition */
+  height: 35vh; 
+  position: absolute;
+  bottom: 10px;
+  z-index: 10;
+  animation: subtleStretchIdle 1s ease-in-out infinite;
+  transform-origin: center bottom; /* Make it stretch from the bottom */
+  user-select: none;
+  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
+  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  filter: 
+    drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))  /* Light shadow */
+    drop-shadow(3px 3px 4px rgba(0, 0, 0, 0.4))  /* Bottom-right shadow */
+    drop-shadow(-3px -3px 4px rgba(0, 0, 0, 0.4));  /* Top-left shadow */
 }
+
+@keyframes subtleStretchIdle {
+  0%, 100% {
+    transform: scaleY(1); /* Original size */
+  }
+  25% {
+    transform: scaleY(1.05); /* Slight stretch down */
+  }
+  50% {
+    transform: scaleY(1.03); /* Slight contraction after stretch */
+  }
+  75% {
+    transform: scaleY(1.05); /* Stretch down again, but still subtle */
+  }
+
+}
+
+
+/* BOUNCE ANIMATION */
+.monster-spawn {
+  animation: monster-bounce 1s ease-out forwards;
+}
+
+@keyframes monster-bounce {
+  0% {
+    transform: scale(0.5) translateY(0);
+  }
+  50% {
+    transform: scale(1.1) translateY(-20px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+
+
+
+
+/* Death animation trigger */
+.monster-death {
+  animation: monster-death 1s ease-in-out forwards; /* Slow death effect */
+}
+
+/* Keyframe animation for monster death */
+@keyframes monster-death {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+    visibility: hidden; /* Ensure it is hidden after death animation */
+  }
+}
+
+
+/* Specific classes for each monster */
+.monster-multiplication-mob-1 {
+  height: 29vh;
+  bottom: -1vh;
+  left: 75vw;
+}
+
+.monster-multiplication-mob-2 {
+  height: 27vh;
+  bottom: 8vh;
+  left: 75vw;
+}
+
+.monster-multiplication-boss-1 {
+  height: 57vh;
+  bottom: -7vh;
+  left: 70vw;
+}
+
+
+
 
 @keyframes freezeMonster {
   0% { 
@@ -365,6 +459,7 @@ body {
 }
 
 .monster.frozen {
+  animation-play-state: paused !important;  /* This will pause all animations on the monster */
   filter: hue-rotate(220deg) saturate(130%) contrast(120%) brightness(90%);
 }
 
@@ -372,6 +467,8 @@ body {
 
 /* When the monster takes damage */
 .monster.damaged {
+  animation-name: shake;
+
   animation: monsterDamage 0.4s ease-out, shake 0.4s ease-out;
 }
 
@@ -410,6 +507,7 @@ body {
 .player-damaged {
   animation: playerDamageAnimation 0.5s ease-out, playerShake 0.5s ease-out;
 }
+
 
 /* Keyframes for player damage: red flash effect */
 @keyframes playerDamageAnimation {
@@ -497,6 +595,8 @@ body {
 
 /* Smooth attack animation with a higher jump and more forward movement for reversed monster */
 .monster-attack {
+  animation-name: monster-attack;
+
   animation: monsterAttackAnimation 0.7s ease-out;
   transform-origin: center center;
 }
@@ -959,7 +1059,7 @@ body {
   height: auto;
   position: absolute;
   top: -3vh;    /* Converted top from px to vh */
-  left: 75vw;   /* Converted left from px to vw */
+  left: 72vw;   /* Converted left from px to vw */
 
   opacity: 0; /* Hide all frames initially */
   transition: opacity 0.1s ease; /* Smooth transition */
@@ -1386,5 +1486,6 @@ body {
   z-index: 100;
   font-family: "Fredoka", sans-serif;
 }
+
 
 
