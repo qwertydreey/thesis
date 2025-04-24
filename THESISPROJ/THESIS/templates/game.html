@@ -58,10 +58,11 @@
   {% else %}
     <p class="text-2xl text-red-400">No questions available for this level.</p>
   {% endif %}
-
+  <button onclick="showVictoryScreen()">Show Victory Popup</button>
   
   <!-- Freeze Turns Left -->
   <div id="freeze-turn" class="freeze-turn"></div>
+  
 </div>
 
 
@@ -206,12 +207,36 @@
 
 
       </div>
-
-
-    
-
-
   </div>
+
+  <div id="victory-screen" class="victory-screen">
+    <div class="victory-box">
+      <h1 class="victory-text">VICTORY!</h1>
+  
+      <div class="victory-buttons">
+        <button id="continue-btn" class="victory-btn">Continue</button>
+        <button id="retry-btn" class="victory-btn">Retry</button>
+        <button id="home-btn" class="victory-btn">Home</button>
+      </div>
+  
+      <div class="reward-box">
+        <p class="reward-text">Rewards</p>
+        <!-- This is where the rewards will be displayed if available -->
+        <div id="bonus-potion-img-container" class="bonus-container">
+          <!-- Potion images and quantities will be added dynamically here -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+
+
+
+  <!-- Optional sound effect -->
+  <!-- <audio id="potion-sfx" src="" preload="auto"></audio> -->
+  
+  
 </div>
 
 
@@ -518,7 +543,6 @@ const languageData = {
   }
 
 
-  // ======= MONSTER HEALTH & PROGRESSION =======
   function monsterTakeDamage() {
   const monsterImg = document.getElementById('monster-sprite');
   if (currentMonsterHealth > 0) {
@@ -536,27 +560,37 @@ const languageData = {
 
       if (!monsterImg) return;
 
-      // 1) Play death animation
+      // 1) Trigger death animation
       monsterImg.classList.add('monster-death');
       console.log("Death animation added");
 
-      // 2) Once death animation is done, remove the class and spawn next monster
+      // 2) Wait for animation to complete
       monsterImg.addEventListener('animationend', function onDeath() {
-        console.log("Death animation ended");  // Debugging line
+        console.log("Death animation ended");
         monsterImg.removeEventListener('animationend', onDeath);
-        monsterImg.classList.remove('monster-death');
-        monsterImg.style.opacity = '';
-        monsterImg.style.transform = '';
 
-        // 🔥 Small delay to allow reflow before triggering next monster spawn
+        // 3) Keep the monster there for 2s, but fade it out smoothly
         setTimeout(() => {
-          nextMonster();
-        }, 0); // 50ms delay — just enough to allow DOM updates
+          // Add fade out effect
+          monsterImg.style.transition = 'opacity 0.5s ease';
+          monsterImg.style.opacity = '0';
+
+          // After fade completes (0.5s), spawn the next monster
+          setTimeout(() => {
+            monsterImg.classList.remove('monster-death');
+            monsterImg.style.opacity = '';
+            monsterImg.style.transition = '';
+            monsterImg.style.transform = '';
+
+            nextMonster();
+          }, 500); // Wait for fade-out to finish
+        }, 100); // Wait 2 seconds before fade
       });
     }
   }
   checkGameOver();
 }
+
 
 
 
@@ -909,18 +943,103 @@ function nextMonster() {
 }
 
 
-
-
-
-
-
-  function showVictoryScreen() {
-    alert("🏆 Stage Cleared! You defeated all monsters!");
-    const rewards = ['health','freeze','thunder'];
-    const bonus   = rewards[Math.floor(Math.random()*rewards.length)];
-    alert(`🎁 You got a bonus ${bonus} potion!`);
-    // TODO: next stage or exit map
+function showVictoryScreen() {
+  const gameContainer = document.querySelector('.game-container');
+  if (!gameContainer) {
+    console.error('Game container not found!');
+    return;
   }
+
+  const victoryScreen = document.getElementById('victory-screen');
+  const victoryBox = victoryScreen.querySelector('.victory-box');
+  const continueBtn = document.getElementById('continue-btn');
+  const retryBtn = document.getElementById('retry-btn');
+  const homeBtn = document.getElementById('home-btn');
+  const bonusContainer = document.getElementById('bonus-potion-img-container');
+
+  // ❌ Remove monster elements
+  document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => {
+    el.remove();
+  });
+
+  // Pause game
+  gameContainer.classList.add('paused');
+
+  // Show screen
+  victoryScreen.style.visibility = 'visible';
+  victoryScreen.classList.add('visible');
+
+  // 🔥 Apply the animation class to the victory box
+  victoryBox.classList.add('box-animation');
+
+  // 🎁 Bonus potion logic
+  const rewards = ['health', 'freeze', 'thunder'];
+  const noRewardChance = Math.random() < 0.4;
+
+  let selectedPotions = [];
+  let potionCounts = { health: 0, freeze: 0, thunder: 0 };
+
+  if (!noRewardChance) {
+    const numPotions = Math.random() < 0.2 ? 2 : 1;
+    for (let i = 0; i < numPotions; i++) {
+      const potionType = rewards[Math.floor(Math.random() * rewards.length)];
+      if (potionCounts[potionType] === 0) {
+        selectedPotions.push(potionType);
+      }
+      potionCounts[potionType]++;
+    }
+  }
+
+  const potionImages = {
+    health: "{{ url_for('static', filename='images/gameimg/health.png') }}",
+    freeze: "{{ url_for('static', filename='images/gameimg/freeze.png') }}",
+    thunder: "{{ url_for('static', filename='images/gameimg/thunder.png') }}"
+  };
+
+  bonusContainer.innerHTML = '';
+
+  selectedPotions.forEach(potion => {
+    const imgElement = document.createElement('img');
+    imgElement.src = potionImages[potion];
+    imgElement.alt = `${potion} potion`;
+    imgElement.classList.add('bonus-potion-img');
+    bonusContainer.appendChild(imgElement);
+
+    const quantityText = document.createElement('p');
+    quantityText.textContent = `${potionCounts[potion]}x`;
+    bonusContainer.appendChild(quantityText);
+  });
+
+  // Close functions
+  function closeVictoryScreen() {
+    victoryScreen.style.visibility = 'hidden';
+    victoryScreen.classList.remove('visible');
+    gameContainer.classList.remove('paused');
+    bonusContainer.innerHTML = '';
+    victoryBox.classList.remove('box-animation'); // Reset animation if needed
+  }
+
+  continueBtn.onclick = () => {
+    window.location.href = "{{ url_for('roadmap') }}";
+    closeVictoryScreen();
+  };
+
+  retryBtn.onclick = () => {
+    window.location.reload();
+    closeVictoryScreen();
+  };
+
+  homeBtn.onclick = () => {
+    window.location.href = "{{ url_for('dashboard') }}";
+    closeVictoryScreen();
+  };
+}
+
+
+
+
+
+  
 
   // ======= INITIAL LOAD =======
   window.addEventListener('DOMContentLoaded', () => {
@@ -966,17 +1085,6 @@ function nextMonster() {
 
 
 </script>
-
-
-
-  
-
-
-  
-
-
-
-
 
 
 
