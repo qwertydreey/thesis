@@ -41,8 +41,8 @@ body {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  width: 350px;
-  height: 100px;
+  width: 38vh;
+  height: 11vh;
   position: relative;
   z-index: 999;
 
@@ -134,8 +134,8 @@ body {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  width: 350px;
-  height: 100px;
+  width: 38vh;
+  height: 11vh;
   position: relative;
   z-index: 999;
   top:11vh;
@@ -242,13 +242,66 @@ body {
 
 }
 
-.additionground {
+.platform {
   background-size: contain;
   background-position: center;
+  z-index: -1; /* Ensure it's behind other elements */
+}
+/* Example platform sizes and positions for different maps */
+.platform-multiplication {
+  height: 30vh;
   width: 100%;
   position: absolute;
-  bottom: -50px; /* Align to the bottom of the container */
-  z-index: -1; /* Ensure it's behind other elements */
+  bottom: -5vh;
+}
+
+.platform-addition {
+  height: 28vh;
+  width: 100%;
+  position: absolute;
+  bottom: -12vh;
+}
+
+.platform-subtraction {
+  height: 22vh;
+  width: 100%;
+  position: absolute;
+  bottom: -10vh;
+}
+
+.platform-division {
+  height: 19vh;
+  width: 100%;
+  position: absolute;
+  bottom: -12vh;
+}
+
+.platform-counting {
+  height: 25vh;
+  width: 100%;
+  position: absolute;
+  bottom: -11vh;
+}
+
+.platform-comparison {
+  height: 32vh;
+  width: 100%;
+  position: absolute;
+  bottom: -11vh;
+}
+
+.platform-numerals {
+  height: 25vh;
+  width: 100%;
+  position: absolute;
+  bottom: -13vh;
+}
+
+.platform-placevalue {
+  height: 17vh;
+  width: 100%;
+  position: absolute;
+  bottom: -9vh;
 }
 
 
@@ -264,10 +317,6 @@ body {
   -webkit-user-select: none; /* Prevents text/image selection in WebKit */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE/Edge */
-  filter: 
-    drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))  /* Light shadow */
-    drop-shadow(3px 3px 4px rgba(0, 0, 0, 0.4))  /* Bottom-right shadow */
-    drop-shadow(-3px -3px 4px rgba(0, 0, 0, 0.4));  /* Top-left shadow */
 }
 
 @keyframes subtleStretchIdle {
@@ -418,27 +467,6 @@ body {
 
 
 
-
-
-
-/* Specific classes for each monster */
-.monster-multiplication-mob-1 {
-  height: 29vh;
-  bottom: -1vh;
-  left: 75vw;
-}
-
-.monster-multiplication-mob-2 {
-  height: 27vh;
-  bottom: 8vh;
-  left: 75vw;
-}
-
-.monster-multiplication-boss-1 {
-  height: 57vh;
-  bottom: -7vh;
-  left: 70vw;
-}
 
 
 
@@ -663,7 +691,7 @@ body {
 }
 
 .freeze-box, .health-box, .thunder-box {
-  width: 7.5vw; /* Adjust width based on viewport width */
+  width: 15vh; /* Adjust width based on viewport width */
   height: auto;
   position: absolute;
   background: transparent center/contain no-repeat;
@@ -697,7 +725,7 @@ body {
 
 /* ========== POTION IMAGES ========== */
 .freeze-potion, .health-potion, .thunder-potion {
-  width: 7.5vw; /* Adjust width based on viewport width */
+  width: 15vh; /* Adjust width based on viewport width */
   height: auto;
   position: absolute;
   background: transparent center/contain no-repeat;
@@ -991,7 +1019,7 @@ body {
 }
 
 .chatbot-img {
-  width: 14vw; /* Converted 17.2rem (approx 275px) to 14.3vw */
+  width: 29vh; /* Converted 17.2rem (approx 275px) to 14.3vw */
   height: auto;
   transition: transform 0.3s ease, filter 0.2s ease;
   filter: drop-shadow(0 0 0.26vw rgba(255, 255, 150, 0.6))
@@ -1015,16 +1043,16 @@ body {
 .speech-bubble {
   user-select: text;
   position: relative;
-  top: 1.56vh;    /* Converted 30px to 1.56vh */
-  right: 1.04vw;  /* Converted 20px to 1.04vw */
+  top: 3.56vh;
+  right: 1.04vh;
   background: #fef3c7;
-  border: 0.16vw solid #d97706; /* Converted 3px to 0.16vw */
-  border-radius: 0.78vw;        /* 15px -> 0.78vw */
-  padding: 1.04vh 1.56vw;       /* 20px 30px */
-  max-width: 26.9vw;            /* 517px -> 26.9vw */
-  max-height: 23vh;           /* 243px -> 44.8vh */
-  width: fit-content;
-  height: auto;
+  border: 0.16vw solid #d97706;
+  border-radius: 0.78vw;
+  padding: 1.04vh 1.56vw;
+  max-width: 28vw;
+  max-height: 25vh;
+  width: 28vw;
+  height: 26vh;
   font-weight: bold;
   color: #5B3A29;
   font-size: clamp(0.75rem, 1vw, 1rem);
@@ -1784,11 +1812,6 @@ body {
 }
 
 
-
-
-
-
-
 .paused .monster, 
 .paused .monster-spawn, 
 .paused .monster-death,
@@ -1798,4 +1821,611 @@ body {
 .paused .thunder-potion {
   animation-play-state: paused !important;
   transition: none !important;
+}
+
+/* ============================
+   ➗ Division Monsters
+============================ */
+.monster-division-mob-1 {
+  width: 33vh;
+  margin-left: 73vw;
+  top: -29vh;
+}
+
+.monster-division-mob-2 {
+  width: 29vh;
+  margin-left: 74vw;
+  top: -25vh;
+}
+
+.monster-division-mob-3 {
+  width: 30vh;
+  margin-left: 74vw;
+  top: -21vh;
+}
+
+.monster-division-boss-1 {
+  width: 60vh;
+  margin-left: 68vw;
+  top: -48vh;
+}
+
+.monster-division-mob-4 {
+  width: 30vh;
+  margin-left: 75vw;
+  top: -26vh;
+}
+
+.monster-division-mob-5 {
+  width: 33vh;
+  margin-left: 74vw;
+  top: -28vh;
+}
+
+.monster-division-mob-6 {
+  width: 29vh;
+  margin-left: 75vw;
+  top: -31vh;
+}
+
+.monster-division-boss-2 {
+  width: 60vh;
+  margin-left: 70vw;
+  top: -44vh;
+}
+
+.monster-division-mob-7 {
+  width: 30vh;
+  margin-left: 75vw;
+  top: -37vh;
+}
+
+.monster-division-mob-8 {
+  width: 34vh;
+  margin-left: 74vw;
+  top: -30vh;
+}
+
+.monster-division-mob-9 {
+  width: 34vh;
+  margin-left: 74vw;
+  top: -28vh;
+}
+
+.monster-division-boss-3 {
+  width: 54vh;
+  margin-left: 69vw;
+  top: -44vh;
+}
+
+
+/* ============================
+   ➕ Addition Monsters
+============================ */
+.monster-addition-mob-1 {
+  width: 33vh;
+  margin-left: 74vw;
+  top: -28vh;
+}
+
+.monster-addition-mob-2 {
+  width: 31vh;
+  margin-left: 74vw;
+  top: -27vh;
+}
+
+.monster-addition-mob-3 {
+  width: 27vh;
+  margin-left: 74vw;
+  top: -23vh;
+}
+
+.monster-addition-boss-1 {
+  width: 43vh;
+  margin-left: 71vw;
+  top: -47vh;
+}
+
+.monster-addition-mob-4 {
+  width: 25vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-addition-mob-5 {
+  width: 38vh;
+  margin-left: 73vw;
+  top: -33vh;
+}
+
+.monster-addition-mob-6 {
+  width: 35vh;
+  margin-left: 72vw;
+  top: -30vh;
+}
+
+.monster-addition-boss-2 {
+  width: 45vh;
+  margin-left: 72vw;
+  top: -46vh;
+}
+
+.monster-addition-mob-7 {
+  width: 32vh;
+  margin-left: 74vw;
+  top: -25vh;
+}
+
+.monster-addition-mob-8 {
+  width: 35vh;
+  margin-left: 74vw;
+  top: -29vh;
+}
+
+.monster-addition-mob-9 {
+  width: 35vh;
+  margin-left: 73vw;
+  top: -34vh;
+}
+
+.monster-addition-boss-3 {
+  width: 40vh;
+  margin-left: 73vw;
+  top: -47vh;
+}
+
+
+/* ============================
+   ➖ Subtraction Monsters
+============================ */
+.monster-subtraction-mob-1 {
+  width: 26vh;
+  margin-left: 74vw;
+  top: -25vh;
+}
+
+.monster-subtraction-mob-2 {
+  width: 26vh;
+  margin-left: 75vw;
+  top: -31vh;
+}
+
+.monster-subtraction-mob-3 {
+  width: 34vh;
+  margin-left: 73vw;
+  top: -23vh;
+}
+
+.monster-subtraction-boss-1 {
+  width: 44vh;
+  margin-left: 74vw;
+  top: -40vh;
+}
+
+.monster-subtraction-mob-4 {
+  width: 31vh;
+  margin-left: 74vw;
+  top: -30vh;
+}
+
+.monster-subtraction-mob-5 {
+  width: 29vh;
+  margin-left: 74vw;
+  top: -33vh;
+}
+
+.monster-subtraction-mob-6 {
+  width: 41vh;
+  margin-left: 70vw;
+  top: -22vh;
+}
+
+.monster-subtraction-boss-2 {
+  width: 47vh;
+  margin-left: 71vw;
+  top: -41vh;
+}
+
+.monster-subtraction-mob-7 {
+  width: 22vh;
+  margin-left: 76vw;
+  top: -31vh;
+}
+
+.monster-subtraction-mob-8 {
+  width: 26vh;
+  margin-left: 75vw;
+  top: -32vh;
+}
+
+.monster-subtraction-mob-9 {
+  width: 27vh;
+  margin-left: 75vw;
+  top: -39vh;
+}
+
+.monster-subtraction-boss-3 {
+  width: 38vh;
+  margin-left: 73vw;
+  top: -44vh;
+}
+
+
+/* ============================
+   ✖️ Multiplication Monsters
+============================ */
+.monster-multiplication-mob-1 {
+  width: 29vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-multiplication-mob-2 {
+  width: 27vh;
+  margin-left: 75vw;
+  top: -27vh;
+}
+
+.monster-multiplication-mob-3 {
+  width: 30vh;
+  margin-left: 75vw;
+  top: -30vh;
+}
+
+.monster-multiplication-boss-1 {
+  width: 50vh;
+  margin-left: 72vw;
+  top: -40vh;
+}
+
+.monster-multiplication-mob-4 {
+  width: 25vh;
+  margin-left: 75vw;
+  top: -19vh;
+}
+
+.monster-multiplication-mob-5 {
+  width: 32vh;
+  margin-left: 75vw;
+  top: -26vh;
+}
+
+.monster-multiplication-mob-6 {
+  width: 33vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-multiplication-boss-2 {
+  width: 41vh;
+  margin-left: 75vw;
+  top: -42vh;
+}
+
+.monster-multiplication-mob-7 {
+  width: 31vh;
+  margin-left: 75vw;
+  top: -24vh;
+}
+
+.monster-multiplication-mob-8 {
+  width: 32vh;
+  margin-left: 75vw;
+  top: -26vh;
+}
+
+.monster-multiplication-mob-9 {
+  width: 32vh;
+  margin-left: 75vw;
+  top: -32vh;
+}
+
+.monster-multiplication-boss-3 {
+  width: 48vh;
+  margin-left: 75vw;
+  top: -42vh;
+}
+
+
+/* ============================
+   🔢 Counting Monsters
+============================ */
+.monster-counting-mob-1 {
+  width: 28vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-counting-mob-2 {
+  width: 35vh;
+  margin-left: 74vw;
+  top: -30vh;
+}
+
+.monster-counting-mob-3 {
+  width: 29vh;
+  margin-left: 75vw;
+  top: -21vh;
+}
+
+.monster-counting-boss-1 {
+  width: 36vh;
+  margin-left: 74vw;
+  top: -47vh;
+}
+
+.monster-counting-mob-4 {
+  width: 31vh;
+  margin-left: 74vw;
+  top: -26vh;
+}
+
+.monster-counting-mob-5 {
+  width: 26vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-counting-mob-6 {
+  width: 38vh;
+  margin-left: 73vw;
+  top: -32vh
+}
+
+.monster-counting-boss-2 {
+  width: 35vh;
+  margin-left: 73vw;
+  top: -44vh;
+}
+
+.monster-counting-mob-7 {
+  width: 31vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-counting-mob-8 {
+  width: 29vh;
+  margin-left: 75vw;
+  top: -34vh;
+}
+
+.monster-counting-mob-9 {
+  width: 31vh;
+  margin-left: 74vw;
+  top: -25vh;
+}
+
+.monster-counting-boss-3 {
+  width: 39vh;
+  margin-left: 73vw;
+  top: -50vh;
+}
+
+
+/* ============================
+   🟰 Comparison Monsters
+============================ */
+.monster-comparison-mob-1 {
+  width: 31vh;
+  margin-left: 75vw;
+  top: -28vh;
+}
+
+.monster-comparison-mob-2 {
+  width: 43vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-comparison-mob-3 {
+  width: 32vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-comparison-boss-1 {
+  width: 44vh;
+  margin-left: 75vw;
+  top: -44vh;
+}
+
+.monster-comparison-mob-4 {
+  width: 36vh;
+  margin-left: 73vw;
+  top: -26vh;
+}
+
+.monster-comparison-mob-5 {
+  width: 28vh;
+  margin-left: 75vw;
+  top: -31vh;
+}
+
+.monster-comparison-mob-6 {
+  width: 34vh;
+  margin-left: 74vw;
+  top: -34vh;
+}
+
+.monster-comparison-boss-2 {
+  width: 46vh;
+  margin-left: 72vw;
+  top: -42vh;
+}
+
+.monster-comparison-mob-7 {
+  width: 36vh;
+  margin-left: 73vw;
+  top: -30vh;
+}
+
+.monster-comparison-mob-8 {
+  width: 34vh;
+  margin-left: 73vw;
+  top: -31vh;
+}
+
+.monster-comparison-mob-9 {
+  width: 33vh;
+  margin-left: 73vw;
+  top: -35vh;
+}
+
+.monster-comparison-boss-3 {
+  width: 79vh;
+  margin-left: 64vw;
+  top: -47vh;
+}
+
+
+/* ============================
+   🔠 Numerals Monsters
+============================ */
+.monster-numerals-mob-1 {
+  width: 37vh;
+  margin-left: 74vw;
+  top: -35vh;
+}
+
+.monster-numerals-mob-2 {
+  width: 30vh;
+  margin-left: 74vw;
+  top: -30vh;
+}
+
+.monster-numerals-mob-3 {
+  width: 26vh;
+  margin-left: 75vw;
+  top: -34vh;
+}
+
+.monster-numerals-boss-1 {
+  width: 39vh;
+  margin-left: 73vw;
+  top: -40vh;
+}
+
+.monster-numerals-mob-4 {
+  width: 25vh;
+  margin-left: 75vw;
+  top: -29vh;
+}
+
+.monster-numerals-mob-5 {
+  width: 24vh;
+  margin-left: 76vw;
+  top: -32vh;
+}
+
+.monster-numerals-mob-6 {
+  width: 27vh;
+  margin-left: 75vw;
+  top: -32vh;
+}
+
+.monster-numerals-boss-2 {
+  width: 42vh;
+  margin-left: 71vw;
+  top: -52vh;
+}
+
+.monster-numerals-mob-7 {
+  width: 28vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-numerals-mob-8 {
+  width: 28vh;
+  margin-left: 75vw;
+  top: -37vh;
+}
+
+.monster-numerals-mob-9 {
+  width: 35vh;
+  margin-left: 73vw;
+  top: -37vh;
+}
+
+.monster-numerals-boss-3 {
+  width: 38vh;
+  margin-left: 73vw;
+  top: -45vh;
+}
+
+
+/* ============================
+   🧩 Place Value Monsters
+============================ */
+.monster-placevalue-mob-1 {
+  width: 26vh;
+  margin-left: 75vw;
+  top: -29vh;
+}
+
+.monster-placevalue-mob-2 {
+  width: 28vh;
+  margin-left: 75vw;
+  top: -27vh;
+}
+
+.monster-placevalue-mob-3 {
+  width: 29vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-placevalue-boss-1 {
+  width: 40vh;
+  margin-left: 75vw;
+  top: -47vh;
+}
+
+.monster-placevalue-mob-4 {
+  width: 27vh;
+  margin-left: 75vw;
+  top: -25vh;
+}
+
+.monster-placevalue-mob-5 {
+  width: 33vh;
+  margin-left: 75vw;
+  top: -28vh;
+}
+
+.monster-placevalue-mob-6 {
+  width: 37vh;
+  margin-left: 75vw;
+  top: -29vh;
+}
+
+.monster-placevalue-boss-2 {
+  width: 43vh;
+  margin-left: 75vw;
+  top: -47vh;
+}
+
+.monster-placevalue-mob-7 {
+  width: 28vh;
+  margin-left: 75vw;
+  top: -38vh;
+}
+
+.monster-placevalue-mob-8 {
+  width: 33vh;
+  margin-left: 75vw;
+  top: -32vh;
+}
+
+.monster-placevalue-mob-9 {
+  width: 29vh;
+  margin-left: 75vw;
+  top: -28vh;
+}
+
+.monster-placevalue-boss-3 {
+  width: 36vh;
+  margin-left: 75vw;
+  top: -46vh;
 }

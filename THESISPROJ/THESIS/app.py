@@ -34,7 +34,6 @@ def login():
         user = cursor.fetchone()
 
         if user and bcrypt.check_password_hash(user['password'], password):
-            # You can implement login logic here (session, cookies)
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid username or password.', 'danger')
@@ -64,9 +63,10 @@ def register():
 def chatbot():
     return render_template('chatbot.html')
 
-@app.route('/multiplication_mirage')
-def multiplication_mirage():
-    return render_template('multiplication_mirage.html')
+@app.route('/stages')
+def stages():
+    selected_map = request.args.get('map', None)
+    return render_template('stages.html', selected_map=selected_map)
 
 @app.route('/dashboard')
 def dashboard():
@@ -82,20 +82,16 @@ def shop():
 
 @app.route('/logout')
 def logout():
-    # Implement logout logic (session, cookies)
     return redirect(url_for('login'))
 
-# Forgot password route
 @app.route('/forgot-password')
 def forgot_password():
     return render_template('forgot_password.html')
 
-# The route that renders the initial game page with a question
 @app.route('/game', methods=['GET'])
 def game():
-    user_id = 1  # Use a hardcoded user ID for now (skip login part)
-    
-    # Get current difficulty for the user
+    user_id = 1  # Use a hardcoded user ID for now
+
     cursor.execute("SELECT current_difficulty FROM user_progress WHERE user_id = %s", (user_id,))
     row = cursor.fetchone()
 
@@ -106,14 +102,11 @@ def game():
     else:
         difficulty = row['current_difficulty']
 
-    # Fetch a random question based on difficulty
     cursor.execute("SELECT * FROM questions WHERE difficulty = %s", (difficulty,))
     questions = cursor.fetchall()
     question = random.choice(questions) if questions else None
 
-    # Render the game page and pass the question to the template
     return render_template('game.html', question=question)
-
 
 @app.route('/submit-answer', methods=['POST'])
 def submit_answer():
@@ -136,17 +129,9 @@ def submit_answer():
         is_correct = user_answer.strip() == question['correct_answer'].strip()
 
         if is_correct:
-            cursor.execute(""" 
-                UPDATE user_progress 
-                SET correct_answers = correct_answers + 1 
-                WHERE user_id = %s
-            """, (user_id,))
+            cursor.execute("UPDATE user_progress SET correct_answers = correct_answers + 1 WHERE user_id = %s", (user_id,))
         else:
-            cursor.execute(""" 
-                UPDATE user_progress 
-                SET wrong_answers = wrong_answers + 1 
-                WHERE user_id = %s
-            """, (user_id,))
+            cursor.execute("UPDATE user_progress SET wrong_answers = wrong_answers + 1 WHERE user_id = %s", (user_id,))
 
         cursor.execute("SELECT correct_answers, wrong_answers FROM user_progress WHERE user_id = %s", (user_id,))
         stats = cursor.fetchone()
@@ -163,12 +148,10 @@ def submit_answer():
         cursor.execute("UPDATE user_progress SET current_difficulty = %s WHERE user_id = %s", (new_diff, user_id))
         db.commit()
 
-        # Return the new question
         return jsonify({'success': True, 'new_question': get_new_question_data(user_id)})
 
     except Exception as e:
         return jsonify({'error': 'There was a problem submitting your answer.'}), 500
-
 
 def get_new_question_data(user_id):
     cursor.execute("SELECT current_difficulty FROM user_progress WHERE user_id = %s", (user_id,))
@@ -194,13 +177,10 @@ def get_new_question_data(user_id):
     else:
         return {'error': 'No questions available for this level.'}
 
-
 @app.route('/get-new-question', methods=['GET'])
 def get_new_question():
     try:
         user_id = 1  # Hardcoded user ID
-        
-        # Fetch new question for the current user
         question_data = get_new_question_data(user_id)
 
         if 'error' in question_data:
