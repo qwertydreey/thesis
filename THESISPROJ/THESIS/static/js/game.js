@@ -447,10 +447,9 @@ function checkGameOver() {
     const input  = document.getElementById('number-input').value.trim();
     const answer = document.getElementById('correct-answer').value.trim();
     if (!answer) {
-      alert("No question loaded."); return;
     }
     if (input === '') {
-      document.getElementById('feedback').innerText = 'Please enter a number!';
+      displayFeedback('Please enter a number!'); // Display feedback using your function
       return;
     }
     if (parseFloat(input) === parseFloat(answer)) {
@@ -502,108 +501,183 @@ function checkGameOver() {
   }
 
 
-  // ======= POTIONS =======
-  let healthPotions  = Infinity;
-  let thunderPotions = Infinity;
-  let freezePotions  = Infinity;
+// ======= POTIONS =======
 
-  let freezePotionUsed = false;
-  let freezeTurns      = 0;
-  const freezeTurnsDisplay = document.getElementById('freeze-turn');
-  const monsterContainer   = document.querySelector('.monster');
-  freezeTurnsDisplay.style.display = 'none';
+// Potion counts
+let healthPotions = 3;
+let thunderPotions = 3;
+let freezePotions = 3;
 
-  function useHealthPotion() {
-    if (currentPlayerHealth >= maxPlayerHealth) {
-      alert("🧪 Full health already!"); return;
-    }
-    playerHeal(4);
-    alert("🧪 Health Potion used!");
+// Potion usage locks
+let isHealthPotionInUse = false;
+let isThunderPotionInUse = false;
+let isFreezePotionInUse = false;
+
+// Freeze-related variables
+let freezePotionUsed = false;
+let freezeTurns = 0;
+const freezeTurnsDisplay = document.getElementById('freeze-turn');
+const monsterContainer = document.querySelector('.monster');
+freezeTurnsDisplay.style.display = 'none';
+
+// ========== HEALTH POTION ==========
+function useHealthPotion() {
+  if (isHealthPotionInUse) return; // lock
+
+  if (currentPlayerHealth >= maxPlayerHealth) {
+    alert("🧪 Full health already!");
+    return;
   }
 
-// GLOBAL for Thunder animation
-
-  // Frame functions for Thunder effect
-  const frames = document.querySelectorAll('.sprite-lightning');
-  let currentFrame = 0;
-  const monsterElement = document.querySelector('.monster');
-
-  function resetFrames() {
-    frames.forEach(f => f.classList.remove('active'));
-    monsterElement.classList.remove('red');
+  if (healthPotions <= 0) {
+    alert("No Health Potions!");
+    return;
   }
 
-  function changeFrame() {
+  isHealthPotionInUse = true;
+  healthPotions--;
+  updatePotionUI();
+
+  playerHeal(4);
+  alert("🧪 Health Potion used!");
+
+  setTimeout(() => {
+    isHealthPotionInUse = false; // unlock after short delay
+  }, 200);
+}
+
+// ========== THUNDER POTION ==========
+const frames = document.querySelectorAll('.sprite-lightning');
+let currentFrame = 0;
+const monsterElement = document.querySelector('.monster');
+
+function resetFrames() {
+  frames.forEach(f => f.classList.remove('active'));
+  monsterElement.classList.remove('red');
+}
+
+function changeFrame() {
+  resetFrames();
+  frames[currentFrame].classList.add('active');
+  currentFrame++;
+  if (currentFrame >= frames.length) {
+    clearInterval(animationInterval);
+    currentFrame = 0;
     resetFrames();
-    frames[currentFrame].classList.add('active');
-    currentFrame++;
-    if (currentFrame >= frames.length) {
-      clearInterval(animationInterval);
-      currentFrame = 0;
-      resetFrames();
-      monsterElement.classList.add('red');
-      setTimeout(() => monsterElement.classList.remove('red'), 70);
-    }
+    monsterElement.classList.add('red');
+    setTimeout(() => monsterElement.classList.remove('red'), 70);
   }
+}
 
-  // Thunder potion logic
-  function useThunderPotion() {
-    if (thunderPotions <= 0) {
-      alert("⚡ No Thunder Potions left!");
-      return;
-    }
-
-    // Stop previous animation if any
-    if (animationInterval !== null) {
-      clearInterval(animationInterval);
-      resetFrames();
-    }
-
-    console.log("Thunder Potion used!");
-    thunderPotions--;
-
-    // Start thunder animation loop
-    animationInterval = setInterval(changeFrame, 100);
-
-    // Delay the monster damage animation and health reduction
+function useThunderPotion() {
+  if (thunderPotions <= 0) {
+    const feedback = document.getElementById('feedback');
+    feedback.innerText = '⚡You have no Thunder Potions left!';
     setTimeout(() => {
-      const monster = document.querySelector(".monster");
-      monster.classList.add("damaged");
+      feedback.innerText = '';
+    }, 2000);
+    return;
+  }
+  if (currentMonsterHealth <= 0 || isThunderPotionInUse) return;
 
-      // Remove the damage effect after animation duration
+  isThunderPotionInUse = true;
+  thunderPotions--;
+  updatePotionUI();
+
+  setTimeout(() => {
+    if (currentMonsterHealth > 0) {
+      if (animationInterval !== null) {
+        clearInterval(animationInterval);
+        resetFrames();
+      }
+
+      console.log("Thunder Potion used!");
+      animationInterval = setInterval(changeFrame, 80); // faster lightning animation
+
       setTimeout(() => {
-        monster.classList.remove("damaged");
+        const monster = document.querySelector(".monster");
 
-        // Apply actual health reduction *after* the animation
-        if (currentMonsterHealth > 0) {
-          monsterTakeDamage();
+        if (!monster.classList.contains('frozen')) {
+          monster.classList.add("damaged");
+          setTimeout(() => {
+            monster.classList.remove("damaged");
+            if (currentMonsterHealth > 0) {
+              monsterTakeDamage();
+            }
+            setTimeout(() => {
+              isThunderPotionInUse = false;
+            }, 150);
+          }, 320);
+        } else {
+          console.log("❄️ Monster is frozen — no damage animation.");
+          if (currentMonsterHealth > 0) {
+            monsterTakeDamage();
+          }
+          setTimeout(() => {
+            isThunderPotionInUse = false;
+          }, 150);
         }
-      }, 400); // match your CSS .damaged duration (0.4s)
-    }, 660); // simulate thunder landing delay
+      }, 520);
+    } else {
+      console.log("❌ Monster is already defeated. Thunder Potion cannot be used.");
+      setTimeout(() => {
+        isThunderPotionInUse = false;
+      }, 150);
+    }
+  }, 600);
+}
+
+
+// ========== FREEZE POTION ==========
+
+function useFreezePotion() {
+  if (isFreezePotionInUse) return; // Lock to prevent spam clicks
+
+  // Check if there are freeze turns remaining
+  if (freezeTurns > 0) {
+    displayFeedback(`❄️ You still have ${freezeTurns} Freeze Turns left!`);
+    return; // Don't use potion if freeze turns are still active
   }
 
-  function useFreezePotion() {
-    if (freezePotions <= 0) { alert("No Freeze Potions!"); return; }
-    freezePotions--;
-    freezePotionUsed = true;
-    freezeTurns      = 3;
-    updateFreezeTurnsDisplay();
-    freezeTurnsDisplay.style.display = 'block';
+  // If no freeze potions are left, show feedback
+  if (freezePotions <= 0) {
+    displayFeedback('❄️ You have no Freeze Potions left!');
+    return;
+  }
+
+  // Proceed with using freeze potion
+  isFreezePotionInUse = true;
+  freezePotions--; // Decrease potion count
+  freezePotionUsed = true;
+  freezeTurns = 3; // Set freeze turns to 3
+  updatePotionUI(); // Update potion UI
+  updateFreezeTurnsDisplay(); // Update freeze turns display
+  freezeTurnsDisplay.style.display = 'block';
+
+  setTimeout(() => {
     applyFreezeEffect();
-  }
+    setTimeout(() => {
+      isFreezePotionInUse = false; // Unlock after short delay
+    }, 200);
+  }, 800); // Adjusted to match 80ms animation speed feel (optional)
+}
 
-  function updateFreezeTurnsDisplay() {
-    freezeTurnsDisplay.innerText = `Freeze Turns Left: ${freezeTurns}`;
-  }
-  function applyFreezeEffect() {
-    monsterContainer.classList.add('frozen');
-  }
-  function removeFreezeEffect() {
-    monsterContainer.classList.remove('frozen');
-  }
-  
-  function damagePlayer() {
-  const monsterContainer = document.querySelector('.monster'); // define locally
+function updateFreezeTurnsDisplay() {
+  freezeTurnsDisplay.innerText = `❄️ Freeze Turns Left: ${freezeTurns}`;
+}
+
+function applyFreezeEffect() {
+  monsterContainer.classList.add('frozen');
+}
+
+function removeFreezeEffect() {
+  monsterContainer.classList.remove('frozen');
+}
+
+// ========== DAMAGE PLAYER (checks if frozen) ==========
+
+function damagePlayer() {
+  const monsterContainer = document.querySelector('.monster');
   const player = document.querySelector('.player');
 
   if (!monsterContainer.classList.contains('frozen')) {
@@ -616,6 +690,27 @@ function checkGameOver() {
   }
 }
 
+
+// ========== UPDATE POTION UI ==========
+function updatePotionUI() {
+  const freezePotion = document.querySelector('.freeze-potion');
+  const freezeQuantity = document.getElementById('freeze-quantity');
+  freezeQuantity.innerText = freezePotions;
+  if (freezePotions <= 0) freezePotion.classList.add('potion-depleted');
+  else freezePotion.classList.remove('potion-depleted');
+
+  const healthPotion = document.querySelector('.health-potion');
+  const healthQuantity = document.getElementById('health-quantity');
+  healthQuantity.innerText = healthPotions;
+  if (healthPotions <= 0) healthPotion.classList.add('potion-depleted');
+  else healthPotion.classList.remove('potion-depleted');
+
+  const thunderPotion = document.querySelector('.thunder-potion');
+  const thunderQuantity = document.getElementById('thunder-quantity');
+  thunderQuantity.innerText = thunderPotions;
+  if (thunderPotions <= 0) thunderPotion.classList.add('potion-depleted');
+  else thunderPotion.classList.remove('potion-depleted');
+}
 
 
   // ======= ANIMATIONS (unchanged) =======
@@ -637,7 +732,7 @@ function checkGameOver() {
   fireball.src = selectedAttack;
   fireball.classList.add("fireball");
 
-  const groundContainer = document.querySelector(".ground-container");
+  const groundContainer = document.querySelector(".ground");
   const player = document.querySelector(".player");
   const monster = document.querySelector(".monster");
 
@@ -723,7 +818,7 @@ function monsterAttack() {
 
 // Show the victory screen
 function showVictoryScreen() {
-  const gameContainer = document.querySelector('.game-container');
+  const gameContainer = document.querySelector('.ground');
   if (!gameContainer) {
     console.error('Game container not found!');
     return;
@@ -815,7 +910,7 @@ function showVictoryScreen() {
 
 // Show the game over screen
 function showGameOverScreen() {
-  const gameContainer = document.querySelector('.game-container');
+  const gameContainer = document.querySelector('.ground');
   if (!gameContainer) {
     console.error('Game container not found!');
     return;
@@ -1119,3 +1214,69 @@ const languageData = {
     }
   });
 
+// Function to handle showing feedback
+let feedbackTimeout; // Global variable to store the timeout ID
+
+function showFeedback(message, duration = 3000) { // Default duration set to 3000ms (3 seconds)
+  const feedback = document.getElementById('feedback');
+
+  // Clear previous feedback message if it's still displayed
+  if (feedbackTimeout) {
+    clearTimeout(feedbackTimeout); // Clear the previous timeout
+    feedback.innerText = ''; // Clear previous feedback message immediately
+  }
+
+  // Display the new feedback message
+  feedback.innerText = message;
+
+  // Set the timeout to clear the feedback after the specified duration
+  feedbackTimeout = setTimeout(() => {
+    feedback.innerText = ''; // Clear feedback after duration
+  }, duration);
+}
+
+
+
+function useFreezePotion() {
+  if (isFreezePotionInUse) return; // Lock to prevent spam clicks
+
+  // Check if there are Freeze Turns left
+  if (freezeTurns > 0) {
+    showFeedback(`❄️ You still have ${freezeTurns} Freeze Turns left!`);
+    return;
+  }
+
+  // Check if no Freeze Potions are left
+  if (freezePotions <= 0) {
+    showFeedback('❄️ You have no Freeze Potions left!');
+    return;
+  }
+
+  isFreezePotionInUse = true;
+  freezePotions--;
+  freezePotionUsed = true;
+  freezeTurns = 3;
+  updatePotionUI();
+  updateFreezeTurnsDisplay();
+  freezeTurnsDisplay.style.display = 'block';
+
+  // Add freeze effect after a small delay
+  setTimeout(() => {
+    applyFreezeEffect();
+    setTimeout(() => {
+      isFreezePotionInUse = false; // Unlock after short delay
+    }, 200);
+  }, 800);
+}
+
+function updateFreezeTurnsDisplay() {
+  freezeTurnsDisplay.innerText = `❄️ Freeze Turns Left: ${freezeTurns}`;
+}
+
+function applyFreezeEffect() {
+  monsterContainer.classList.add('frozen');
+}
+
+function removeFreezeEffect() {
+  monsterContainer.classList.remove('frozen');
+}

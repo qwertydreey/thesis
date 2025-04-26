@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monster Atlas</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/monster_atlas.css') }}">
+</head>
+<body>
+
+    <div id="container">
+        <!-- Left side for map buttons -->
+        <div id="map-container">
+            <button class="map-btn" onclick="displayMonsters('addition')">Addition</button>
+            <button class="map-btn" onclick="displayMonsters('multiplication')">Multiplication</button>
+            <button class="map-btn" onclick="displayMonsters('subtraction')">Subtraction</button>
+            <button class="map-btn" onclick="displayMonsters('division')">Division</button>
+            <button class="map-btn" onclick="displayMonsters('counting')">Counting</button>
+            <button class="map-btn" onclick="displayMonsters('comparison')">Comparison</button>
+            <button class="map-btn" onclick="displayMonsters('numerals')">Numerals</button>
+            <button class="map-btn" onclick="displayMonsters('placevalue')">Place Value</button>
+        </div>
+    
+        <!-- Right side for monster display -->
+        <div id="monster-container">
+            <div id="monster-display">
+                <div id="monster-info">
+                    <!-- This section will be dynamically updated with monster images and descriptions -->
+                </div>
+                <div id="monster-navigation">
+                    <button id="prev-btn">Prev</button>
+                    <button id="next-btn">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    
+      
+      
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+
+let currentMonsterIndex = 0;
+let currentMonsters = [];
+const monsters = {
+    
+  addition: [
+
+    { "name": "Addition-Mob-1", "img": "Addition-Mob-1.png", "description": "A number growing larger with each step.", "type": "Mob" },
+    { "name": "Addition-Mob-2", "img": "Addition-Mob-2.png", "description": "A number merging with others, becoming larger.", "type": "Mob" },
+    { "name": "Addition-Mob-3", "img": "Addition-Mob-3.png", "description": "A value increasing with every addition.", "type": "Mob" },
+    { "name": "Addition-Boss-1", "img": "Addition-Boss-1.png", "description": "The addition king, merging numbers in an endless chain.", "type": "Boss" },
+    { "name": "Addition-Mob-4", "img": "Addition-Mob-4.png", "description": "A multiplying machine that doubles everything.", "type": "Mob" },
+    { "name": "Addition-Mob-5", "img": "Addition-Mob-5.png", "description": "A growth monster, expanding as it moves.", "type": "Mob" },
+    { "name": "Addition-Mob-6", "img": "Addition-Mob-6.png", "description": "A bloated creature born from excess.", "type": "Mob" },
+    { "name": "Addition-Boss-2", "img": "Addition-Boss-2.png", "description": "The grand adder, making numbers multiply.", "type": "Boss" },
+    { "name": "Addition-Mob-7", "img": "Addition-Mob-7.png", "description": "An ultimate number-pusher that never stops growing.", "type": "Mob" },
+    { "name": "Addition-Mob-8", "img": "Addition-Mob-8.png", "description": "A monster of infinite growth.", "type": "Mob" },
+    { "name": "Addition-Mob-9", "img": "Addition-Mob-9.png", "description": "A creature that feeds on sums, growing exponentially.", "type": "Mob" },
+    { "name": "Addition-Boss-3", "img": "Addition-Boss-3.png", "description": "The ultimate adder, controlling all sums.", "type": "Boss" }
+  ],
+  multiplication: [
+
+    { "name": "Multiplication-Mob-1", "img": "Multiplication-Mob-1.png", "description": "A common desert ogre lurking the sands.", "type": "Mob" },
+    { "name": "Multiplication-Mob-2", "img": "Multiplication-Mob-2.png", "description": "A sand stomper causing tremors.", "type": "Mob" },
+    { "name": "Multiplication-Mob-3", "img": "Multiplication-Mob-3.png", "description": "A cactus monster creeping under the sun.", "type": "Mob" },
+    { "name": "Multiplication-Boss-1", "img": "Multiplication-Boss-1.png", "description": "The scarab king scorching the desert with fire.", "type": "Boss" },
+    { "name": "Multiplication-Mob-4", "img": "Multiplication-Mob-4.png", "description": "A dune dweller hiding under the sands.", "type": "Mob" },
+    { "name": "Multiplication-Mob-5", "img": "Multiplication-Mob-5.png", "description": "A sunburst stalker preying travelers.", "type": "Mob" },
+    { "name": "Multiplication-Mob-6", "img": "Multiplication-Mob-6.png", "description": "A fiery stalker blending with dunes.", "type": "Mob" },
+    { "name": "Multiplication-Boss-2", "img": "Multiplication-Boss-2.png", "description": "The phantom ruler of pyramid tombs.", "type": "Boss" },
+    { "name": "Multiplication-Mob-7", "img": "Multiplication-Mob-7.png", "description": "A feral hound patrolling the heat.", "type": "Mob" },
+    { "name": "Multiplication-Mob-8", "img": "Multiplication-Mob-8.png", "description": "A heat hound blazing through dunes.", "type": "Mob" },
+    { "name": "Multiplication-Mob-9", "img": "Multiplication-Mob-9.png", "description": "A hound with fangs as hot as fire.", "type": "Mob" },
+    { "name": "Multiplication-Boss-3", "img": "Multiplication-Boss-3.png", "description": "Anubis' ghost, guardian of ancient secrets.", "type": "Boss" }
+  ],
+ subtraction: [
+
+    { "name": "Subtraction-Mob-1", "img": "Subtraction-Mob-1.png", "description": "A subtractor lurking in the shadows.", "type": "Mob" },
+    { "name": "Subtraction-Mob-2", "img": "Subtraction-Mob-2.png", "description": "A number remover deleting values from existence.", "type": "Mob" },
+    { "name": "Subtraction-Mob-3", "img": "Subtraction-Mob-3.png", "description": "A value-fader causing digits to disappear.", "type": "Mob" },
+    { "name": "Subtraction-Boss-1", "img": "Subtraction-Boss-1.png", "description": "The subtraction king, erasing all in its path.", "type": "Boss" },
+    { "name": "Subtraction-Mob-4", "img": "Subtraction-Mob-4.png", "description": "A shadow-walker removing the light.", "type": "Mob" },
+    { "name": "Subtraction-Mob-5", "img": "Subtraction-Mob-5.png", "description": "A void-spreader consuming all values.", "type": "Mob" },
+    { "name": "Subtraction-Mob-6", "img": "Subtraction-Mob-6.png", "description": "A fading specter stealing numbers away.", "type": "Mob" },
+    { "name": "Subtraction-Boss-2", "img": "Subtraction-Boss-2.png", "description": "The king of negative space, pulling everything into the void.", "type": "Boss" },
+    { "name": "Subtraction-Mob-7", "img": "Subtraction-Mob-7.png", "description": "A dark creature erasing everything in sight.", "type": "Mob" },
+    { "name": "Subtraction-Mob-8", "img": "Subtraction-Mob-8.png", "description": "A shadow that steals numbers and light.", "type": "Mob" },
+    { "name": "Subtraction-Mob-9", "img": "Subtraction-Mob-9.png", "description": "A reaper of numbers, taking them all into darkness.", "type": "Mob" },
+    { "name": "Subtraction-Boss-3", "img": "Subtraction-Boss-3.png", "description": "The ultimate subtraction demon, master of the void.", "type": "Boss" }
+  ],
+  division: [
+
+    { "name": "Division-Mob-1", "img": "Division-Mob-1.png", "description": "A fraction-maker splitting numbers in half.", "type": "Mob" },
+    { "name": "Division-Mob-2", "img": "Division-Mob-2.png", "description": "A divisor carving up values into pieces.", "type": "Mob" },
+    { "name": "Division-Mob-3", "img": "Division-Mob-3.png", "description": "A number splitter, dividing numbers into parts.", "type": "Mob" },
+    { "name": "Division-Boss-1", "img": "Division-Boss-1.png", "description": "The master divisor, splitting everything into fractions.", "type": "Boss" },
+    { "name": "Division-Mob-4", "img": "Division-Mob-4.png", "description": "A divider splitting worlds apart.", "type": "Mob" },
+    { "name": "Division-Mob-5", "img": "Division-Mob-5.png", "description": "A shifter separating elements.", "type": "Mob" },
+    { "name": "Division-Mob-6", "img": "Division-Mob-6.png", "description": "A splitter of destinies and values.", "type": "Mob" },
+    { "name": "Division-Boss-2", "img": "Division-Boss-2.png", "description": "The division tyrant, breaking everything into perfect pieces.", "type": "Boss" },
+    { "name": "Division-Mob-7", "img": "Division-Mob-7.png", "description": "A ruler of division, splitting to conquer.", "type": "Mob" },
+    { "name": "Division-Mob-8", "img": "Division-Mob-8.png", "description": "A monster that breaks down all things into fractions.", "type": "Mob" },
+    { "name": "Division-Mob-9", "img": "Division-Mob-9.png", "description": "A beast that tears everything into small pieces.", "type": "Mob" },
+    { "name": "Division-Boss-3", "img": "Division-Boss-3.png", "description": "The ultimate divider, splitting the world in half.", "type": "Boss" }
+  ],
+  
+  counting: [
+
+    { "name": "Counting-Mob-1", "img": "Counting-Mob-1.png", "description": "A creature that counts by one.", "type": "Mob" },
+    { "name": "Counting-Mob-2", "img": "Counting-Mob-2.png", "description": "A creature that multiplies the numbers.", "type": "Mob" },
+    { "name": "Counting-Mob-3", "img": "Counting-Mob-3.png", "description": "A number-stretching monster counting high.", "type": "Mob" },
+    { "name": "Counting-Boss-1", "img": "Counting-Boss-1.png", "description": "The ruler of the counting kingdom.", "type": "Boss" },
+    { "name": "Counting-Mob-4", "img": "Counting-Mob-4.png", "description": "A counter split by intervals.", "type": "Mob" },
+    { "name": "Counting-Mob-5", "img": "Counting-Mob-5.png", "description": "A big number stomper.", "type": "Mob" },
+    { "name": "Counting-Mob-6", "img": "Counting-Mob-6.png", "description": "A rapidly multiplying monster.", "type": "Mob" },
+    { "name": "Counting-Boss-2", "img": "Counting-Boss-2.png", "description": "The boss counting everything in sight.", "type": "Boss" },
+    { "name": "Counting-Mob-7", "img": "Counting-Mob-7.png", "description": "A sequential beast stretching the numberline.", "type": "Mob" },
+    { "name": "Counting-Mob-8", "img": "Counting-Mob-8.png", "description": "A number monster continuing the count.", "type": "Mob" },
+    { "name": "Counting-Mob-9", "img": "Counting-Mob-9.png", "description": "A power-counter working its way through.", "type": "Mob" },
+    { "name": "Counting-Boss-3", "img": "Counting-Boss-3.png", "description": "The king of counting.", "type": "Boss" }
+  ],
+  comparison: [
+
+    { "name": "Comparison-Mob-1", "img": "Comparison-Mob-1.png", "description": "A critter measuring objects.", "type": "Mob" },
+    { "name": "Comparison-Mob-2", "img": "Comparison-Mob-2.png", "description": "A divider splitting objects for comparison.", "type": "Mob" },
+    { "name": "Comparison-Mob-3", "img": "Comparison-Mob-3.png", "description": "A balance keeper comparing values.", "type": "Mob" },
+    { "name": "Comparison-Boss-1", "img": "Comparison-Boss-1.png", "description": "The comparison ruler measuring every value.", "type": "Boss" },
+    { "name": "Comparison-Mob-4", "img": "Comparison-Mob-4.png", "description": "A strange creature balancing the values.", "type": "Mob" },
+    { "name": "Comparison-Mob-5", "img": "Comparison-Mob-5.png", "description": "A judge splitting values equally.", "type": "Mob" },
+    { "name": "Comparison-Mob-6", "img": "Comparison-Mob-6.png", "description": "A counter measuring differences.", "type": "Mob" },
+    { "name": "Comparison-Boss-2", "img": "Comparison-Boss-2.png", "description": "The comparison monster, deciding the fates of numbers.", "type": "Boss" },
+    { "name": "Comparison-Mob-7", "img": "Comparison-Mob-7.png", "description": "A ruler comparing values from opposite sides.", "type": "Mob" },
+    { "name": "Comparison-Mob-8", "img": "Comparison-Mob-8.png", "description": "A measure-working monster.", "type": "Mob" },
+    { "name": "Comparison-Mob-9", "img": "Comparison-Mob-9.png", "description": "A comparison hunter.", "type": "Mob" },
+    { "name": "Comparison-Boss-3", "img": "Comparison-Boss-3.png", "description": "The master of comparisons.", "type": "Boss" }
+  ],
+  numerals: [
+    { "name": "Numerals-Mob-1", "img": "Numerals-Mob-1.png", "description": "A number-hopper skipping from numeral to numeral.", "type": "Mob" },
+    { "name": "Numerals-Mob-2", "img": "Numerals-Mob-2.png", "description": "A numeracy monster counting all the way.", "type": "Mob" },
+    { "name": "Numerals-Mob-3", "img": "Numerals-Mob-3.png", "description": "A numeral beast scratching the number line.", "type": "Mob" },
+    { "name": "Numerals-Boss-1", "img": "Numerals-Boss-1.png", "description": "The grand numeral keeper of the ancient numbers.", "type": "Boss" },
+    { "name": "Numerals-Mob-4", "img": "Numerals-Mob-4.png", "description": "A number-crusher smashing through numerals.", "type": "Mob" },
+    { "name": "Numerals-Mob-5", "img": "Numerals-Mob-5.png", "description": "A numeral-fighter perfecting all numbers.", "type": "Mob" },
+    { "name": "Numerals-Mob-6", "img": "Numerals-Mob-6.png", "description": "A magical numeral keeper.", "type": "Mob" },
+    { "name": "Numerals-Boss-2", "img": "Numerals-Boss-2.png", "description": "The ultimate ruler of numerals.", "type": "Boss" },
+    { "name": "Numerals-Mob-7", "img": "Numerals-Mob-7.png", "description": "A creepy numeral-spreading monster.", "type": "Mob" },
+    { "name": "Numerals-Mob-8", "img": "Numerals-Mob-8.png", "description": "A numeral-devouring beast.", "type": "Mob" },
+    { "name": "Numerals-Mob-9", "img": "Numerals-Mob-9.png", "description": "A numeral conqueror.", "type": "Mob" }
+  ],
+  placevalue: [
+
+    { "name": "PlaceValue-Mob-1", "img": "PlaceValue-Mob-1.png", "description": "A basic place value monster, guarding the ones place.", "type": "Mob" },
+    { "name": "PlaceValue-Mob-2", "img": "PlaceValue-Mob-2.png", "description": "A place value guardian, keeping track of tens.", "type": "Mob" },
+    { "name": "PlaceValue-Mob-3", "img": "PlaceValue-Mob-3.png", "description": "The place value trickster, shifting between hundreds.", "type": "Mob" },
+    { "name": "PlaceValue-Boss-1", "img": "PlaceValue-Boss-1.png", "description": "The mighty Place Value King, ruler of all digits.", "type": "Boss" },
+    { "name": "PlaceValue-Mob-4", "img": "PlaceValue-Mob-4.png", "description": "A monster that moves numbers across the thousands place.", "type": "Mob" },
+    { "name": "PlaceValue-Mob-5", "img": "PlaceValue-Mob-5.png", "description": "The place value master, controlling decimal places.", "type": "Mob" },
+    { "name": "PlaceValue-Mob-6", "img": "PlaceValue-Mob-6.png", "description": "A monster that makes numbers grow into greater places.", "type": "Mob" },
+    { "name": "PlaceValue-Boss-2", "img": "PlaceValue-Boss-2.png", "description": "The supreme Place Value Overlord, with the power to shift any digit.", "type": "Boss" },
+    { "name": "PlaceValue-Mob-7", "img": "PlaceValue-Mob-7.png", "description": "A chaotic place value creature, messing up the order of digits.", "type": "Mob" },
+    { "name": "PlaceValue-Mob-8", "img": "PlaceValue-Mob-8.png", "description": "A place value beast that multiplies numbers by powers of ten.", "type": "Mob" },
+    { "name": "PlaceValue-Mob-9", "img": "PlaceValue-Mob-9.png", "description": "A place value destroyer, erasing numbers from existence.", "type": "Mob" }
+  ]
+};
+
+
+
+
+
+
+
+function displayMonsters(operation) {
+    // Set the current monsters based on the selected operation
+    currentMonsters = monsters[operation];
+    currentMonsterIndex = 0;  // Reset to the first monster
+    
+    // Update the display with the first monster
+    updateMonsterDisplay();
+}
+
+function updateMonsterDisplay() {
+    const monster = currentMonsters[currentMonsterIndex];
+    const monsterInfo = document.getElementById('monster-info');
+    
+    // Assuming 'folderName' is a dynamic variable based on the operation type (e.g., 'addition')
+    const folderName = monster.name.split('-')[0].toLowerCase();  // This will give 'addition' from 'Addition-Mob-1'
+    
+    // Access the specific folder of monsters (e.g., 'addition') from the main object
+    const monstersInFolder = monsters[folderName]; 
+    
+    // Get the specific monster info
+    const monsterData = monstersInFolder.find(m => m.name === monster.name); // Find the monster by name
+    
+    // Construct the image path dynamically
+    const imagePath = `/static/images/gameimg/mnstr/${folderName}/${monsterData.img}`;
+    
+    // Clear previous monster info and update
+    monsterInfo.innerHTML = `
+        <h2>${monsterData.name}</h2>
+        <img src="${imagePath}" alt="${monsterData.name}" />
+        <p><strong>Type:</strong> ${monsterData.type}</p>
+        <p>${monsterData.description}</p>
+    `;
+}
+
+
+
+document.getElementById('prev-btn').addEventListener('click', function() {
+    if (currentMonsterIndex > 0) {
+        currentMonsterIndex--;
+        updateMonsterDisplay();
+    }
+});
+
+document.getElementById('next-btn').addEventListener('click', function() {
+    if (currentMonsterIndex < currentMonsters.length - 1) {
+        currentMonsterIndex++;
+        updateMonsterDisplay();
+    }
+});
+
+
+
+
+  </script>
+
+</body>
+</html>

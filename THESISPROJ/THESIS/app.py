@@ -80,6 +80,14 @@ def roadmap():
 def shop():
     return render_template('shop.html')
 
+@app.route('/collectibles')
+def collectibles():
+    return render_template('collectibles.html')
+
+@app.route('/monster_atlas')
+def monster_atlas():
+    return render_template('monster_atlas.html')
+
 @app.route('/logout')
 def logout():
     return redirect(url_for('login'))

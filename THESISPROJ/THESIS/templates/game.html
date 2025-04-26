@@ -1,283 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Tailwind CSS and Font Awesome Integration -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Link to Custom Game Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
-    <!-- Font Awesome Icons for heart and other icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Chewy&family=Fredoka:wght@300..700&family=Varela+Round&display=swap" rel="stylesheet">
+<head>
+  <!-- Tailwind CSS and Font Awesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Chewy&family=Fredoka:wght@300..700&family=Varela+Round&display=swap" rel="stylesheet">
+</head>
 
-</body>
+<body>
+  <div class="game-wrapper">
 
-  </head>
-  <body>
-    <div class="game-wrapper">
-      <!-- Game Background -->
-      <div class="game-bg" id="game-bg">
-        <!-- Main Game Container (Player and Monster Section) -->
-          <div class="flex justify-between items-center p-4 w-full">
-            <!-- Player Section -->
-            <div class="player-container">
-                <p class="player-name">PLAYER NAME</p>
-                <div id="player-health" class="hp-bar-container playerhp">
-                </div>
-            </div>
-
-            <div class="lightning-container">
-              <img src="{{ url_for('static', filename='images/anim/thunder/11.png') }}" class="sprite-lightning" />
-              <img src="{{ url_for('static', filename='images/anim/thunder/22.png') }}" class="sprite-lightning" />
-              <img src="{{ url_for('static', filename='images/anim/thunder/33.png') }}" class="sprite-lightning" />
-              <img src="{{ url_for('static', filename='images/anim/thunder/44.png') }}" class="sprite-lightning" />
-              <img src="{{ url_for('static', filename='images/anim/thunder/55.png') }}" class="sprite-lightning" />
-            </div>
-
-
-
-            <!-- Monster Section -->
-            <div class="monster-container">
-                <p class="monster-name">MONSTER NAME</p>
-                <div id="monster-health" class="hp-bar-container monsterhp">
-                </div>
-          </div>
+    <!-- Game Background -->
+    <div class="game-bg" id="game-bg">
+      
+      <!-- Player and Monster Section -->
+      <div class="flex justify-between items-center p-4 w-full">
+        <!-- Player -->
+        <div class="player-container">
+          <p class="player-name">PLAYER NAME</p>
+          <div id="player-health" class="hp-bar-container playerhp"></div>
         </div>
 
-<!-- Pass the HP bar image base path to JavaScript -->
-<div id="hp-bar-path" data-base-url="{{ url_for('static', filename='images/gameimg/hpbars/') }}"></div>
+        <!-- Lightning Effect -->
+        <div class="lightning-container">
+          <img src="{{ url_for('static', filename='images/anim/thunder/11.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/22.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/33.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/44.png') }}" class="sprite-lightning" />
+          <img src="{{ url_for('static', filename='images/anim/thunder/55.png') }}" class="sprite-lightning" />
+        </div>
 
-
-
-        
-        <p id="feedback"></p> <!-- Feedback area to show if answer is correct or incorrect -->
-
-<!-- Question Section -->
-<div class="question-container">
-  {% if question %}
-    <p id="question-text" class="question-text" data-question-id="{{ question.id }}">{{ question.question_text }}</p>
-    <input type="hidden" id="question-id" value="{{ question.id }}">
-    <input type="hidden" id="correct-answer" value="{{ question.correct_answer }}">
-  {% else %}
-    <p class="text-2xl text-red-400">No questions available for this level.</p>
-  {% endif %}
-
-  <!-- <button onclick="showVictoryScreen()">Show Victory Popup</button> -->
-  
-  <!-- Freeze Turns Left -->
-  <div id="freeze-turn" class="freeze-turn"></div>
-  
-</div>
-
-
-<div class="menu-btn-wrapper">
-  <button id="menuButton" class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
-</div>
-
-<!-- Overlay that dims the background and holds the menu -->
-<div id="menuOverlay" class="menu-overlay hidden">
-  <div id="gameMenu" class="game-menu">
-    <button class="menu-item" data-lang="resume" onclick="resumeGame()">Resume</button>
-    <button class="menu-item" data-lang="restart" onclick="restartGame()">Restart</button>
-    <button class="menu-item" data-lang="settings" onclick="openSettings()">Settings</button>
-    <button class="menu-item" data-lang="quit" onclick="goToMainMenu()">Quit</button>
-  </div>
-
-  <!-- Settings Menu (Inside the game menu container) -->
-  <div id="settingsMenu" class="game-menu hidden">
-    <div class="settings-container">
-
-      <!-- Volume Settings -->
-      <div class="setting-option">
-        <label for="volume" data-lang="volumeLabel">Volume</label>
-        <input type="range" id="volume" min="0" max="100" value="50">
-      </div>
-
-      <!-- Mute Option aligned like Volume -->
-      <div class="setting-option mute-align">
-        <div class="mute-wrapper">
-          <input type="checkbox" id="muteCheckbox" onchange="toggleMuteCheckbox()">
-          <span class="mute-label" data-lang="muteLabel">Mute</span>
+        <!-- Monster -->
+        <div class="monster-container">
+          <p class="monster-name">MONSTER NAME</p>
+          <div id="monster-health" class="hp-bar-container monsterhp"></div>
         </div>
       </div>
 
-      <!-- Language Settings -->
-      <div class="language-container">
-        <label for="language" data-lang="languageLabel">Language</label>
-        <div class="language-box">
-          <button id="prevLanguage" onclick="changeLanguage('prev')"> &lt; </button>
-          <span id="languageText">English</span>
-          <button id="nextLanguage" onclick="changeLanguage('next')"> &gt; </button>
-        </div>
-      </div>
+      <!-- HP Bar Path -->
+      <div id="hp-bar-path" data-base-url="{{ url_for('static', filename='images/gameimg/hpbars/') }}"></div>
 
-      <div class="settings-item-container">
-        <button class="settings-item" onclick="applySettings()" data-lang="apply">Apply</button>
-        <button class="settings-item" onclick="closeSettings()" data-lang="back">Back</button> <!-- Back button -->
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-                
-
-
-<!-- Combined Ground and Characters Section -->
-<div class="game-container">
-  <!-- Ground Section -->
-  <div class="ground-container">
-    <!-- Character (Wizard) -->
-    <img src="{{ url_for('static', filename='images/gameimg/char/char.png') }}" alt="Wizard" class="character player">
-    
-
-    <img
-    id="monster-sprite"
-    src="" ;
-    alt="Monster"
-    class="monster"
-  />
-
-
-    
-    <!-- <-- Fireball (added here inside the container) --> 
-        <div class="fireball"></div>
-        <div id="attack-image-paths"
+      <!-- ⚡ Attack Image Paths (AYOS na pwesto) -->
+      <div id="attack-image-paths"
         data-add="{{ url_for('static', filename='images/anim/charattack/Addition Attack.png') }}"
         data-sub="{{ url_for('static', filename='images/anim/charattack/Subtraction Attack.png') }}"
         data-mul="{{ url_for('static', filename='images/anim/charattack/Multiplication Attack.png') }}"
         data-div="{{ url_for('static', filename='images/anim/charattack/Division Attack.png') }}">
-   </div>
-   
-    <!-- Ground (Platform) -->
-    <div class="ground"></div>
-    <img 
-    id="platform-image"
-    src="" alt="ground" 
-    class="platform">
+      </div>
 
+      <!-- Menu Button -->
+<button class="1btn" id="menuButton" onclick="showGameOverScreen()">WWWWWWWWWWWWWWWWW</button>
+      <!-- Characters and Platform Section (Ground) -->
+      <div class="ground">
+        <!-- Platform -->
+        <img id="platform-image" src="" alt="Platform" class="platform">
 
-  </div>
-</div>
+        <!-- Characters -->
+        <img src="{{ url_for('static', filename='images/gameimg/char/char.png') }}" alt="Wizard" class="character player">
+        <img id="monster-sprite" src="" alt="Monster" class="monster">
 
+        <!-- Fireball -->
+        <div class="fireball"></div>
+      </div>
 
-<!-- Footer section for controls -->
-<div class="game-control-box">
-  <!-- Main game bar split into 3 sections -->
-  <div class="gamecontent">
+    </div> <!-- End of game-bg -->
+
+    <!-- Game Control Box -->
+    <div class="game-control-box">
+      <div class="gamecontent">
 
 <!-- Potion Section -->
 <div class="potion-section">
-  <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="useFreezePotion()">
-  <img src="{{ url_for('static', filename='images/gameimg/freeze box.png') }}" class="freeze-box">
-  <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="useHealthPotion()">
-  <img src="{{ url_for('static', filename='images/gameimg/health box.png') }}" class="health-box">
-  <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="Thunder Potion" onclick="useThunderPotion()">
-  <img src="{{ url_for('static', filename='images/gameimg/thunder box.png') }}" class="thunder-box">
-
-</div>
-<div id="potion-image-paths"
-     data-health="{{ url_for('static', filename='images/gameimg/health.png') }}"
-     data-freeze="{{ url_for('static', filename='images/gameimg/freeze.png') }}"
-     data-thunder="{{ url_for('static', filename='images/gameimg/thunder.png') }}">
-</div>
-
-
-<!-- Game Controls -->
-<div class="game-control-container">
-  <!-- Number Buttons Grid -->
-  <div class="button-grid">
-    <div class="button" onclick="addToInput(7)"></div>
-    <div class="button" onclick="addToInput(8)"></div>
-    <div class="button" onclick="addToInput(9)"></div>
-    <div class="button" onclick="addToInput(4)"></div>
-    <div class="button" onclick="addToInput(5)"></div>
-    <div class="button" onclick="addToInput(6)"></div>
-    <div class="button" onclick="addToInput(1)"></div>
-    <div class="button" onclick="addToInput(2)"></div>
-    <div class="button" onclick="addToInput(3)"></div>
-    <div class="button backspace" onclick="backspace()"></div>
-    <div class="button" onclick="addToInput(0)"></div>
-    <div class="button" onclick="addToInput('.')"></div>
+  <div class="potion-container">
+    <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="useFreezePotion()">
+    <img src="{{ url_for('static', filename='images/gameimg/freeze box.png') }}" class="freeze-box">
+    <span class="potion-quantity" id="freeze-quantity">3</span>
   </div>
-
-  <!-- Input and Attack -->
-  <div class="right-section">
-    <div class="placeholder-input">
-      <input type="text" class="input-field" id="number-input" />
-    </div>
-    <div class="attack-button" onclick="handleAttack()"></div>
-  </div>
-</div>
-
   
-
+  <div class="potion-container">
+    <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="useHealthPotion()">
+    <img src="{{ url_for('static', filename='images/gameimg/health box.png') }}" class="health-box">
+    <span class="potion-quantity" id="health-quantity">3</span>
+  </div>
+  
+  <div class="potion-container">
+    <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="Thunder Potion" onclick="useThunderPotion()">
+    <img src="{{ url_for('static', filename='images/gameimg/thunder box.png') }}" class="thunder-box">
+    <span class="potion-quantity" id="thunder-quantity">3</span>
+  </div>
 </div>
-    <!-- Chatbot Section -->
-        <div class="chatbot-container">
+
+
+
+
+        <div class="game-control-container">
+          <div class="button-grid">
+            <div class="button" onclick="addToInput(7)"></div>
+            <div class="button" onclick="addToInput(8)"></div>
+            <div class="button" onclick="addToInput(9)"></div>
+            <div class="button" onclick="addToInput(4)"></div>
+            <div class="button" onclick="addToInput(5)"></div>
+            <div class="button" onclick="addToInput(6)"></div>
+            <div class="button" onclick="addToInput(1)"></div>
+            <div class="button" onclick="addToInput(2)"></div>
+            <div class="button" onclick="addToInput(3)"></div>
+            <div class="button backspace" onclick="backspace()"></div>
+            <div class="button" onclick="addToInput(0)"></div>
+            <div class="button" onclick="addToInput('.')"></div>
+          </div>
+
+          <div class="right-section">
+            <div class="placeholder-input">
+              <input type="text" class="input-field" id="number-input" />
+            </div>
+            <div class="attack-button" onclick="handleAttack()"></div>
+          </div>
+        </div>
+
+        <!-- <div class="chatbot-container">
           <div class="speech-bubble">
             <p><strong>Need help solving?</strong></p>
-            <p>Start by identifying the key numbers in the problem. If it's an addition problem, look for the + sign and the numbers on either side. Try breaking the problem into smaller steps to make it easier to solve. Don't forget to check your work!</p>
-            <p>Feel free to ask for a hint or solution step if you're stuck!</p>
+            <p>Start by identifying the key numbers in the problem. Look for the + sign and break into smaller steps!</p>
+            <p>Ask for hints if stuck!</p>
           </div>
           <a href="{{ url_for('chatbot') }}">
             <img src="{{ url_for('static', filename='images/gameimg/counticus.png') }}" alt="Wizard Counticus" class="chatbot-img">
           </a>
-        </div>
-
+        </div> -->
 
       </div>
+    </div>
+
+
+    <!-- Question Section -->
+    <div class="question-container">
+      {% if question %}
+        <p id="question-text" class="question-text" data-question-id="{{ question.id }}">{{ question.question_text }}</p>
+        <input type="hidden" id="question-id" value="{{ question.id }}">
+        <input type="hidden" id="correct-answer" value="{{ question.correct_answer }}">
+      {% else %}
+        <p class="text-2xl text-red-400">No questions available for this level.</p>
+      {% endif %}
+      <div id="freeze-turn" class="freeze-turn"></div>
+    </div>
+
+    <!-- Feedback -->
+    <p id="feedback"></p>
+
+  </div> <!-- End of game-wrapper -->
+  <div class="menu-btn-wrapper">
+    <button id="menuButton" class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
   </div>
 
-  <div id="victory-screen" class="victory-screen">
-    <div class="victory-box">
-      <h1 class="victory-text">VICTORY!</h1>
-  
-      <div class="victory-buttons">
-        <button id="continue-btn" class="victory-btn">Continue</button>
-        <button id="retry-btn" class="victory-btn">Retry</button>
-        <button id="home-btn" class="victory-btn">Home</button>
-      </div>
-  
-      <div class="reward-box">
-        <p class="reward-text">Rewards</p>
-        <!-- This is where the rewards will be displayed if available -->
-        <div id="bonus-potion-img-container" class="bonus-container">
-          <!-- Potion images and quantities will be added dynamically here -->
+  <!-- Game Menu Overlay -->
+  <div id="menuOverlay" class="menu-overlay hidden">
+    <div id="gameMenu" class="game-menu">
+      <button class="menu-item" data-lang="resume" onclick="resumeGame()">Resume</button>
+      <button class="menu-item" data-lang="restart" onclick="restartGame()">Restart</button>
+      <button class="menu-item" data-lang="settings" onclick="openSettings()">Settings</button>
+      <button class="menu-item" data-lang="quit" onclick="goToMainMenu()">Quit</button>
+    </div>
+
+    <!-- Settings Menu -->
+    <div id="settingsMenu" class="game-menu hidden">
+      <div class="settings-container">
+        <div class="setting-option">
+          <label for="volume" data-lang="volumeLabel">Volume</label>
+          <input type="range" id="volume" min="0" max="100" value="50">
+        </div>
+        <div class="setting-option mute-align">
+          <div class="mute-wrapper">
+            <input type="checkbox" id="muteCheckbox" onchange="toggleMuteCheckbox()">
+            <span class="mute-label" data-lang="muteLabel">Mute</span>
+          </div>
+        </div>
+        <div class="language-container">
+          <label for="language" data-lang="languageLabel">Language</label>
+          <div class="language-box">
+            <button id="prevLanguage" onclick="changeLanguage('prev')"> &lt; </button>
+            <span id="languageText">English</span>
+            <button id="nextLanguage" onclick="changeLanguage('next')"> &gt; </button>
+          </div>
+        </div>
+        <div class="settings-item-container">
+          <button class="settings-item" onclick="applySettings()" data-lang="apply">Apply</button>
+          <button class="settings-item" onclick="closeSettings()" data-lang="back">Back</button>
         </div>
       </div>
     </div>
   </div>
-  
-  
+
+    <!-- Victory Screen -->
+    <div id="victory-screen" class="victory-screen">
+      <div class="victory-box">
+        <h1 class="victory-text">VICTORY!</h1>
+        <div class="victory-buttons">
+          <button id="continue-btn" class="victory-btn">Continue</button>
+          <button id="retry-btn" class="victory-btn">Retry</button>
+          <button id="home-btn" class="victory-btn">Home</button>
+        </div>
+        <div class="reward-box">
+          <p class="reward-text">Rewards</p>
+          <div id="bonus-potion-img-container" class="bonus-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameover-screen" class="gameover-screen">
+      <div class="gameover-box">
+        <h1 class="gameover-text">Game Over!</h1>
+        <div class="gameover-buttons">
+          <button id="retry-btn" class="gameover-btn">Retry</button>
+          <button id="home-btn" class="gameover-btn">Home</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div id="potion-image-paths"
+       data-health="{{ url_for('static', filename='images/gameimg/health.png') }}"
+       data-freeze="{{ url_for('static', filename='images/gameimg/freeze.png') }}"
+       data-thunder="{{ url_for('static', filename='images/gameimg/thunder.png') }}">
+  </div>
+
+  <!-- Route Paths -->
   <div id="route-paths"
-  data-roadmap="{{ url_for('roadmap') }}"
-  data-dashboard="{{ url_for('dashboard') }}">
-</div>
-
-
-  <div id="gameover-screen" class="gameover-screen">
-    <div class="gameover-box">
-      <h1 class="gameover-text">Game Over!</h1>
-  
-      <div class="gameover-buttons">
-        <button id="retry-btn" class="gameover-btn">Retry</button>
-        <button id="home-btn" class="gameover-btn">Home</button>
-      </div>
-    </div>
+    data-roadmap="{{ url_for('roadmap') }}"
+    data-dashboard="{{ url_for('dashboard') }}">
   </div>
-  
-  
-  
-  
-</div>
 
+  <script src="{{ url_for('static', filename='js/game.js') }}"></script>
 
-<script src="{{ url_for('static', filename='js/game.js') }}"></script>
-
-
-  </body>
+</body>
 </html>

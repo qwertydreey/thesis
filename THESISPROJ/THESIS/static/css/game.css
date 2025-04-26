@@ -75,7 +75,7 @@ body {
 .monster-name {
   position: absolute;
   top: 28%;
-  font-size: 1.5rem;
+  font-size: 2.5vh;
   color: #ffffff;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,
                -1px 1px 0 #000, 1px 1px 0 #000;
@@ -208,108 +208,109 @@ body {
 
 /* ========== GAME BACKGROUND ========== */
 .game-bg {
-  position: absolute;
-  top: 0;
+  position: relative;
+  top: -13vh; /* Moves the background up by 16vh */
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100vw; /* Full width of the viewport */
+  height: 74vh; /* Takes up 69% of the viewport height */
   background-repeat: no-repeat;
-  z-index: 0;
-  user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
+  background-size: cover; /* Ensures the background image covers the area */
+  z-index: 0; /* Behind the other elements like ground and game control box */
+  user-select: none; /* Disables text selection */
+  -webkit-user-drag: none; /* Prevents image dragging in webkit-based browsers */
+  -webkit-user-select: none; /* Prevents text selection in webkit-based browsers */
+  -moz-user-select: none; /* Prevents text selection in Mozilla browsers */
+  -ms-user-select: none; /* Prevents text selection in MS browsers */
 }
 
 
-.game-container {
-  position: relative; /* Make sure the container is positioned */
-  height: 100%; /* or set a specific height depending on your setup */
-  width: 100%; /* or set a specific width */
-}
 
-/* ========== GROUND SECTION ========== */
-.ground-container {
-  position: absolute;
-  top: 47vh;
-  width: 100%;
-  height: 40px;
-}
+
+
+
 
 .ground {
-  width: 100%;
-  height: 40px;
-
+  position: absolute; /* Make it absolutely positioned to control placement */
+  bottom: 3vh; /* Position it at the bottom of the screen */
+  left: 0;
+  width: 100%; /* Full width of the screen */
+  height: auto; /* Adjust height based on content */
+  z-index: 1; /* Ensure it stays above the game background but below the game control box */
 }
 
 .platform {
-  background-size: contain;
-  background-position: center;
-  z-index: -1; /* Ensure it's behind other elements */
+  position: absolute; /* Absolute positioning to align properly with the ground */
+  bottom: 0; /* Align it to the bottom of the ground */
+  left: 0;
+  width: 100%; /* Full width of the screen */
+  height: auto; /* Adjust height based on content */
+  background-size: contain; /* Ensure the platform image scales correctly */
+  background-position: center; /* Center the platform image */
+  z-index: 0; /* Keep it behind the game control box */
 }
+
 /* Example platform sizes and positions for different maps */
 .platform-multiplication {
   height: 30vh;
   width: 100%;
   position: absolute;
-  bottom: -5vh;
+  bottom: 0vh;
 }
 
 .platform-addition {
   height: 28vh;
   width: 100%;
   position: absolute;
-  bottom: -12vh;
+  bottom: -8vh;
 }
 
 .platform-subtraction {
   height: 22vh;
   width: 100%;
   position: absolute;
-  bottom: -10vh;
+  bottom: -6.5vh;
 }
 
 .platform-division {
   height: 19vh;
   width: 100%;
   position: absolute;
-  bottom: -12vh;
+  bottom: -8.5vh;
 }
 
 .platform-counting {
   height: 25vh;
   width: 100%;
   position: absolute;
-  bottom: -11vh;
+  bottom: -4.5vh;
 }
 
 .platform-comparison {
   height: 32vh;
   width: 100%;
   position: absolute;
-  bottom: -11vh;
+  bottom: -7vh;
 }
 
 .platform-numerals {
   height: 25vh;
   width: 100%;
   position: absolute;
-  bottom: -13vh;
+  bottom: -8.5vh;
 }
 
 .platform-placevalue {
-  height: 17vh;
+  height: 14vh;
   width: 100%;
   position: absolute;
-  bottom: -9vh;
+  bottom: -3.5vh;
 }
 
 
 /* ========== CHARACTER SECTION ========== */
 .character {
   position: absolute;
-  bottom: 10px;
+  bottom: 4vh;
   z-index: 10;
   animation: subtleStretchIdle 1s ease-in-out infinite;
   transform-origin: center bottom; /* Make it stretch from the bottom */
@@ -377,15 +378,6 @@ body {
   }
 }
 
-
-
-
-
-
-.player {
-  left: 5%;
-  height: 250px;
-}
 
 
 /* Base class for all monsters */
@@ -490,20 +482,18 @@ body {
 }
 
 .monster.frozen {
-  animation-play-state: paused !important;  /* This will pause all animations on the monster */
-  filter: hue-rotate(220deg) saturate(130%) contrast(120%) brightness(90%);
+  animation-play-state: paused !important;
+  filter: brightness(0.7) drop-shadow(0 0 15px #00bfff) sepia(1) hue-rotate(180deg) saturate(500%) brightness(80%);
 }
 
 
 
 /* When the monster takes damage */
 .monster.damaged {
-  animation-name: shake;
-
-  animation: monsterDamage 0.4s ease-out, shake 0.4s ease-out;
+  animation: monsterDamage 0.4s ease-out, playerShake 0.5s ease-out;
 }
 
-/* Damage animation for the monster */
+/* Damage animation for the monster with intense red effect */
 @keyframes monsterDamage {
   0% {
     transform: scale(1);
@@ -511,7 +501,7 @@ body {
   }
   30% {
     transform: scale(1.08);
-    filter: brightness(1.5) saturate(3) hue-rotate(-100deg); /* Stronger red tint */
+    filter: brightness(0.6) sepia(1) hue-rotate(-50deg) saturate(800%) contrast(1.4); /* Stronger red tint */
   }
   60% {
     transform: scale(1);
@@ -524,8 +514,9 @@ body {
 }
 
 
+
 /* Shake animation */
-@keyframes shake {
+@keyframes Playershake {
   0% { transform: translateX(0); }
   20% { transform: translateX(-6px); }
   40% { transform: translateX(6px); }
@@ -535,29 +526,30 @@ body {
 }
 
 /* Player damage animation */
+/* Player damage animation */
 .player-damaged {
   animation: playerDamageAnimation 0.5s ease-out, playerShake 0.5s ease-out;
 }
 
-
-/* Keyframes for player damage: red flash effect */
+/* Keyframes for player damage: more intense red flash effect */
 @keyframes playerDamageAnimation {
   0% {
     filter: none; /* No effect */
   }
   25% {
-    filter: brightness(1.5) saturate(2) hue-rotate(-100deg); /* Stronger red tint */
+    filter: brightness(0.6) sepia(1) hue-rotate(-50deg) saturate(800%) contrast(1.4); /* Stronger red tint */
   }
   50% {
     filter: none; /* Back to normal */
   }
   75% {
-    filter: brightness(1.5) saturate(2) hue-rotate(-100deg); /* Stronger red tint */
+    filter: brightness(0.6) sepia(1) hue-rotate(-50deg) saturate(800%) contrast(1.4); /* Stronger red tint */
   }
   100% {
     filter: none; /* Back to normal */
   }
 }
+
 
 /* Shake animation */
 @keyframes playerShake {
@@ -669,22 +661,25 @@ body {
 
 /* ========== GAME CONTROL BOX ========== */
 .game-control-box {
+  position: absolute; /* Stay positioned relative to the viewport */
+  bottom: 0; /* Stick to the bottom */
+  left: 0; /* Align to the left */
+  width: 100vw; /* Full width of the screen */
+  height: 36vh; /* 36% of the viewport height */
   background-image: url('../images/gameimg/gamecontrolbox.png');
   background-repeat: no-repeat;
   background-size: cover;
   padding: 1rem;
-  height: 36vh; /* Adjust height based on viewport height */
-  width: 100vw; /* Full viewport width */
-  top: 64vh; /* Adjusted to viewport height */
-  position: absolute;
-  overflow: visible;
-  z-index: 999;
-  user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
+  overflow: visible; /* Allow the content to overflow if necessary */
+  z-index: 999; /* Ensure it's on top of other elements */
+  user-select: none; /* Prevent text selection */
+  -webkit-user-drag: none; /* Prevent dragging */
+  -webkit-user-select: none; /* Prevent text selection on webkit browsers */
+  -moz-user-select: none; /* Prevent text selection on Firefox */
+  -ms-user-select: none; /* Prevent text selection on IE/Edge */
 }
+
+
 
 /* ========== POTION SECTION ========== */
 .potion-section {
@@ -806,28 +801,34 @@ body {
 .game-control-container {
   background-image: url('../images/gameimg/buttons/bookbg.png');
   background-repeat: no-repeat;
-  background-size: contain; /* Make sure the entire image fits */
-  z-index: 0;
+  background-size: contain; /* Keep full image visible */
   background-position: center;
   display: inline-flex;
   justify-content: center;
   align-items: flex-start;
   box-sizing: border-box;
-  position: relative;
-  bottom: 13vh;
-  left: 36.48vw;
+
+  position: absolute; /* Change to absolute */
+  bottom: 0; /* Stick to the bottom of the parent */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Correct the center shift */
+  
   gap: 0.52vw;
   flex-wrap: wrap;
   padding: 1.04vw;
   margin: 0 auto;
   width: 27vw;
   height: 40vh;
+
   user-select: none;
-  -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
-  -webkit-user-select: none; /* Prevents text/image selection in WebKit */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  z-index: 1; /* Above the background, but below controls if needed */
 }
+
 
 
 
@@ -1008,24 +1009,27 @@ body {
 
 
 
-
+/* ========== CHATBOT CONTAINER ========== */
 .chatbot-container {
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 0.625vw;
+  gap: 0.5vh;
   justify-content: flex-start;
-  right: 23vw; /* Converted 415px to approx 21.6vw */
-  top: -1.4vh;   /* Converted -27px to approx -1.4vh */
+  right: 1vw; /* Adjust for smaller screen sizes */
+  bottom: 0;   /* Adjust vertical positioning */
+  z-index: 10; /* Ensure it stays above other elements */
 }
 
+/* ========== CHATBOT IMAGE ========== */
 .chatbot-img {
-  width: 29vh; /* Converted 17.2rem (approx 275px) to 14.3vw */
-  height: auto;
+  width: 30vh;
+  height: 37vh;
+  max-height: 37vh;
   transition: transform 0.3s ease, filter 0.2s ease;
-  filter: drop-shadow(0 0 0.26vw rgba(255, 255, 150, 0.6))
-          drop-shadow(0 0 0.52vw rgba(255, 255, 150, 0.4))
-          drop-shadow(0 0 0.78vw rgba(255, 255, 150, 0.2));
+  filter: drop-shadow(0 0 1vw rgba(255, 255, 150, 0.6))
+          drop-shadow(0 0 2vw rgba(255, 255, 150, 0.4))
+          drop-shadow(0 0 3vw rgba(255, 255, 150, 0.2));
   user-select: none;
   -webkit-user-drag: none;
   -webkit-user-select: none;
@@ -1033,35 +1037,49 @@ body {
   -ms-user-select: none;
 }
 
-
+/* ========== CHATBOT IMAGE ACTIVE STATE ========== */
 .chatbot-img:active {
-  transform: scale(1.03);
-  filter: drop-shadow(0 0 0.26vw rgba(255, 255, 150, 0.6))
-          drop-shadow(0 0 0.52vw rgba(255, 255, 150, 0.4))
-          drop-shadow(0 0 0.78vw rgba(255, 255, 150, 0.2));
+  transform: scale(1.02);
+  filter: drop-shadow(0 0 1vw rgba(255, 255, 150, 0.6))
+          drop-shadow(0 0 2vw rgba(255, 255, 150, 0.4))
+          drop-shadow(0 0 3vw rgba(255, 255, 150, 0.2));
 }
 
 .speech-bubble {
   user-select: text;
   position: relative;
-  top: 3.56vh;
+  bottom: 3.56vh;
   right: 1.04vh;
   background: #fef3c7;
   border: 0.16vw solid #d97706;
   border-radius: 0.78vw;
-  padding: 1.04vh 1.56vw;
-  max-width: 28vw;
-  max-height: 25vh;
-  width: 28vw;
-  height: 26vh;
+  padding: 1.04vh 2vw; /* Adjusted padding */
+  max-width: 20vw;  /* Adjusted max-width */
+  max-height: 27vh; /* Adjusted max-height */
+  width: 20vw;
+  height: 27vh;
   font-weight: bold;
   color: #5B3A29;
-  font-size: clamp(0.75rem, 1vw, 1rem);
+  font-size: clamp(0.65rem, 1.5vw, 1rem); /* Font size adjusts based on screen size */
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+/* Add the tail using the :before pseudo-element */
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -1.5vh; /* Position tail below the bubble */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 1.5vw solid transparent;
+  border-right: 1.5vw solid transparent;
+  border-top: 1.5vh solid #fef3c7; /* Same color as the bubble background */
 }
 
 /* Scrollbar styling */
@@ -1087,9 +1105,9 @@ body {
 
 .sprite-lightning {
   width: 22.34vw;  /* Converted width from px to vw */
-  height: auto;
+  height: 72vh;
   position: absolute;
-  top: -3vh;    /* Converted top from px to vh */
+  margin-top: -10vh;    /* Converted top from px to vh */
   left: 72vw;   /* Converted left from px to vw */
 
   opacity: 0; /* Hide all frames initially */
@@ -1155,7 +1173,6 @@ body {
     pointer-events: all; /* This absorbs all clicks outside the menu */
   }
 
-  /* Menu Button Container */
   /* Menu Button Container */
 /* Menu Button Wrapper */
 .menu-btn-wrapper {
@@ -1573,7 +1590,7 @@ body {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  width: 50vw;
+  width: 102vh;
   height: 68vh;
   border-radius: 2vh;
   text-align: center;
@@ -1653,19 +1670,18 @@ body {
 
 /* Reward Box */
 .reward-box {
-  margin-top: 3vh;
+  margin: -1vh auto;
   padding: 2vh;
   border-radius: 2.5vh;
   background-color: #f0c15d; /* Warm gold color */
   text-align: center;
-  width: 50%;
-  margin: -10px auto;
-  min-height: 12vh;
-  height: 15vh;
-  border: 3px solid #d79e3a; /* Darker golden border */
-  overflow: hidden; /* Prevent content from overflowing */
-  position: relative; /* So the child elements can be positioned relative to this box */
+  width: 47vh; /* Based on screen height, not width */
+  height: 15vh; /* Based on screen height */
+  border: 0.5vh solid #d79e3a;
+  overflow: hidden;
+  position: relative;
 }
+
 
 /* Reward label text */
 .reward-text {
@@ -1746,7 +1762,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   margin-top: -11vh;
-  width: 42vw;
+  width: 84vh;
   height: 58vh;
   border-radius: 2vh;
   text-align: center;
@@ -1830,74 +1846,75 @@ body {
 .monster-division-mob-1 {
   width: 33vh;
   margin-left: 73vw;
-  top: -29vh;
+  top: -37vh; /* Adjusted */
 }
 
 .monster-division-mob-2 {
   width: 29vh;
   margin-left: 74vw;
-  top: -25vh;
+  top: -33vh; /* Adjusted */
 }
 
 .monster-division-mob-3 {
   width: 30vh;
   margin-left: 74vw;
-  top: -21vh;
+  top: -29vh; /* Adjusted */
 }
 
 .monster-division-boss-1 {
   width: 60vh;
   margin-left: 68vw;
-  top: -48vh;
+  top: -57vh; /* Adjusted */
 }
 
 .monster-division-mob-4 {
   width: 30vh;
   margin-left: 75vw;
-  top: -26vh;
+  top: -34vh; /* Adjusted */
 }
 
 .monster-division-mob-5 {
   width: 33vh;
   margin-left: 74vw;
-  top: -28vh;
+  top: -36vh; /* Adjusted */
 }
 
 .monster-division-mob-6 {
   width: 29vh;
   margin-left: 75vw;
-  top: -31vh;
+  top: -39vh; /* Adjusted */
 }
 
 .monster-division-boss-2 {
   width: 60vh;
   margin-left: 70vw;
-  top: -44vh;
+  top: -54vh; /* Adjusted */
 }
 
 .monster-division-mob-7 {
   width: 30vh;
   margin-left: 75vw;
-  top: -37vh;
+  top: -45vh; /* Adjusted */
 }
 
 .monster-division-mob-8 {
   width: 34vh;
   margin-left: 74vw;
-  top: -30vh;
+  top: -38vh; /* Adjusted */
 }
 
 .monster-division-mob-9 {
-  width: 34vh;
+  width: 27vh;
   margin-left: 74vw;
-  top: -28vh;
+  top: -31vh; /* Adjusted */
 }
 
 .monster-division-boss-3 {
   width: 54vh;
   margin-left: 69vw;
-  top: -44vh;
+  top: -55vh; /* Adjusted */
 }
+
 
 
 /* ============================
@@ -1906,74 +1923,75 @@ body {
 .monster-addition-mob-1 {
   width: 33vh;
   margin-left: 74vw;
-  top: -28vh;
+  top: -36vh; /* Adjusted */
 }
 
 .monster-addition-mob-2 {
   width: 31vh;
   margin-left: 74vw;
-  top: -27vh;
+  top: -35vh; /* Adjusted */
 }
 
 .monster-addition-mob-3 {
   width: 27vh;
   margin-left: 74vw;
-  top: -23vh;
+  top: -31vh; /* Adjusted */
 }
 
 .monster-addition-boss-1 {
   width: 43vh;
   margin-left: 71vw;
-  top: -47vh;
+  top: -55vh; /* Adjusted */
 }
 
 .monster-addition-mob-4 {
   width: 25vh;
   margin-left: 75vw;
-  top: -25vh;
+  top: -33vh; /* Adjusted */
 }
 
 .monster-addition-mob-5 {
   width: 38vh;
   margin-left: 73vw;
-  top: -33vh;
+  top: -41vh; /* Adjusted */
 }
 
 .monster-addition-mob-6 {
   width: 35vh;
   margin-left: 72vw;
-  top: -30vh;
+  top: -38vh; /* Adjusted */
 }
 
 .monster-addition-boss-2 {
   width: 45vh;
   margin-left: 72vw;
-  top: -46vh;
+  top: -56vh; /* Adjusted */
 }
 
 .monster-addition-mob-7 {
   width: 32vh;
   margin-left: 74vw;
-  top: -25vh;
+  top: -33vh; /* Adjusted */
 }
 
 .monster-addition-mob-8 {
   width: 35vh;
   margin-left: 74vw;
-  top: -29vh;
+  top: -37vh; /* Adjusted */
 }
 
 .monster-addition-mob-9 {
   width: 35vh;
   margin-left: 73vw;
-  top: -34vh;
+  top: -42vh; /* Adjusted */
 }
 
 .monster-addition-boss-3 {
   width: 40vh;
   margin-left: 73vw;
-  top: -47vh;
+  top: -55vh; /* Adjusted */
 }
+
 
 
 /* ============================
@@ -1982,74 +2000,75 @@ body {
 .monster-subtraction-mob-1 {
   width: 26vh;
   margin-left: 74vw;
-  top: -25vh;
+  top: -33vh; /* Adjusted */
 }
 
 .monster-subtraction-mob-2 {
   width: 26vh;
   margin-left: 75vw;
-  top: -31vh;
+  top: -39vh; /* Adjusted */
 }
 
 .monster-subtraction-mob-3 {
   width: 34vh;
   margin-left: 73vw;
-  top: -23vh;
+  top: -31vh; /* Adjusted */
 }
 
 .monster-subtraction-boss-1 {
   width: 44vh;
   margin-left: 74vw;
-  top: -40vh;
+  top: -48vh; /* Adjusted */
 }
 
 .monster-subtraction-mob-4 {
   width: 31vh;
   margin-left: 74vw;
-  top: -30vh;
+  top: -38vh; /* Adjusted */
 }
 
 .monster-subtraction-mob-5 {
   width: 29vh;
   margin-left: 74vw;
-  top: -33vh;
+  top: -41vh; /* Adjusted */
 }
 
 .monster-subtraction-mob-6 {
   width: 41vh;
   margin-left: 70vw;
-  top: -22vh;
+  top: -30vh; /* Adjusted */
 }
 
 .monster-subtraction-boss-2 {
   width: 47vh;
   margin-left: 71vw;
-  top: -41vh;
+  top: -49vh; /* Adjusted */
 }
 
 .monster-subtraction-mob-7 {
   width: 22vh;
   margin-left: 76vw;
-  top: -31vh;
+  top: -39vh; /* Adjusted */
 }
 
 .monster-subtraction-mob-8 {
   width: 26vh;
   margin-left: 75vw;
-  top: -32vh;
+  top: -40vh; /* Adjusted */
 }
 
 .monster-subtraction-mob-9 {
   width: 27vh;
   margin-left: 75vw;
-  top: -39vh;
+  top: -47vh; /* Adjusted */
 }
 
 .monster-subtraction-boss-3 {
   width: 38vh;
   margin-left: 73vw;
-  top: -44vh;
+  top: -52vh; /* Adjusted */
 }
+
 
 
 /* ============================
@@ -2058,73 +2077,73 @@ body {
 .monster-multiplication-mob-1 {
   width: 29vh;
   margin-left: 75vw;
-  top: -25vh;
+  top: -32vh;
 }
 
 .monster-multiplication-mob-2 {
   width: 27vh;
   margin-left: 75vw;
-  top: -27vh;
+  top: -34vh;
 }
 
 .monster-multiplication-mob-3 {
   width: 30vh;
   margin-left: 75vw;
-  top: -30vh;
+  top: -38vh;
 }
 
 .monster-multiplication-boss-1 {
-  width: 50vh;
-  margin-left: 72vw;
-  top: -40vh;
+  width: 62vh;
+  margin-left: 69vw;
+  top: -59vh;
 }
 
 .monster-multiplication-mob-4 {
   width: 25vh;
   margin-left: 75vw;
-  top: -19vh;
+  top: -27vh;
 }
 
 .monster-multiplication-mob-5 {
   width: 32vh;
   margin-left: 75vw;
-  top: -26vh;
+  top: -33vh;
 }
 
 .monster-multiplication-mob-6 {
   width: 33vh;
   margin-left: 75vw;
-  top: -25vh;
+  top: -33vh;
 }
 
 .monster-multiplication-boss-2 {
   width: 41vh;
   margin-left: 75vw;
-  top: -42vh;
+  top: -50vh;
 }
 
 .monster-multiplication-mob-7 {
   width: 31vh;
   margin-left: 75vw;
-  top: -24vh;
+  top: -32vh;
 }
 
 .monster-multiplication-mob-8 {
   width: 32vh;
   margin-left: 75vw;
-  top: -26vh;
+  top: -33vh;
 }
 
 .monster-multiplication-mob-9 {
   width: 32vh;
   margin-left: 75vw;
-  top: -32vh;
+  top: -38vh;
 }
 
 .monster-multiplication-boss-3 {
   width: 48vh;
   margin-left: 75vw;
-  top: -42vh;
+  top: -49vh;
 }
 
 
@@ -2134,74 +2153,75 @@ body {
 .monster-counting-mob-1 {
   width: 28vh;
   margin-left: 75vw;
-  top: -25vh;
+  top: -35vh; /* Adjusted */
 }
 
 .monster-counting-mob-2 {
   width: 35vh;
   margin-left: 74vw;
-  top: -30vh;
+  top: -40vh; /* Adjusted */
 }
 
 .monster-counting-mob-3 {
   width: 29vh;
   margin-left: 75vw;
-  top: -21vh;
+  top: -31vh; /* Adjusted */
 }
 
 .monster-counting-boss-1 {
   width: 36vh;
   margin-left: 74vw;
-  top: -47vh;
+  top: -57vh; /* Adjusted */
 }
 
 .monster-counting-mob-4 {
   width: 31vh;
   margin-left: 74vw;
-  top: -26vh;
+  top: -36vh; /* Adjusted */
 }
 
 .monster-counting-mob-5 {
   width: 26vh;
   margin-left: 75vw;
-  top: -25vh;
+  top: -35vh; /* Adjusted */
 }
 
 .monster-counting-mob-6 {
   width: 38vh;
   margin-left: 73vw;
-  top: -32vh
+  top: -42vh; /* Adjusted */
 }
 
 .monster-counting-boss-2 {
   width: 35vh;
   margin-left: 73vw;
-  top: -44vh;
+  top: -54vh; /* Adjusted */
 }
 
 .monster-counting-mob-7 {
-  width: 31vh;
-  margin-left: 75vw;
-  top: -25vh;
+  width: 24vh;
+  margin-left: 74vw;
+  top: -30vh; /* Adjusted */
 }
 
 .monster-counting-mob-8 {
   width: 29vh;
   margin-left: 75vw;
-  top: -34vh;
+  top: -44vh; /* Adjusted */
 }
 
 .monster-counting-mob-9 {
   width: 31vh;
   margin-left: 74vw;
-  top: -25vh;
+  top: -35vh; /* Adjusted */
 }
 
 .monster-counting-boss-3 {
   width: 39vh;
   margin-left: 73vw;
-  top: -50vh;
+  top: -60vh; /* Adjusted */
 }
+
 
 
 /* ============================
@@ -2210,74 +2230,75 @@ body {
 .monster-comparison-mob-1 {
   width: 31vh;
   margin-left: 75vw;
-  top: -28vh;
+  top: -36vh; /* Adjusted */
 }
 
 .monster-comparison-mob-2 {
   width: 43vh;
   margin-left: 75vw;
-  top: -25vh;
+  top: -33vh; /* Adjusted */
 }
 
 .monster-comparison-mob-3 {
   width: 32vh;
   margin-left: 75vw;
-  top: -25vh;
+  top: -33vh; /* Adjusted */
 }
 
 .monster-comparison-boss-1 {
   width: 44vh;
   margin-left: 75vw;
-  top: -44vh;
+  top: -52vh; /* Adjusted */
 }
 
 .monster-comparison-mob-4 {
   width: 36vh;
   margin-left: 73vw;
-  top: -26vh;
+  top: -34vh; /* Adjusted */
 }
 
 .monster-comparison-mob-5 {
   width: 28vh;
   margin-left: 75vw;
-  top: -31vh;
+  top: -39vh; /* Adjusted */
 }
 
 .monster-comparison-mob-6 {
   width: 34vh;
   margin-left: 74vw;
-  top: -34vh;
+  top: -42vh; /* Adjusted */
 }
 
 .monster-comparison-boss-2 {
   width: 46vh;
   margin-left: 72vw;
-  top: -42vh;
+  top: -50vh; /* Adjusted */
 }
 
 .monster-comparison-mob-7 {
   width: 36vh;
   margin-left: 73vw;
-  top: -30vh;
+  top: -38vh; /* Adjusted */
 }
 
 .monster-comparison-mob-8 {
   width: 34vh;
   margin-left: 73vw;
-  top: -31vh;
+  top: -39vh; /* Adjusted */
 }
 
 .monster-comparison-mob-9 {
   width: 33vh;
   margin-left: 73vw;
-  top: -35vh;
+  top: -43vh; /* Adjusted */
 }
 
 .monster-comparison-boss-3 {
   width: 79vh;
   margin-left: 64vw;
-  top: -47vh;
+  top: -55vh; /* Adjusted */
 }
+
 
 
 /* ============================
@@ -2286,74 +2307,75 @@ body {
 .monster-numerals-mob-1 {
   width: 37vh;
   margin-left: 74vw;
-  top: -35vh;
+  top: -43vh; /* Adjusted */
 }
 
 .monster-numerals-mob-2 {
   width: 30vh;
   margin-left: 74vw;
-  top: -30vh;
+  top: -38vh; /* Adjusted */
 }
 
 .monster-numerals-mob-3 {
   width: 26vh;
   margin-left: 75vw;
-  top: -34vh;
+  top: -42vh; /* Adjusted */
 }
 
 .monster-numerals-boss-1 {
   width: 39vh;
   margin-left: 73vw;
-  top: -40vh;
+  top: -49vh; /* Adjusted */
 }
 
 .monster-numerals-mob-4 {
   width: 25vh;
   margin-left: 75vw;
-  top: -29vh;
+  top: -37vh; /* Adjusted */
 }
 
 .monster-numerals-mob-5 {
   width: 24vh;
   margin-left: 76vw;
-  top: -32vh;
+  top: -40vh; /* Adjusted */
 }
 
 .monster-numerals-mob-6 {
   width: 27vh;
   margin-left: 75vw;
-  top: -32vh;
+  top: -40vh; /* Adjusted */
 }
 
 .monster-numerals-boss-2 {
   width: 42vh;
   margin-left: 71vw;
-  top: -52vh;
+  top: -60vh; /* Adjusted */
 }
 
 .monster-numerals-mob-7 {
   width: 28vh;
   margin-left: 75vw;
-  top: -25vh;
+  top: -33vh; /* Adjusted */
 }
 
 .monster-numerals-mob-8 {
   width: 28vh;
   margin-left: 75vw;
-  top: -37vh;
+  top: -45vh; /* Adjusted */
 }
 
 .monster-numerals-mob-9 {
   width: 35vh;
   margin-left: 73vw;
-  top: -37vh;
+  top: -45vh; /* Adjusted */
 }
 
 .monster-numerals-boss-3 {
   width: 38vh;
   margin-left: 73vw;
-  top: -45vh;
+  top: -53vh; /* Adjusted */
 }
+
 
 
 /* ============================
@@ -2362,71 +2384,71 @@ body {
 .monster-placevalue-mob-1 {
   width: 26vh;
   margin-left: 75vw;
-  top: -29vh;
+  top: -35vh;
 }
 
 .monster-placevalue-mob-2 {
   width: 28vh;
   margin-left: 75vw;
-  top: -27vh;
+  top: -33vh;
 }
 
 .monster-placevalue-mob-3 {
   width: 29vh;
   margin-left: 75vw;
-  top: -25vh;
+  top: -31vh;
 }
 
 .monster-placevalue-boss-1 {
   width: 40vh;
   margin-left: 75vw;
-  top: -47vh;
+  top: -53vh;
 }
 
 .monster-placevalue-mob-4 {
   width: 27vh;
   margin-left: 75vw;
-  top: -25vh;
+  top: -31vh;
 }
 
 .monster-placevalue-mob-5 {
   width: 33vh;
   margin-left: 75vw;
-  top: -28vh;
+  top: -36vh;
 }
 
 .monster-placevalue-mob-6 {
   width: 37vh;
   margin-left: 75vw;
-  top: -29vh;
+  top: -36vh;
 }
 
 .monster-placevalue-boss-2 {
   width: 43vh;
   margin-left: 75vw;
-  top: -47vh;
+  top: -53vh;
 }
 
 .monster-placevalue-mob-7 {
   width: 28vh;
   margin-left: 75vw;
-  top: -38vh;
+  top: -44vh;
 }
 
 .monster-placevalue-mob-8 {
   width: 33vh;
   margin-left: 75vw;
-  top: -32vh;
+  top: -38vh;
 }
 
 .monster-placevalue-mob-9 {
   width: 29vh;
   margin-left: 75vw;
-  top: -28vh;
+  top: -34vh;
 }
 
 .monster-placevalue-boss-3 {
   width: 36vh;
   margin-left: 75vw;
-  top: -46vh;
+  top: -54vh;
 }

@@ -1,0 +1,125 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #2C003E; /* Deep Purple Background */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Ensures the body takes up the full width of the screen */
+}
+
+/* Container Styles */
+.container {
+    width: 100%; /* Full width */
+    height: 100vh; /* Full height of the viewport */
+    display: flex;
+    flex-direction: column;
+    background-color: #1A1A2E; /* Dark Background */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #4A148C; /* Deep Purple */
+    color: #FFEB3B; /* Gold */
+}
+
+.back-button {
+    text-decoration: none;
+    background-color: #FFEB3B; /* Gold */
+    color: #2C003E; /* Deep Purple */
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #FFD600; /* Slightly brighter gold on hover */
+    transform: scale(1.05);
+}
+
+.title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    text-align: center;
+    flex-grow: 1;
+}
+
+/* Tabs Section */
+.tabs {
+    display: flex;
+    justify-content: space-evenly;
+    background-color: #3E1C41; /* Dark Purple Accent */
+    border-bottom: 2px solid #FFEB3B; /* Gold Border */
+    padding: 10px;
+    width: 100%;
+}
+
+.tab-button {
+    flex-grow: 1;
+    padding: 15px 0;
+    font-size: 1.2rem;
+    background: none;
+    border: none;
+    color: #FFEB3B; /* Gold */
+    cursor: pointer;
+    text-align: center;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.tab-button.active {
+    background-color: #FFEB3B; /* Gold */
+    color: #2C003E; /* Deep Purple */
+    font-weight: bold;
+}
+
+/* Content Section */
+.tab-content {
+    display: none;
+    flex-grow: 1;
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Grid Layout for items */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    padding: 15px;
+}
+
+.square {
+    background-color: #5C6BC0; /* Muted Purple */
+    border-radius: 10px;
+    aspect-ratio: 1;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #FFEB3B; /* Gold */
+    font-weight: bold;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.square:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}

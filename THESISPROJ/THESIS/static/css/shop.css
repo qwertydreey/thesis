@@ -123,28 +123,28 @@ html, body {
   
   
   .health {
-    top: 52.1%;
+    top: 64%;
     left: 14.1%;
     width: 8%;
-    height: 41.8%;
+    height: 16.8%;
     background-image: url('../images/shopimg/health.png');
   }
   
   
   .thunder {
-    top: 51.8%;
+    top: 64.1%;
     left: 30.1%;
     width: 8.3%;
-    height: 41.8%;
+    height: 16.8%;
     background-image: url('../images/shopimg/thunder.png');
   }
   
   
   .freeze {
-    top: 52.1%;
+    top: 64%;
     left: 46.6%;
     width: 8.4%;
-    height: 41.8%;
+    height: 17.8%;
     background-image: url('../images/shopimg/freeze.png');
   }
   
@@ -159,64 +159,68 @@ html, body {
 
   .speech-bubble {
     position: absolute;
-    top: 77.1%;
-    left: 70.6%;
+    top: 80vh;
+    left: 70vw;
     background: #fef3c7;
     border: 3px solid #d97706;
-    border-radius: 25px;
-    padding: 20px 30px;
-    max-width: 300px;
+    border-radius: 3vh;
+    padding: 2vh 3vw;
+    max-width: 12.5vw; /* Fixed width to prevent resizing the bubble */
     width: fit-content;
     height: auto;
+    max-height: 19vh; /* Limit height to 10% of viewport height */
     font-weight: bold;
     color: #5B3A29;
-    font-size: clamp(0.75rem, 1vw, 1rem);
+    font-size: clamp(1rem, 4vw, 2rem); /* Use clamp to make the font size responsive */
     word-wrap: break-word;
     transform: translate(-50%, -50%);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
     z-index: 10;
-  }
-  
-  .speech-bubble.show {
+}
+
+.speech-bubble.show {
     opacity: 1;
     visibility: visible;
-  }
-  
-  .speech-bubble::after {
-    content: '';
-    position: absolute;
-    top: 83%;
-    right: -14px; /* Adjusted a bit more to fit the bigger size */
-    width: 0;
-    height: 0;
-    border-top: 14px solid transparent;
-    border-left: 26px solid #fef3c7;
-    border-bottom: 14px solid transparent;
-    transform: translateY(-50%);
-  }
-  
-  /* Title styling */
-  .speech-bubble h2 {
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  top: 85%;
+  right: -3.03vh;
+  width: 0;
+  height: 0;
+  border-top: 12px solid transparent;
+  border-left: 35px solid #fef3c7;
+  border-bottom: 14px solid transparent;
+  transform: translateY(-50%);
+}
+
+/* Title styling */
+.speech-bubble h2 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 2.5vh;
     text-align: center;
     font-weight: 800;
-  }
-  
-  /* Title colors */
-  .health-title { color: #d4150c; }
-  .thunder-title { color: #fbc513; }
-  .freeze-title { color: #53cbe5; }
-  
-  .speech-bubble p {
+}
+
+/* Title colors */
+.health-title { color: #d4150c; }
+.thunder-title { color: #fbc513; }
+.freeze-title { color: #53cbe5; }
+
+.speech-bubble p {
     margin-top: 0.5rem;
-    font-size: 1rem;
-    text-align: justify;  
+    font-size: 2vh;
+    text-align: justify;
     line-height: 1.4;
     font-weight: 600;
-  }
+    max-width: 100%; /* This will ensure the paragraph does not exceed 90% of the speech bubble's width */
+    word-wrap: break-word; /* Ensures long words are wrapped */
+}
+
 
   
   

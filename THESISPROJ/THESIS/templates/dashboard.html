@@ -35,16 +35,23 @@
             </a>
           </div>
 
-      
-        <!-- Subtraction Sands -->
-        <div class="dashboard-btn-wrapper">
-          <button class="dashboard-btn collections" onclick="startHoverEffect(this); window.location.href='#';"></button>
-        </div>
 
-        <!-- Subtraction Sands -->
-        <div class="dashboard-btn-wrapper">
-          <button class="dashboard-btn monsters" onclick="startHoverEffect(this); window.location.href='#';"></button>
-        </div>
+          <!-- ADVENTURE -->
+          <div class="dashboard-btn-wrapper">
+            <a href="{{ url_for('collectibles') }}">
+              <button class="dashboard-btn collections"></button>
+            </a>
+          </div>
+
+
+          <!-- MONSTER ATLAS -->
+          <div class="dashboard-btn-wrapper">
+            <a href="{{ url_for('monster_atlas') }}">
+              <button class="dashboard-btn monsters"></button>
+            </a>
+          </div>
+
+
 
           <!-- SHOP -->
           <div class="dashboard-btn-wrapper">
