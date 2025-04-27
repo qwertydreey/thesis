@@ -285,6 +285,9 @@ function spawnMonster(idx) {
     monsterNameEl.textContent = m.displayName || m.name.replace(/-/g, ' ');
   }
 
+  // Set the spawn animation flag to true
+  isMonsterSpawnAnimationInProgress = true;
+
   // Trigger spawn animation
   monsterImg.classList.remove('monster-spawn');  // Reset animation
   void monsterImg.offsetWidth;  // Force reflow
@@ -293,12 +296,44 @@ function spawnMonster(idx) {
   // Remove animation after it's done
   monsterImg.addEventListener('animationend', function clearSpawn() {
     monsterImg.classList.remove('monster-spawn');
+    
+    // Set spawn animation flag to false after animation ends
+    isMonsterSpawnAnimationInProgress = false;
+    
     monsterImg.removeEventListener('animationend', clearSpawn);
-  });
 
-  updateHealthBars();
-  fetchNewQuestion();
+    updateHealthBars();
+    fetchNewQuestion();
+  });
 }
+
+
+
+function triggerMonsterDeathAnimation() {
+  const monsterImg = document.getElementById('monster-sprite');
+  if (!monsterImg) return;
+
+  // Start death animation
+  monsterImg.classList.add('monster-death');
+  
+  // Set death animation flag
+  isMonsterDeathAnimationInProgress = true;
+
+  // Reset after death animation
+  monsterImg.addEventListener('animationend', function clearDeath() {
+    monsterImg.classList.remove('monster-death');
+    isMonsterDeathAnimationInProgress = false; // End death animation
+    monsterImg.removeEventListener('animationend', clearDeath);
+
+    // Proceed to next monster after death animation
+    nextMonster();
+  });
+}
+
+
+
+
+
 
 // Go to next monster
 function nextMonster() {
@@ -310,6 +345,26 @@ function nextMonster() {
 }
 
 
+function startMonsterDeathAnimation() {
+  isMonsterDeathAnimationInProgress = true;
+
+  // Your death animation code here
+  
+  // Once death animation is finished, reset the flag
+  setTimeout(() => {
+    isMonsterDeathAnimationInProgress = false;
+  }, deathAnimationDuration); // Use the actual duration of the death animation
+}
+function startMonsterSpawnAnimation() {
+  isMonsterSpawnAnimationInProgress = true;
+
+  // Your spawn animation code here
+  
+  // Once spawn animation is finished, reset the flag
+  setTimeout(() => {
+    isMonsterSpawnAnimationInProgress = false;
+  }, spawnAnimationDuration); // Use the actual duration of the spawn animation
+}
 
 
 
@@ -508,6 +563,9 @@ let healthPotions = 3;
 let thunderPotions = 3;
 let freezePotions = 3;
 
+let isMonsterSpawnAnimationInProgress = false;
+let isMonsterDeathAnimationInProgress = false;
+
 // Potion usage locks
 let isHealthPotionInUse = false;
 let isThunderPotionInUse = false;
@@ -570,15 +628,25 @@ function changeFrame() {
 }
 
 function useThunderPotion() {
+  // Prevent using Thunder Potion if any animation is in progress
+  if (isThunderPotionInUse || isMonsterSpawnAnimationInProgress || isMonsterDeathAnimationInProgress) {
+    showFeedback("❌ Thunder Potion is on cooldown! Please wait.");
+    return;
+  }
+
   if (thunderPotions <= 0) {
     const feedback = document.getElementById('feedback');
-    feedback.innerText = '⚡You have no Thunder Potions left!';
+    feedback.innerText = '⚡ You have no Thunder Potions left!';
     setTimeout(() => {
       feedback.innerText = '';
     }, 2000);
     return;
   }
-  if (currentMonsterHealth <= 0 || isThunderPotionInUse) return;
+
+  if (currentMonsterHealth <= 0) {
+    console.log("❌ Monster is already defeated. Thunder Potion cannot be used.");
+    return;
+  }
 
   isThunderPotionInUse = true;
   thunderPotions--;
@@ -586,6 +654,7 @@ function useThunderPotion() {
 
   setTimeout(() => {
     if (currentMonsterHealth > 0) {
+      // Handle the Thunder Potion animation and damage
       if (animationInterval !== null) {
         clearInterval(animationInterval);
         resetFrames();
@@ -628,51 +697,64 @@ function useThunderPotion() {
 }
 
 
-// ========== FREEZE POTION ==========
 
 function useFreezePotion() {
-  if (isFreezePotionInUse) return; // Lock to prevent spam clicks
-
-  // Check if there are freeze turns remaining
-  if (freezeTurns > 0) {
-    displayFeedback(`❄️ You still have ${freezeTurns} Freeze Turns left!`);
-    return; // Don't use potion if freeze turns are still active
-  }
-
-  // If no freeze potions are left, show feedback
-  if (freezePotions <= 0) {
-    displayFeedback('❄️ You have no Freeze Potions left!');
+  // Prevent if a potion is in use, or spawn/death animation is in progress
+  if (isFreezePotionInUse || isMonsterSpawnAnimationInProgress || isMonsterDeathAnimationInProgress) {
+    showFeedback("❌ You can't use the Freeze Potion during monster animation!");
     return;
   }
 
-  // Proceed with using freeze potion
+  if (freezeTurns > 0) {
+    showFeedback(`❄️ You still have ${freezeTurns} Freeze Turns left!`);
+    return;
+  }
+
+  if (freezePotions <= 0) {
+    showFeedback('❄️ You have no Freeze Potions left!');
+    return;
+  }
+
   isFreezePotionInUse = true;
-  freezePotions--; // Decrease potion count
+  freezePotions--;
   freezePotionUsed = true;
-  freezeTurns = 3; // Set freeze turns to 3
-  updatePotionUI(); // Update potion UI
-  updateFreezeTurnsDisplay(); // Update freeze turns display
+  freezeTurns = 3;
+  updatePotionUI();
+  updateFreezeTurnsDisplay();
   freezeTurnsDisplay.style.display = 'block';
 
+  // Apply the freeze effect after checking for spawn/death animations
   setTimeout(() => {
-    applyFreezeEffect();
-    setTimeout(() => {
-      isFreezePotionInUse = false; // Unlock after short delay
-    }, 200);
-  }, 800); // Adjusted to match 80ms animation speed feel (optional)
-}
+    if (!isMonsterSpawnAnimationInProgress && !isMonsterDeathAnimationInProgress) {
+      applyFreezeEffect(); // Freeze the monster if no animation is in progress
+    } else {
+      showFeedback("❌ Can't freeze during spawn or death animation!"); // Feedback if freeze is used during animation
+    }
 
-function updateFreezeTurnsDisplay() {
-  freezeTurnsDisplay.innerText = `❄️ Freeze Turns Left: ${freezeTurns}`;
+    // Reset the Freeze Potion use state after a short delay
+    setTimeout(() => {
+      isFreezePotionInUse = false; // Unlock potion after short delay
+    }, 400);
+  }, 400);
 }
 
 function applyFreezeEffect() {
-  monsterContainer.classList.add('frozen');
+  // Freeze the monster only if it's not already frozen
+  if (!monsterContainer.classList.contains('frozen')) {
+    monsterContainer.classList.add('frozen');
+  }
 }
 
 function removeFreezeEffect() {
   monsterContainer.classList.remove('frozen');
 }
+
+
+function updateFreezeTurnsDisplay() {
+  freezeTurnsDisplay.innerText = `❄️ Freeze Turns Left: ${freezeTurns}`;
+}
+
+
 
 // ========== DAMAGE PLAYER (checks if frozen) ==========
 
@@ -1237,46 +1319,5 @@ function showFeedback(message, duration = 3000) { // Default duration set to 300
 
 
 
-function useFreezePotion() {
-  if (isFreezePotionInUse) return; // Lock to prevent spam clicks
 
-  // Check if there are Freeze Turns left
-  if (freezeTurns > 0) {
-    showFeedback(`❄️ You still have ${freezeTurns} Freeze Turns left!`);
-    return;
-  }
 
-  // Check if no Freeze Potions are left
-  if (freezePotions <= 0) {
-    showFeedback('❄️ You have no Freeze Potions left!');
-    return;
-  }
-
-  isFreezePotionInUse = true;
-  freezePotions--;
-  freezePotionUsed = true;
-  freezeTurns = 3;
-  updatePotionUI();
-  updateFreezeTurnsDisplay();
-  freezeTurnsDisplay.style.display = 'block';
-
-  // Add freeze effect after a small delay
-  setTimeout(() => {
-    applyFreezeEffect();
-    setTimeout(() => {
-      isFreezePotionInUse = false; // Unlock after short delay
-    }, 200);
-  }, 800);
-}
-
-function updateFreezeTurnsDisplay() {
-  freezeTurnsDisplay.innerText = `❄️ Freeze Turns Left: ${freezeTurns}`;
-}
-
-function applyFreezeEffect() {
-  monsterContainer.classList.add('frozen');
-}
-
-function removeFreezeEffect() {
-  monsterContainer.classList.remove('frozen');
-}
