@@ -4,36 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Monster Atlas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
   <link rel="stylesheet" href="{{ url_for('static', filename='css/monster_atlas.css') }}">
 </head>
 <body>
+  <img src="{{ url_for('static', filename='images/atlasimg/bg.png') }}" alt="bg" class="bg"/> 
 
-    <div id="container">
-        <!-- Left side for map buttons -->
-        <div id="map-container">
-            <button class="map-btn" onclick="displayMonsters('addition')">Addition</button>
-            <button class="map-btn" onclick="displayMonsters('multiplication')">Multiplication</button>
-            <button class="map-btn" onclick="displayMonsters('subtraction')">Subtraction</button>
-            <button class="map-btn" onclick="displayMonsters('division')">Division</button>
-            <button class="map-btn" onclick="displayMonsters('counting')">Counting</button>
-            <button class="map-btn" onclick="displayMonsters('comparison')">Comparison</button>
-            <button class="map-btn" onclick="displayMonsters('numerals')">Numerals</button>
-            <button class="map-btn" onclick="displayMonsters('placevalue')">Place Value</button>
-        </div>
+  
+
+<div id="container">
+  <div class="back-btn-wrapper">
+    <a href="{{ url_for('dashboard') }}">
+      <button class="back-btn"></button>
+    </a>
+  </div>
+
+  <span id="monster-atlas-title">MONSTER ATLAS</span>
+
+  <div id="map-container">
+    <button class="map-btn" data-operation="addition" onclick="displayMonsters('addition')">Addition</button>
+    <button class="map-btn" data-operation="multiplication" onclick="displayMonsters('multiplication')">Multiplication</button>
+    <button class="map-btn" data-operation="subtraction" onclick="displayMonsters('subtraction')">Subtraction</button>
+    <button class="map-btn" data-operation="division" onclick="displayMonsters('division')">Division</button>
+    <button class="map-btn" data-operation="counting" onclick="displayMonsters('counting')">Counting</button>
+    <button class="map-btn" data-operation="comparison" onclick="displayMonsters('comparison')">Comparison</button>
+    <button class="map-btn" data-operation="numerals" onclick="displayMonsters('numerals')">Numerals</button>
+    <button class="map-btn" data-operation="placevalue" onclick="displayMonsters('placevalue')">Place Value</button>
+</div>
+
+  
     
-        <!-- Right side for monster display -->
-        <div id="monster-container">
-            <div id="monster-display">
-                <div id="monster-info">
-                    <!-- This section will be dynamically updated with monster images and descriptions -->
-                </div>
-                <div id="monster-navigation">
-                    <button id="prev-btn">Prev</button>
-                    <button id="next-btn">Next</button>
-                </div>
+    <!-- Right side for monster display -->
+    <div id="monster-container">
+        <div id="monster-display">
+          <div id="monster-track"></div>
+
+            <div id="monster-info">
+                <!-- This section will be dynamically updated with monster images and descriptions -->
+            </div>
+            <div id="monster-navigation">
+                <button id="prev-btn"></button>
+                <button id="next-btn"></button>
             </div>
         </div>
     </div>
+</div>
+
+
+
     
 
     
@@ -43,7 +62,7 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-
+let isChanging = false; // Flag to prevent rapid transitions
 let currentMonsterIndex = 0;
 let currentMonsters = [];
 const monsters = {
@@ -150,7 +169,9 @@ const monsters = {
     { "name": "Numerals-Boss-2", "img": "Numerals-Boss-2.png", "description": "The ultimate ruler of numerals.", "type": "Boss" },
     { "name": "Numerals-Mob-7", "img": "Numerals-Mob-7.png", "description": "A creepy numeral-spreading monster.", "type": "Mob" },
     { "name": "Numerals-Mob-8", "img": "Numerals-Mob-8.png", "description": "A numeral-devouring beast.", "type": "Mob" },
-    { "name": "Numerals-Mob-9", "img": "Numerals-Mob-9.png", "description": "A numeral conqueror.", "type": "Mob" }
+    { "name": "Numerals-Mob-9", "img": "Numerals-Mob-9.png", "description": "A numeral conqueror.", "type": "Mob" },
+    { "name": "Numerals-Boss-3", "img": "Numerals-Boss-2.png", "description": "The ultimate ruler of numerals.", "type": "Boss" },
+
   ],
   placevalue: [
 
@@ -164,7 +185,9 @@ const monsters = {
     { "name": "PlaceValue-Boss-2", "img": "PlaceValue-Boss-2.png", "description": "The supreme Place Value Overlord, with the power to shift any digit.", "type": "Boss" },
     { "name": "PlaceValue-Mob-7", "img": "PlaceValue-Mob-7.png", "description": "A chaotic place value creature, messing up the order of digits.", "type": "Mob" },
     { "name": "PlaceValue-Mob-8", "img": "PlaceValue-Mob-8.png", "description": "A place value beast that multiplies numbers by powers of ten.", "type": "Mob" },
-    { "name": "PlaceValue-Mob-9", "img": "PlaceValue-Mob-9.png", "description": "A place value destroyer, erasing numbers from existence.", "type": "Mob" }
+    { "name": "PlaceValue-Mob-9", "img": "PlaceValue-Mob-9.png", "description": "A place value destroyer, erasing numbers from existence.", "type": "Mob" },
+    { "name": "PlaceValue-Boss-3", "img": "PlaceValue-Boss-2.png", "description": "The supreme Place Value Overlord, with the power to shift any digit.", "type": "Boss" },
+
   ]
 };
 
@@ -173,6 +196,11 @@ const monsters = {
 
 
 
+// Default operation to be selected when the page loads
+window.addEventListener('DOMContentLoaded', function() {
+    // Set the default operation to 'addition' (or any other operation you prefer)
+    displayMonsters('addition');
+});
 
 function displayMonsters(operation) {
     // Set the current monsters based on the selected operation
@@ -181,50 +209,89 @@ function displayMonsters(operation) {
     
     // Update the display with the first monster
     updateMonsterDisplay();
+
+    // Highlight the clicked button and remove highlight from others
+    const mapButtons = document.querySelectorAll('.map-btn'); // Select all map buttons
+    mapButtons.forEach(btn => {
+        // Remove active class from all buttons
+        btn.classList.remove('active');
+    });
+    
+    // Add the active class to the clicked button
+    const activeButton = document.querySelector(`#map-container button[data-operation="${operation}"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
 }
 
 function updateMonsterDisplay() {
     const monster = currentMonsters[currentMonsterIndex];
     const monsterInfo = document.getElementById('monster-info');
+    const monsterTrack = document.getElementById('monster-track'); // Assuming there's an element to display the track
     
-    // Assuming 'folderName' is a dynamic variable based on the operation type (e.g., 'addition')
-    const folderName = monster.name.split('-')[0].toLowerCase();  // This will give 'addition' from 'Addition-Mob-1'
-    
-    // Access the specific folder of monsters (e.g., 'addition') from the main object
-    const monstersInFolder = monsters[folderName]; 
-    
-    // Get the specific monster info
-    const monsterData = monstersInFolder.find(m => m.name === monster.name); // Find the monster by name
-    
-    // Construct the image path dynamically
-    const imagePath = `/static/images/gameimg/mnstr/${folderName}/${monsterData.img}`;
-    
-    // Clear previous monster info and update
-    monsterInfo.innerHTML = `
-        <h2>${monsterData.name}</h2>
-        <img src="${imagePath}" alt="${monsterData.name}" />
-        <p><strong>Type:</strong> ${monsterData.type}</p>
-        <p>${monsterData.description}</p>
-    `;
+    // Apply fade-out to the entire monster info (image and text)
+    monsterInfo.classList.add('monster-info-fade-out');
+
+    // Wait for the fade-out transition to finish before changing the content
+    setTimeout(() => {
+        // Assuming 'folderName' is a dynamic variable based on the operation type (e.g., 'addition')
+        const folderName = monster.name.split('-')[0].toLowerCase();  // This will give 'addition' from 'Addition-Mob-1'
+
+        // Access the specific folder of monsters (e.g., 'addition') from the main object
+        const monstersInFolder = monsters[folderName]; 
+
+        // Get the specific monster info
+        const monsterData = monstersInFolder.find(m => m.name === monster.name); // Find the monster by name
+
+        // Construct the image path dynamically
+        const imagePath = `/static/images/gameimg/mnstr/${folderName}/${monsterData.img}`;
+
+        // Update the monster info content
+        monsterInfo.innerHTML = `
+            <div class="monster-image-container">
+                <img src="${imagePath}" alt="${monsterData.name}" />
+            </div>
+            <h2>${monsterData.name}</h2>
+            <p><strong>Type:</strong> ${monsterData.type}</p>
+            <p>${monsterData.description}</p>
+        `;
+
+        // Update the monster track display (e.g., "1 of 12")
+        monsterTrack.textContent = `${currentMonsterIndex + 1} of ${currentMonsters.length}`;
+
+        // After updating the content, apply the fade-in effect
+        monsterInfo.classList.remove('monster-info-fade-out');
+        monsterInfo.classList.add('monster-info-fade-in');
+    }, 500); // Delay for the duration of the fade-out transition (500ms)
 }
 
 
-
-document.getElementById('prev-btn').addEventListener('click', function() {
-    if (currentMonsterIndex > 0) {
-        currentMonsterIndex--;
-        updateMonsterDisplay();
-    }
-});
-
+// Prevent rapid clicking by adding debounce logic
 document.getElementById('next-btn').addEventListener('click', function() {
-    if (currentMonsterIndex < currentMonsters.length - 1) {
+    if (!isChanging && currentMonsterIndex < currentMonsters.length - 1) {
+        isChanging = true; // Lock the transition
         currentMonsterIndex++;
         updateMonsterDisplay();
+
+        // Reset lock after the transition is done
+        setTimeout(() => {
+            isChanging = false; // Unlock the transition after the fade-in is done
+        }, 500); // Match this with the duration of the CSS transition
     }
 });
 
+document.getElementById('prev-btn').addEventListener('click', function() {
+    if (!isChanging && currentMonsterIndex > 0) {
+        isChanging = true; // Lock the transition
+        currentMonsterIndex--;
+        updateMonsterDisplay();
 
+        // Reset lock after the transition is done
+        setTimeout(() => {
+            isChanging = false; // Unlock the transition after the fade-in is done
+        }, 500); // Match this with the duration of the CSS transition
+    }
+});
 
 
   </script>

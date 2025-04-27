@@ -1,113 +1,304 @@
-/* General container to wrap both the map and monster sections */
-#container {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    gap: 20px; /* Space between map section and monster section */
+@font-face {
+    font-family: "FSP DEMO - Merlo Neue Bold";
+    src: url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.eot");
+    src: url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.svg#FSP DEMO - Merlo Neue Bold")format("svg");
 }
 
-/* Styling for the map buttons on the left */
+/* Load custom font */
+@font-face {
+    font-family: 'Squeid Gameis';
+    src: url('../fonts/SqueidGameisRegular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Ensure body and html take full height and prevent scrolling */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+.bg {
+    background-size: cover;
+    background-position: center;
+    position: fixed; /* Fixed positioning to cover the entire viewport */
+    width: 100%;
+    height: 100%;
+    max-width: none; /* remove max-width if you want full stretch */
+    z-index: -1; /* Ensure it stays behind other elements */
+}
+/* Main container to hold sections */
+#container {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    width: auto;
+    height: auto;
+    gap: 2vh;
+    padding: 0% 6% 0% 6%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Header section with Back button */
+#header {
+    height: 8vh; /* Adjusted height for header */
+    width: 100%; /* Ensure it takes full width */
+    max-width: 100%; /* Keep the maximum width proportional */
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;     /* Center vertically */
+    font-family: 'Squeid Gameis';
+    letter-spacing: 1vh;
+    overflow: hidden;
+}
+
+
+/* Map container for buttons */
 #map-container {
-    width: 30%; /* 30% for the map buttons */
-    background-color: #f4f4f4;
+    margin-top: 19vh;
+    width: 20%; /* Increased width to ensure it takes more space */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Space between each button */
+    align-items: center;
+    gap: 1vh; /* Adjusted gap between buttons for a bit more space */
+    height: auto; /* Set to auto so that it can grow depending on the number of buttons */
+    overflow-y: auto;
+    flex-grow: 1;
+    box-sizing: border-box; /* Ensure padding doesn't affect the width */
 }
 
+/* General button styling */
+/* Normal button styling (not clicked yet) */
 .map-btn {
-    padding: 12px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+    border: 2px solid #CCCCCC; /* Light grey border */
+    font-size: 2vh;
+    border-radius: 1.5vh;
     cursor: pointer;
-    text-align: left;
+    height: 6vh; /* Set button height for consistency */
+    width: 100%; /* Ensures buttons span the full container width */
+    text-align: center;
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    font-family: "FSP DEMO - Merlo Neue Bold";
+    margin-bottom: 1rem; /* Add spacing between buttons */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    box-sizing: border-box; /* Ensure padding doesn't affect the button size */
+    /* Embossed effect using box-shadow */
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2), inset 0px 1px 5px rgba(0, 0, 0, 0.1); /* Shadow inside to create an embossed look */
 }
 
+/* Button styling for the active state */
+.map-btn.active {
+    background-color: #e00505; /* Light green background for active state */
+    color: #ffffff; /* Black text for better contrast */
+    border: 2px solid #880000; /* Darker green border */
+    box-shadow: inset 0px 1px 5px rgba(0, 0, 0, 0.2), 1px 1px 3px rgba(0, 0, 0, 0.2); /* Slightly darker emboss effect */
+}
+
+/* Hover effects */
 .map-btn:hover {
-    background-color: #45a049;
+    opacity: 0.9; /* Slightly decrease opacity on hover */
+    transform: scale(1.02); /* Scale up slightly */
 }
 
-/* Monster container on the right side */
+
+/* Monster container */
 #monster-container {
-    width: 65%; /* 65% for the monster display */
+    margin-top: 15vh;
+
+    width: 65%;  /* Ensures it takes up the remaining space */
+    height: 80vh;
     padding: 20px;
-    background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevents content from overflowing */
+    display: flex;
+    flex-direction: column; /* Stacks content vertically */
+    justify-content: center; /* Centers content vertically */
+    align-items: center; /* Centers content horizontally */
+    flex-grow: 1; /* Ensures the container grows to fill available space */
+    position: relative; /* To position children absolutely inside */
 }
 
-/* Styling for the monster display area */
+/* Monster info section */
+#monster-info {
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif; /* Use the custom font */
+    opacity: 1; /* Make sure it's visible initially */
+    transition: opacity 0.5s ease; /* Fade transition for the entire info */
+}
+
+/* Fade-out effect for the entire monster info (image + text) */
+.monster-info-fade-out {
+    opacity: 0; /* Fade out the entire section */
+}
+
+/* Fade-in effect for the entire monster info (image + text) */
+.monster-info-fade-in {
+    opacity: 1; /* Fade in the entire section */
+}
+
+/* Monster image styling */
+#monster-info img {
+    max-width: 100%;
+    max-height: 45vh;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.7)) 
+            drop-shadow(4px 4px 5px rgba(0, 0, 0, 0.6)) 
+            drop-shadow(-3px -3px 4px rgba(0, 0, 0, 0.6));
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    border-radius: 5px; /* Optional: Add rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6); /* Soft shadow */
+}
+
+
+
+/* Fade-out effect for the image */
+.monster-img-fade-out {
+    opacity: 0; /* Fade out the image */
+    transform: scale(0.95); /* Slightly shrink the image */
+}
+
+/* Fade-in effect for the image */
+.monster-img-fade-in {
+    opacity: 1; /* Fade in the image */
+    transform: scale(1); /* Reset scale to normal */
+}
+
+/* Hover effect for the image */
+#monster-info img:hover {
+    transform: scale(1.05); /* Slightly enlarges the image on hover */
+}
+
+
+
+.back-btn {
+    position: absolute;
+    top: 11.1%;
+    left: 5.1%;
+    width: 6%;
+    height: 9.8%;
+    background: transparent center / contain no-repeat;
+    background-image: url(../images/atlasimg/back.png);
+    border: none;
+    outline: none;
+    box-shadow: none;
+    cursor: pointer;
+    transition: transform 0.5s ease;
+    z-index: 999;
+  }
+  
+.back-btn:hover {
+    transform: scale(1.03); /* Scale up on hover */
+  }
+
+.back-btn {
+filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.8)) /* Stronger shadow with higher opacity */
+      drop-shadow(0 0 12px rgba(0, 0, 0, 0.6)) /* Slightly larger shadow */
+      drop-shadow(0 0 18px rgba(0, 0, 0, 0.4)); /* Even larger shadow for deeper effect */
+  }
+
+/* Monster atlas title styling */
+#monster-atlas-title {
+    top: 10vh; /* Adjusted to position it at the top */
+    font-size: 8vh;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: center;
+    position: absolute;
+    font-family: 'Squeid Gameis';
+    letter-spacing: 2vh;
+
+}
+#monster-track {
+    bottom: 5vh; /* Adjusted to position it at the bottom */
+    position: absolute;
+    font-size: 2vh; /* Adjust font size for visibility */
+    color: #ffffff; /* Use the same orange color to match the theme */
+    text-align: center; /* Center the text */
+    font-family: 'Poppins', sans-serif; /* Use the custom font */
+    transition: opacity 0.3s ease-in-out; /* Smooth transition for opacity */
+}
+
+/* Navigation buttons (Prev and Next) */
+#monster-navigation {
+    position: absolute; /* Absolute positioning within the #monster-container */
+    top: 50%; /* Center vertically within the container */
+    left: 50%; /* Center horizontally within the container */
+    transform: translate(-50%, -50%); /* Offset by 50% of its own width and height to truly center it */
+    display: flex;
+    justify-content: center; /* Center buttons horizontally */
+    gap: 40vw; /* Adjust gap between buttons */
+    width: auto; /* Automatically adjust based on the content */
+    padding: 0 10px;
+    box-sizing: border-box; /* Prevents overflow */
+}
+
+/* Styling for the prev button background image */
+#prev-btn {
+    background-image: url('../images/atlasimg/left.png'); 
+    background-size: contain; /* Ensure the image fits inside the button */
+    background-repeat: no-repeat; /* Avoid repeating the background image */
+    background-position: center; /* Center the background image inside the button */
+    background-color: transparent; /* Transparent background to allow image to be visible */
+}
+/* Optional: Add styles for the next button */
+#next-btn {
+    background-image: url('../images/atlasimg/right.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+}
+
+/* Common styling for both prev and next buttons */
+#prev-btn, #next-btn {
+    width: 10vh;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none; /* Remove any default borders */
+    border-radius: 50%; /* Make the buttons round */
+    background-color: transparent; /* Ensure the background is transparent */
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.6))
+    drop-shadow(3px 3px 4px rgba(0, 0, 0, 0.4))
+    drop-shadow(-3px -3px 4px rgba(0, 0, 0, 0.4));
+}
+
+/* Hover effect to scale the buttons */
+#prev-btn:hover, #next-btn:hover {
+    transform: scale(1.1); /* Slightly enlarge the button on hover */
+}
+
+
+
+
+/* Monster display section styling */
 #monster-display {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    text-align: center;
-    overflow-y: auto; /* Allow scrolling if content overflows */
-}
-
-/* Styling for monster images */
-#monster-display img {
-    width: 50vh !important; /* Force width to be 100% of the parent container */
-    height: auto !important; /* Maintain aspect ratio */
-    object-fit: contain !important; /* Ensure image doesn't get distorted */
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    overflow: visible !important; /* Make sure there's no clipping */
-}
-
-/* Monster information styling */
-#monster-info {
-    display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.monster {
-    margin-bottom: 20px;
-}
-
-.monster p {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-    margin-top: 10px;
-}
-
-/* Description styling below the monster image */
-.monster-description {
-    font-size: 1rem;
-    color: #555;
-    max-width: 300px;
-    text-align: center;
-    margin-top: 10px;
-}
-
-/* Styling for navigation buttons (Prev and Next) */
-#monster-navigation {
-    display: flex;
-    justify-content: space-between;
     width: 100%;
 }
 
-#prev-btn, #next-btn {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-#prev-btn:hover, #next-btn:hover {
-    background-color: #0056b3;
-}
