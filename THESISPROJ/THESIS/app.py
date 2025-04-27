@@ -49,16 +49,37 @@ def login():
 def register():
     if request.method == 'POST':
         username = request.form['username']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        birth_day = request.form['birth_day']
+        birth_month = request.form['birth_month']
+        birth_year = request.form['birth_year']
+        gender = request.form['gender']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
 
+        # Check if passwords match
+        if password != confirm_password:
+            flash('Passwords do not match!', 'danger')
+            return redirect(url_for('register'))
+
+        # Check if username already exists
         cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
         if cursor.fetchone():
             flash('Username already exists.', 'danger')
             return redirect(url_for('register'))
 
+        # Hash the password
         hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
-        cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed_pw))
+
+        # Insert user into database
+        cursor.execute("""
+            INSERT INTO users 
+            (username, first_name, last_name, birth_day, birth_month, birth_year, gender, password)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (username, first_name, last_name, birth_day, birth_month, birth_year, gender, hashed_pw))
         db.commit()
+
         flash('Registration successful! You can now log in.', 'success')
         return redirect(url_for('login'))
 
