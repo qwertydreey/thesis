@@ -38,21 +38,21 @@
         const form = document.getElementById('chat-form');
         const input = document.getElementById('user-input');
         const chatBox = document.getElementById('chat-box');
-
+    
         function createMessageRow(message, sender) {
             const row = document.createElement('div');
             row.classList.add('message-row', sender);
-
+    
             const profile = document.createElement('img');
             profile.classList.add('profile-pic');
-            profile.src = sender === 'user' 
-                ? 'https://via.placeholder.com/50/008000/FFFFFF?text=U' 
+            profile.src = sender === 'user'
+                ? 'https://via.placeholder.com/50/008000/FFFFFF?text=U'
                 : 'https://via.placeholder.com/50/0000FF/FFFFFF?text=W';
-
+    
             const bubble = document.createElement('div');
             bubble.classList.add('message-bubble');
             bubble.textContent = message;
-
+    
             if (sender === 'user') {
                 row.appendChild(bubble);
                 row.appendChild(profile);
@@ -60,26 +60,47 @@
                 row.appendChild(profile);
                 row.appendChild(bubble);
             }
-
+    
             return row;
         }
-
-        form.addEventListener('submit', function(e) {
+    
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
             const userText = input.value.trim();
             if (!userText) return;
-
+    
+            // Create and show the user's message immediately
             const userMsg = createMessageRow(userText, 'user');
             chatBox.prepend(userMsg);
-
-            const botMsg = createMessageRow("Hmm... let me think about that!", 'bot');
-            setTimeout(() => {
-                chatBox.prepend(botMsg);
-            }, 500);
-
+    
+            // Show thinking message
+            const thinkingMsg = createMessageRow("Hmm... let me think about that!", 'bot');
+            chatBox.prepend(thinkingMsg);
+    
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
+    
+            try {
+                const response = await fetch('/chatbot-api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userText })
+                });
+    
+                const data = await response.json();
+    
+                // Remove the "thinking" message
+                thinkingMsg.remove();
+    
+                // Show the real reply from Counticus
+                const botReply = createMessageRow(data.reply, 'bot');
+                chatBox.prepend(botReply);
+            } catch (error) {
+                thinkingMsg.remove();
+                const errorMsg = createMessageRow("Oops! Counticus couldn't reach the magic scrolls 🧙‍♂️📜.", 'bot');
+                chatBox.prepend(errorMsg);
+            }
         });
-    </script>
+    </script>    
 </body>
 </html>
