@@ -51,7 +51,7 @@
       </div>
 
       <!-- Menu Button -->
-<button class="1btn" id="menuButton" onclick="showGameOverScreen()">WWWWWWWWWWWWWWWWW</button>
+<!-- <button class="1btn" id="menuButton" onclick="showGameOverScreen()">WWWWWWWWWWWWWWWWW</button> -->
       <!-- Characters and Platform Section (Ground) -->
       <div class="ground">
         <!-- Platform -->
@@ -59,35 +59,42 @@
 
         <!-- Characters -->
         <img src="{{ url_for('static', filename='images/gameimg/char/char.png') }}" alt="Wizard" class="character player">
+        <div class="fireball"></div>
+
         <img id="monster-sprite" src="" alt="Monster" class="monster">
 
         <!-- Fireball -->
-        <div class="fireball"></div>
       </div>
 
     </div> <!-- End of game-bg -->
 
     <!-- Game Control Box -->
-    <div class="game-control-box">
-      <div class="gamecontent">
-
+    <div class="game-control-box"></div>
+      
+    
 <!-- Potion Section -->
 <div class="potion-section">
-  <div class="potion-container">
-    <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="useFreezePotion()">
-    <img src="{{ url_for('static', filename='images/gameimg/freeze box.png') }}" class="freeze-box">
+  <div class="potion-item">
+    <div class="freeze-box-container">
+      <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="useFreezePotion()">
+      <img src="{{ url_for('static', filename='images/gameimg/freeze box.png') }}" class="freeze-box">
+    </div>
     <span class="potion-quantity" id="freeze-quantity">3</span>
   </div>
-  
-  <div class="potion-container">
-    <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="useHealthPotion()">
-    <img src="{{ url_for('static', filename='images/gameimg/health box.png') }}" class="health-box">
+
+  <div class="potion-item">
+    <div class="health-box-container">
+      <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="useHealthPotion()">
+      <img src="{{ url_for('static', filename='images/gameimg/health box.png') }}" class="health-box">
+    </div>
     <span class="potion-quantity" id="health-quantity">3</span>
   </div>
-  
-  <div class="potion-container">
-    <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="Thunder Potion" onclick="useThunderPotion()">
-    <img src="{{ url_for('static', filename='images/gameimg/thunder box.png') }}" class="thunder-box">
+
+  <div class="potion-item">
+    <div class="thunder-box-container">
+      <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="Thunder Potion" onclick="useThunderPotion()">
+      <img src="{{ url_for('static', filename='images/gameimg/thunder box.png') }}" class="thunder-box">
+    </div>
     <span class="potion-quantity" id="thunder-quantity">3</span>
   </div>
 </div>
@@ -95,8 +102,9 @@
 
 
 
+
+
         <div class="game-control-container">
-          <div class="button-grid">
             <div class="button" onclick="addToInput(7)"></div>
             <div class="button" onclick="addToInput(8)"></div>
             <div class="button" onclick="addToInput(9)"></div>
@@ -109,17 +117,14 @@
             <div class="button backspace" onclick="backspace()"></div>
             <div class="button" onclick="addToInput(0)"></div>
             <div class="button" onclick="addToInput('.')"></div>
-          </div>
-
-          <div class="right-section">
             <div class="placeholder-input">
               <input type="text" class="input-field" id="number-input" />
             </div>
             <div class="attack-button" onclick="handleAttack()"></div>
           </div>
-        </div>
 
-        <!-- <div class="chatbot-container">
+
+        <div class="chatbot-container">
           <div class="speech-bubble">
             <p><strong>Need help solving?</strong></p>
             <p>Start by identifying the key numbers in the problem. Look for the + sign and break into smaller steps!</p>
@@ -128,10 +133,9 @@
           <a href="{{ url_for('chatbot') }}">
             <img src="{{ url_for('static', filename='images/gameimg/counticus.png') }}" alt="Wizard Counticus" class="chatbot-img">
           </a>
-        </div> -->
+        </div>
 
-      </div>
-    </div>
+
 
 
     <!-- Question Section -->

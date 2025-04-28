@@ -583,12 +583,12 @@ function useHealthPotion() {
   if (isHealthPotionInUse) return; // lock
 
   if (currentPlayerHealth >= maxPlayerHealth) {
-    alert("🧪 Full health already!");
+    showFeedback("🧪 Full health already!");
     return;
   }
 
   if (healthPotions <= 0) {
-    alert("No Health Potions!");
+    showFeedback("No Health Potions!");
     return;
   }
 
@@ -596,13 +596,23 @@ function useHealthPotion() {
   healthPotions--;
   updatePotionUI();
 
-  playerHeal(4);
-  alert("🧪 Health Potion used!");
+  playerHeal(4); // Heal the player
+  showFeedback("🧪 Health Potion used!");
+
+  // Add healing effect to the player image
+  const playerImg = document.querySelector('.player');
+  playerImg.classList.add('heal'); // Trigger the healing animation
+
+  // Remove the heal class after the animation ends to reset the effect
+  setTimeout(() => {
+    playerImg.classList.remove('heal');
+  }, 500); // Match the duration of your animation (2s)
 
   setTimeout(() => {
-    isHealthPotionInUse = false; // unlock after short delay
+    isHealthPotionInUse = false; // Unlock after short delay
   }, 200);
 }
+
 
 // ========== THUNDER POTION ==========
 const frames = document.querySelectorAll('.sprite-lightning');
