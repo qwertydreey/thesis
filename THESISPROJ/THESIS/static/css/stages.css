@@ -1,98 +1,137 @@
-/* General Page Styling */
+
 body {
-    background-color: #1a202c;
-    color: white;
-    font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #1E273E;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden; /* Prevent body from showing extra background */
+}
+
+.main-wrapper {
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+
+}
+
+
+.stages-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  max-width: none; /* remove max-width if you want full stretch */
+
+}
+
+.bg-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: fill; /* Force stretching */
+  z-index: -1;
+  filter: blur(5px); /* Add blur effect with 10px radius, you can adjust this value */
+}
+
+
+.map-img {
+  position: absolute;
+  top: 8%;
+  left: 28%;
+  width: 43%;
+  height: 85%;
+  background-image: url('../images/stageimg/Additropolis Village.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+  animation: smoothBungeeDrop 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; /* Bungee drop effect */
+}
+
+@keyframes smoothBungeeDrop {
+  0% {
+    transform: translateY(-100%) scale(0.8); /* Start off-screen and slightly scaled */
   }
-  
-  .container {
-    padding: 20px;
+  50% {
+    transform: translateY(0) scale(1); /* Smooth fall to the original position */
   }
-  
-  /* Stage Card Styling */
-  .custom-card {
-    background-color: #2d3748;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  100% {
+    transform: translateY(0) scale(1); /* Final position, no movement or scaling */
   }
-  
-  .custom-card img {
-    max-width: 100%;
-    border-radius: 8px;
+}
+
+
+.stage {
+position: absolute;
+width: auto;
+height: 9%;
+background-size: contain;
+background-position: center;
+background-repeat: no-repeat;
+z-index: 3;
+transition: transform 0.4s ease; /* Smooth transition */
+
+}
+
+.stage:hover {
+  transform: scale(1.02); /* Scale up on hover */
+}
+.s1{
+  top: 46%;
+  left: 33%;
+}
+.s2{
+  top: 57%;
+  left: 33%;
+}
+.s3{
+  top: 68%;
+  left: 33%;
+}
+
+.star {
+  position: absolute;
+  width: auto;
+  height: 9%;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 4;
+  transition: transform 0.4s ease; /* Smooth transition */
   }
-  
-  .custom-card h2 {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #fff;
+  .star:hover {
+    transform: scale(1.02); /* Scale up on hover */
   }
-  
-  .custom-card p {
-    font-size: 0.875rem;
-    color: #cbd5e0;
+  .st1{
+    top: 45%;
+    left: 61%;
   }
-  
-  .custom-card .progress-bar-wrapper {
-    width: 100%;
-    height: 8px;
-    background-color: #4a5568;
-    border-radius: 4px;
-    margin-top: 10px;
+  .st2{
+    top: 56%;
+    left: 61%;
   }
-  
-  .custom-card .progress-bar-fill {
-    height: 100%;
-    background-color: #38b2ac;
-    border-radius: 4px;
+  .st3{
+    top: 67%;
+    left: 61%;
   }
-  
-  /* Button Styling */
-  .custom-card .btn {
-    background-color: #e53e3e;
-    border-color: #e53e3e;
+
+  .back-btn{
+    position: absolute; /* Same positioning as shop-btn */
+    top: 5.1%;
+    left: 4.1%;
+    width: 12%;
+    height: 14.8%;
+    background: transparent center/contain no-repeat; /* Same layout (image background) */
+    background-image: url('../images/stageimg/back2.png'); /* Image as background */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: transform 0.2s ease; /* Smooth transition */
+    z-index: 999; /* Ensure it's on top */
   }
-  
-  .custom-card .btn:hover {
-    background-color: #c53030;
-    border-color: #c53030;
-  }
-  
-  .text-center {
-    text-align: center;
-  }
-  
-  /* Back Button */
-  .back-btn {
-    background: url('path_to_back_button_image') no-repeat center center;
-    width: 50px;
-    height: 50px;
-    border: none;
-    cursor: pointer;
-    background-size: contain;
-  }
-  
   .back-btn:hover {
-    opacity: 0.8;
+    transform: scale(1.02); /* Scale up on hover */
   }
-  
-  /* Roadmap Title */
-  #map-title {
-    font-size: 2rem;
-    text-align: center;
-    font-weight: bold;
-    margin-bottom: 30px;
-  }
-  
-  /* Media Queries for Responsiveness */
-  @media (max-width: 768px) {
-    .custom-card {
-      padding: 12px;
-    }
-  
-    .custom-card img {
-      width: 100%;
-      height: auto;
-    }
-  }
-  

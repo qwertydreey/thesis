@@ -154,16 +154,38 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   position: absolute;
-  top: 18vh;    /* 18% of the viewport height */
-  left: 50vw;   /* 50% of the viewport width */  
+  top: -1vh;
+  left: 33vw;
   transform: translate(-50%, -50%);
   z-index: 10;
   width: 70vh;
   height: 38vh;
   text-align: center;
   padding: 0 10px;
-
+  animation: smoothBungeeDrop 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; /* Shortened duration for faster effect */
 }
+
+@keyframes smoothBungeeDrop {
+  0% {
+    transform: translateY(-100%) scale(0.8); /* Start off-screen and slightly scaled */
+    opacity: 0;
+  }
+  30% {
+    transform: translateY(0) scale(1); /* Fast drop to original position */
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-4%) scale(1.02); 
+  }
+  70% {
+  }
+  100% {
+    transform: translateY(0) scale(1); /* Settle back to final position */
+    opacity: 1;
+  }
+}
+
+
 
 
 .question-text {
@@ -1259,13 +1281,14 @@ body {
   transition: opacity 0.2s ease; /* Only apply opacity transition to wrapper */
 }
 
+
 /* Menu Button Styling */
 .menu-btn {
   background-image: url('../images/gameimg/menubg2.png');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  margin-top: 0.8vh; /* Convert 8px to vh */
+  margin-top: 1.8vh;
   width: 19.6vw;
   height: 11.7vh; /* Convert 117px to vh (approximately) */
   font-size: 4vh;  /* Responsive font size based on viewport height */

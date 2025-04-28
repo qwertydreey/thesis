@@ -4,75 +4,127 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stages</title>
-  
   <!-- Link to External CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/stages.css') }}" />
-
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  
   <!-- Tailwind CSS (Optional) -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="container py-4">
-    <h1 class="text-center text-2xl font-bold mb-5" id="map-title">Stages</h1>
 
-    <!-- Stage Cards Container -->
-    <div class="row g-4" id="stages-content">
-      <!-- Stage cards will be dynamically inserted here -->
+<body>
+  <div class="back">
+    <a href="{{ url_for('roadmap') }}">
+      <button class="back-btn"></button>
+    </a>
+  </div>
+
+  <div class="main-wrapper">
+    <div class="stages-content">
+      <img src="{{ url_for('static', filename='images/stageimg/bg.png') }}" alt="stages" class="bg-img" />
+    </div>
+      <div class="map-wrapper">
+
+      <div class="map-img">
+
+      <div class="buttons">
+        <button>
+          <img src="{{ url_for('static', filename='images/stageimg/stage1.png') }}" alt="stage" class="stage s1" />
+        </button>
+        <button>
+          <img src="{{ url_for('static', filename='images/stageimg/stage2.png') }}" alt="stage" class="stage s2" />
+        </button>
+        <button>
+          <img src="{{ url_for('static', filename='images/stageimg/stage3.png') }}" alt="stage" class="stage s3" />
+        </button>
+      </div> 
+      
+      <div class="stars">
+        <img src="{{ url_for('static', filename='images/stageimg/star-empty.png') }}" alt="star" class="star st1" />
+        <img src="{{ url_for('static', filename='images/stageimg/star-empty.png') }}" alt="star" class="star st2" />
+        <img src="{{ url_for('static', filename='images/stageimg/star-empty.png') }}" alt="star" class="star st3" />
+
+      </div>
+
+    
+          
+      </div>
+      </div>
     </div>
 
-<!-- Back Button -->
-<div class="text-center mt-4">
-  <a href="{{ url_for('roadmap') }}" class="btn btn-danger">
-    Back to Roadmap
-  </a>
-</div>
 
 
-  <script>
-    const selectedMap = "{{ selected_map or '' }}";
-    const mapTitle = document.getElementById('map-title');
-    const stagesContent = document.getElementById('stages-content');
-  
-    if (selectedMap) {
-      mapTitle.textContent = `${selectedMap.charAt(0).toUpperCase() + selectedMap.slice(1)} Stages`;
-  
-      // Generate 3 stages (modify the number of stages if needed)
-      let html = '';
-      for (let i = 1; i <= 3; i++) {
-        let description = `Description for ${selectedMap} stage ${i}`;
-        let stageLink = `/game?map=${selectedMap}&stage=${i}`;
-        
-        html += `
-          <div class="col-12 col-md-6 col-lg-3">
-            <div class="custom-card">
-              <div style="border: 1px solid rgb(0, 17, 255); padding: 10px;">
-                <img src="https://via.placeholder.com/150x150" alt="Stage ${i} Image" />
-              </div>
-              <p class="text-sm mb-2">${description}</p>
-              <h2 class="text-lg font-bold mb-2">${selectedMap.charAt(0).toUpperCase() + selectedMap.slice(1)} Stage ${i}</h2>
-              <div class="progress-bar-wrapper mb-2">
-                <div class="progress-bar-fill" style="width: ${30 + i * 10}%"></div>
-              </div>
-              <p class="text-sm mb-3">${i + 1} of 5 Completed</p>
-              <a href="${stageLink}" class="btn btn-danger w-100">Start</a>
-            </div>
-          </div>
-        `;
+    <script>
+      const selectedMap = "{{ selected_map or '' }}";
+    
+      function goToStage(stageNumber) {
+        if (selectedMap) {
+          // Show loading screen
+          const loadingOverlay = document.createElement('div');
+          loadingOverlay.style.position = 'fixed';
+          loadingOverlay.style.top = '0';
+          loadingOverlay.style.left = '0';
+          loadingOverlay.style.width = '100vw';
+          loadingOverlay.style.height = '100vh';
+          loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'; // Dim background
+          loadingOverlay.style.display = 'flex';
+          loadingOverlay.style.justifyContent = 'center';
+          loadingOverlay.style.alignItems = 'center';
+          loadingOverlay.style.color = '#fff';
+          loadingOverlay.style.fontSize = '2rem';
+          loadingOverlay.style.zIndex = '9999';
+          loadingOverlay.innerText = 'Loading...';
+    
+          document.body.appendChild(loadingOverlay);
+    
+          // After 1 second, redirect to the game page
+          setTimeout(() => {
+            window.location.href = `/game?map=${selectedMap}&stage=${stageNumber}`;
+          }, 1000); // 1000 milliseconds = 1 second
+        } else {
+          alert('No map selected.');
+        }
       }
-  
-      stagesContent.innerHTML = html;
-    } else {
-      stagesContent.innerHTML = `<p>No map selected.</p>`;
-    }
-  </script>
-  
-  
-  
+    
+      // Attach event listeners to stage buttons
+      document.querySelectorAll('.stage').forEach((stageImg, index) => {
+        stageImg.addEventListener('click', () => {
+          goToStage(index + 1); // index 0 => Stage 1, etc.
+        });
+      });
+    
+      // Change background image based on selectedMap
+      const mapImgDiv = document.querySelector('.map-img');
+      if (selectedMap && mapImgDiv) {
+        const mapImages = {
+          addition: "{{ url_for('static', filename='images/stageimg/addition-bg.png') }}",
+          subtraction: "{{ url_for('static', filename='images/stageimg/subtraction-bg.png') }}",
+          multiplication: "{{ url_for('static', filename='images/stageimg/multiplication-bg.png') }}",
+          division: "{{ url_for('static', filename='images/stageimg/division-bg.png') }}",
+          counting: "{{ url_for('static', filename='images/stageimg/counting-bg.png') }}",
+          comparison: "{{ url_for('static', filename='images/stageimg/comparison-bg.png') }}",
+          numerals: "{{ url_for('static', filename='images/stageimg/numerals-bg.png') }}",
+          placevalue: "{{ url_for('static', filename='images/stageimg/placevalue-bg.png') }}"
+        };
+    
+        if (mapImages[selectedMap]) {
+          mapImgDiv.style.backgroundImage = `url('${mapImages[selectedMap]}')`;
+          mapImgDiv.style.backgroundSize = 'cover';
+          mapImgDiv.style.backgroundPosition = 'center';
+        }
+      }
+    </script>
+    
+    
 
-  <!-- Bootstrap JS (Optional) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  </body>
+  </html>
+
+
+
+
+
+
+
+
+
+
+

@@ -148,15 +148,16 @@
         <p class="text-2xl text-red-400">No questions available for this level.</p>
       {% endif %}
       <div id="freeze-turn" class="freeze-turn"></div>
+      <div class="menu-btn-wrapper">
+        <button id="menuButton" class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+      </div>
     </div>
 
     <!-- Feedback -->
     <p id="feedback"></p>
 
   </div> <!-- End of game-wrapper -->
-  <div class="menu-btn-wrapper">
-    <button id="menuButton" class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
-  </div>
+
 
   <!-- Game Menu Overlay -->
   <div id="menuOverlay" class="menu-overlay hidden">

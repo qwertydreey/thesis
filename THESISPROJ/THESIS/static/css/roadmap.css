@@ -1,6 +1,4 @@
-html {
-  scroll-behavior: smooth;
-}
+
 
 body {
   margin: 0;
@@ -228,11 +226,11 @@ body {
 .back-btn {
   position: absolute;
   top: 3.1%;
-  left: 0%;
-  width: 11%;
-  height: 12.8%;
+  left: 1%;
+  width: 7%;
+  height: 9.8%;
   background: transparent center/contain no-repeat; /* Same layout (image background) */
-  background-image: url('../images/shopimg/back.png'); /* Image as background */
+  background-image: url('../images/stageimg/back2.png'); /* Image as background */
   border: none; /* No border */
   padding: 0; /* No padding */
   margin: 0; /* No margin */
