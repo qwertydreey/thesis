@@ -66,34 +66,6 @@ body {
 }
 
 
-.stage {
-position: absolute;
-width: auto;
-height: 9%;
-background-size: contain;
-background-position: center;
-background-repeat: no-repeat;
-z-index: 3;
-transition: transform 0.4s ease; /* Smooth transition */
-
-}
-
-.stage:hover {
-  transform: scale(1.02); /* Scale up on hover */
-}
-.s1{
-  top: 46%;
-  left: 33%;
-}
-.s2{
-  top: 57%;
-  left: 33%;
-}
-.s3{
-  top: 68%;
-  left: 33%;
-}
-
 .star {
   position: absolute;
   width: auto;
@@ -135,3 +107,64 @@ transition: transform 0.4s ease; /* Smooth transition */
   .back-btn:hover {
     transform: scale(1.02); /* Scale up on hover */
   }
+
+
+/* Stage styles */
+
+.stage {
+  position: absolute; /* Reverted to absolute for correct positioning */
+  transition: all 0.3s ease;
+  width: auto;
+  height: 9%;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 3;
+  transition: transform 0.4s ease; /* Smooth transition */
+}
+
+.stage:hover {
+  transform: scale(1.02); /* Scale up on hover */
+}
+
+.s1 {
+  top: 46%;
+  left: 33%;
+}
+
+.s2 {
+  top: 57%;
+  left: 33%;
+}
+
+.s3 {
+  top: 68%;
+  left: 33%;
+}
+
+
+
+/* Apply grayscale for locked stages */
+.stage.locked img {
+  filter: grayscale(100%) !important; /* Grayscale effect when locked */
+}
+
+/* Locked text overlay */
+.stage.locked::after {
+  content: "Locked";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.btn.locked {
+  opacity: 0.5; /* Optional: Dim the locked stage to indicate it's not fully accessible */
+  filter: grayscale(100%);
+}
+

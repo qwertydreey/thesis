@@ -34,14 +34,14 @@ const mapStages = {
   multiplication: {
     1: [
       { name: 'Multiplication-Mob-1', displayName: "OASIS OGRES", maxHp: 1, image: 'Multiplication-Mob-1.png' },
-      { name: 'Multiplication-Mob-2', displayName: "SANDY STOMPERS", maxHp: 3, image: 'Multiplication-Mob-2.png' },
-      { name: 'Multiplication-Mob-3', displayName: "CACTUS CREEPERS", maxHp: 4, image: 'Multiplication-Mob-3.png' },
-      { name: 'Multiplication-Boss-1', displayName: "SCORCH SCARAB", maxHp: 5, image: 'Multiplication-Boss-1.png' }
+      { name: 'Multiplication-Mob-2', displayName: "SANDY STOMPERS", maxHp: 1, image: 'Multiplication-Mob-2.png' },//3
+      { name: 'Multiplication-Mob-3', displayName: "CACTUS CREEPERS", maxHp: 1, image: 'Multiplication-Mob-3.png' },//4
+      { name: 'Multiplication-Boss-1', displayName: "SCORCH SCARAB", maxHp: 1, image: 'Multiplication-Boss-1.png' }//5
     ],
     2: [
       { name: 'Multiplication-Mob-4', displayName: "DUNE DWELLERS", maxHp: 2, image: 'Multiplication-Mob-4.png' },
-      { name: 'Multiplication-Mob-5', displayName: "SUNBURST STALKERS", maxHp: 4, image: 'Multiplication-Mob-5.png' },
-      { name: 'Multiplication-Mob-6', displayName: "SUNBURST STALKERS", maxHp: 3, image: 'Multiplication-Mob-6.png' },
+      { name: 'Multiplication-Mob-5', displayName: "SUNBURST STALKERS", maxHp: 4, image: 'Multiplication-Mob-5.png' },//4
+      { name: 'Multiplication-Mob-6', displayName: "SUNBURST STALKERS", maxHp: 3, image: 'Multiplication-Mob-6.png' },//
       { name: 'Multiplication-Boss-2', displayName: "PYRAMID PHANTOM", maxHp: 5, image: 'Multiplication-Boss-2.png' }
     ],
     3: [
@@ -614,7 +614,7 @@ function checkGameOver() {
     if (selectedMap && selectedStage) {
       const starsEarnedStage = 1;  // Always 1 star per completed stage
       updateStageProgress(selectedMap, selectedStage, starsEarnedStage);  // Store stage progress in localStorage
-      updateRoadmapStars();  // Update visual roadmap (stars displayed for the stages)
+      updateRoadmapStars(selectedMap, selectedStage);  // Update visual roadmap (stars displayed for the stages)
     }
   
     // Close victory screen
@@ -628,9 +628,10 @@ function checkGameOver() {
   
     // Route button actions
     continueBtn.onclick = () => {
-      // Redirect to the next stage or map
-      const nextMap = getNextMap();  // You can define this function to fetch the next map based on the player's progress
-      window.location.href = `/stages?map=${nextMap}`;
+      const nextMapUrl = getNextMap(selectedMap, selectedStage); // Pass current map and stage
+      if (nextMapUrl) {
+        window.location.href = `/stages?${nextMapUrl}`;
+      }
       closeVictoryScreen();
     };
   
@@ -650,34 +651,25 @@ function checkGameOver() {
   
   
   
-  function getNextMap() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentMap = urlParams.get('map');
-    const currentStage = urlParams.get('stage');
-    
-    if (!currentMap || !currentStage) {
-      console.error('Map or Stage is missing from URL!');
-      return;
-    }
-    
-    // Example: Assuming your maps are named 'multiplication', 'addition', etc.
-    const mapOrder = ['multiplication', 'addition', 'subtraction', 'division', 'counting', 'comparison', 'numerals', 'placevalue'];
-    
-    // Find the current map's index in the map order
-    const currentMapIndex = mapOrder.indexOf(currentMap);
-    
-    if (currentMapIndex === -1) {
-      console.error('Current map not found in map order!');
-      return;
-    }
-    
-    // Move to the next map, if the current map is the last map, stay on the last one
-    const nextMap = currentMapIndex < mapOrder.length - 1 ? mapOrder[currentMapIndex + 1] : mapOrder[currentMapIndex];
-    
-    // Optionally, you can also define logic to move to the next stage of the current map instead of the next map
-    
-    return nextMap;
+  
+  
+function getNextMap(currentMap, currentStage) {
+  const mapOrder = ['multiplication', 'addition', 'subtraction', 'division', 'counting', 'comparison', 'numerals', 'placevalue'];
+
+  // Find the current map's index
+  const currentMapIndex = mapOrder.indexOf(currentMap);
+
+  if (currentMapIndex === -1) {
+    console.error('Current map not found!');
+    return;
   }
+
+  // After stage 3, stay on the same map and stage (do not automatically switch map)
+  return `map=${currentMap}&stage=${currentStage}`;
+}
+
+  
+  
   
   
   
@@ -763,7 +755,7 @@ function calculateStars() {
 
 // ======= INITIAL LOAD =======
 window.addEventListener('DOMContentLoaded', () => {
-  updateRoadmapStars();  // Update the roadmap stars when the page loads
+  updateRoadmapStars();  // Update stars from localStorage
   initMapAndStage();
   updateHealthBars();
   fetchNewQuestion();
