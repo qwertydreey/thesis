@@ -6,6 +6,8 @@ const urlParams     = new URLSearchParams(window.location.search);
 const selectedMap   = urlParams.get('map')   || 'multiplication';
 const selectedStage = parseInt(urlParams.get('stage'), 10) || 1;
 
+
+
 // Backgrounds per map
 const mapBackgrounds = {
   multiplication: 'Multiplication Mirage.png',
@@ -193,7 +195,91 @@ const mapStages = {
   }
 };
 
+const rewardMap = {
+  multiplication: {
+    1: "reward-multiplication-badge",
+    2: "reward-multiplication-title",
+    3: "reward-multiplication-border"
+  },
+  addition: {
+    1: "reward-addition-badge",
+    2: "reward-addition-title",
+    3: "reward-addition-border"
+  },
+  subtraction: {
+    1: "reward-subtraction-badge",
+    2: "reward-subtraction-title",
+    3: "reward-subtraction-border"
+  },
+  division: {
+    1: "reward-division-badge",
+    2: "reward-division-title",
+    3: "reward-division-border"
+  },
+  counting: {
+    1: "reward-counting-badge",
+    2: "reward-counting-title",
+    3: "reward-counting-border"
+  },
+  comparison: {
+    1: "reward-comparison-badge",
+    2: "reward-comparison-title",
+    3: "reward-comparison-border"
+  },
+  numerals: {
+    1: "reward-numerals-badge",
+    2: "reward-numerals-title",
+    3: "reward-numerals-border"
+  },
+  placevalue: {
+    1: "reward-placevalue-badge",
+    2: "reward-placevalue-title",
+    3: "reward-placevalue-border"
+  }
+};
 
+const rewardData = {
+  multiplication: {
+    badge: "/static/images/gameimg/rewardimg/badge/badge-1.png",
+    title: "/static/images/gameimg/rewardimg/title/title-1.png",
+    border: "/static/images/gameimg/rewardimg/border/border-1.png"
+  },
+  addition: {
+    badge: "/static/images/gameimg/rewardimg/badge/badge-2.png",
+    title: "/static/images/gameimg/rewardimg/title/title-2.png",
+    border: "/static/images/gameimg/rewardimg/border/border-2.png"
+  },
+  subtraction: {
+    badge: "/static/images/gameimg/rewardimg/badge/badge-3.png",
+    title: "/static/images/gameimg/rewardimg/title/title-3.png",
+    border: "/static/images/gameimg/rewardimg/border/border-3.png"
+  },
+  division: {
+    badge: "/static/images/gameimg/rewardimg/badge/badge-4.png",
+    title: "/static/images/gameimg/rewardimg/title/title-4.png",
+    border: "/static/images/gameimg/rewardimg/border/border-4.png"
+  },
+  counting: {
+    badge: "/static/images/gameimg/rewardimg/badge/badge-5.png",
+    title: "/static/images/gameimg/rewardimg/title/title-5.png",
+    border: "/static/images/gameimg/rewardimg/border/border-5.png"
+  },
+  comparison: {
+    badge: "/static/images/gameimg/rewardimg/badge/badge-6.png",
+    title: "/static/images/gameimg/rewardimg/title/title-6.png",
+    border: "/static/images/gameimg/rewardimg/border/border-6.png"
+  },
+  numerals: {
+    badge: "/static/images/gameimg/rewardimg/badge/badge-7.png",
+    title: "/static/images/gameimg/rewardimg/title/title-7.png",
+    border: "/static/images/gameimg/rewardimg/border/border-7.png"
+  },
+  placevalue: {
+    badge: "/static/images/gameimg/rewardimg/badge/badge-8.png",
+    title: "/static/images/gameimg/rewardimg/title/title-8.png",
+    border: "/static/images/gameimg/rewardimg/border/border-8.png"
+  }
+};
 
 
 
@@ -546,7 +632,6 @@ function checkGameOver() {
     const continueBtn = document.getElementById('continue-btn');
     const retryBtn = document.getElementById('retry-btn');
     const homeBtn = document.getElementById('home-btn');
-    const bonusContainer = document.getElementById('bonus-potion-img-container');
   
     // Remove monster elements
     document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => el.remove());
@@ -559,76 +644,82 @@ function checkGameOver() {
     victoryScreen.classList.add('visible');
     victoryBox.classList.add('box-animation');
   
-    // Bonus potion logic (no change)
-    const rewards = ['health', 'freeze', 'thunder'];
-    const noRewardChance = Math.random() < 0.4;
+    // ✅ MAP & STAGE REWARD LOGIC
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedMap = urlParams.get('map') || 'multiplication';
+    const selectedStage = parseInt(urlParams.get('stage')); // make sure to parse it as an integer
   
-    let selectedPotions = [];
-    let potionCounts = { health: 0, freeze: 0, thunder: 0 };
+    const rewardCategories = rewardMap[selectedMap];
+    const reward = rewardData[selectedMap];
   
-    if (!noRewardChance) {
-      const numPotions = Math.random() < 0.2 ? 2 : 1;
-      for (let i = 0; i < numPotions; i++) {
-        const potionType = rewards[Math.floor(Math.random() * rewards.length)];
-        if (potionCounts[potionType] === 0) {
-          selectedPotions.push(potionType);
-        }
-        potionCounts[potionType]++;
+    // Check if the reward categories and reward data exist
+    if (rewardCategories && reward) {
+      const badgeElement = document.getElementById(rewardCategories[1]);
+      const titleElement = document.getElementById(rewardCategories[2]);
+      const borderElement = document.getElementById(rewardCategories[3]);
+  
+      // Log the elements and reward data (for debugging)
+      console.log("Reward Elements:");
+      console.log("Badge Element:", badgeElement);
+      console.log("Title Element:", titleElement);
+      console.log("Border Element:", borderElement);
+  
+      console.log("Reward Data:");
+      console.log("Badge Image Path:", reward.badge);
+      console.log("Title Image Path:", reward.title);
+      console.log("Border Image Path:", reward.border);
+  
+      // Hide all rewards first
+      if (badgeElement) badgeElement.classList.add('hidden');
+      if (titleElement) titleElement.classList.add('hidden');
+      if (borderElement) borderElement.classList.add('hidden');
+  
+      // Set reward images and show them based on stage
+      if (selectedStage === 1 && badgeElement) {
+        badgeElement.src = reward.badge;
+        badgeElement.classList.remove('hidden'); // Show badge
+        badgeElement.style.display = 'block'; // Ensure it's visible
+        console.log("Stage 1: Showing Badge");
+      } else if (selectedStage === 2 && titleElement) {
+        titleElement.src = reward.title;
+        titleElement.classList.remove('hidden'); // Show title
+        titleElement.style.display = 'block'; // Ensure it's visible
+        console.log("Stage 2: Showing Title");
+      } else if (selectedStage === 3 && borderElement) {
+        borderElement.src = reward.border;
+        borderElement.classList.remove('hidden'); // Show border
+        borderElement.style.display = 'block'; // Ensure it's visible
+        console.log("Stage 3: Showing Border");
       }
     }
   
-    const potionPaths = document.getElementById("potion-image-paths").dataset;
-    const potionImages = {
-      health: potionPaths.health,
-      freeze: potionPaths.freeze,
-      thunder: potionPaths.thunder
-    };
-  
-    bonusContainer.innerHTML = '';
-    selectedPotions.forEach(potion => {
-      const imgElement = document.createElement('img');
-      imgElement.src = potionImages[potion];
-      imgElement.alt = `${potion} potion`;
-      imgElement.classList.add('bonus-potion-img');
-      bonusContainer.appendChild(imgElement);
-  
-      const quantityText = document.createElement('p');
-      quantityText.textContent = `${potionCounts[potion]}x`;
-      bonusContainer.appendChild(quantityText);
-    });
-  
     // ✅ Update overall map progress stars
-    const urlParams = new URLSearchParams(window.location.search);
-    const selectedMap = urlParams.get('map');
-    const selectedStage = urlParams.get('stage');
-  
     if (selectedMap) {
-      const starsEarned = 1; // Since it's a completed stage, 1 star will be earned
+      const starsEarned = 1; // Logic for earned stars, can be updated as needed
       const currentStars = parseInt(localStorage.getItem(selectedMap)) || 0;
       if (starsEarned > currentStars) {
-        localStorage.setItem(selectedMap, starsEarned); // Update map progress with the highest stars earned
+        localStorage.setItem(selectedMap, starsEarned);
       }
     }
   
     // ✅ Update per-stage star rating
     if (selectedMap && selectedStage) {
-      const starsEarnedStage = 1;  // Always 1 star per completed stage
-      updateStageProgress(selectedMap, selectedStage, starsEarnedStage);  // Store stage progress in localStorage
-      updateRoadmapStars(selectedMap, selectedStage);  // Update visual roadmap (stars displayed for the stages)
+      const starsEarnedStage = 1; // Logic for earned stars per stage
+      updateStageProgress(selectedMap, selectedStage, starsEarnedStage);
+      updateRoadmapStars(selectedMap, selectedStage);
     }
   
-    // Close victory screen
+    // ✅ Close victory screen helper
     function closeVictoryScreen() {
       victoryScreen.style.visibility = 'hidden';
       victoryScreen.classList.remove('visible');
       gameContainer.classList.remove('paused');
-      bonusContainer.innerHTML = '';
       victoryBox.classList.remove('box-animation');
     }
   
-    // Route button actions
+    // ✅ Button actions
     continueBtn.onclick = () => {
-      const nextMapUrl = getNextMap(selectedMap, selectedStage); // Pass current map and stage
+      const nextMapUrl = getNextMap(selectedMap, selectedStage);
       if (nextMapUrl) {
         window.location.href = `/stages?${nextMapUrl}`;
       }
@@ -640,14 +731,33 @@ function checkGameOver() {
       closeVictoryScreen();
     };
   
+    // Get route paths from the HTML data attributes
+    const routePathsElement = document.getElementById('route-paths');
+    const routePaths = {
+      roadmap: routePathsElement.getAttribute('data-roadmap'),
+      dashboard: routePathsElement.getAttribute('data-dashboard')
+    };
+  
     homeBtn.onclick = () => {
       window.location.href = routePaths.dashboard;
       closeVictoryScreen();
     };
   
-    console.log('selectedMap:', selectedMap);
-    console.log('selectedStage:', selectedStage);
+    console.log("Victory Screen Loaded:");
+    console.log("Map:", selectedMap);
+    console.log("Stage:", selectedStage);
+    if (reward) {
+      console.log("Badge:", reward.badge);
+      console.log("Title:", reward.title);
+      console.log("Border:", reward.border);
+    }
   }
+  
+  
+  
+  
+  
+  
   
   
   

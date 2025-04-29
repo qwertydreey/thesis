@@ -51,7 +51,7 @@
       </div>
 
       <!-- Menu Button -->
-<!-- <button class="1btn" id="menuButton" onclick="showGameOverScreen()">WWWWWWWWWWWWWWWWW</button> -->
+<button class="1btn" id="menuButton" onclick="showVictoryScreen()">WWWWWWWWWWWWWWWWW</button>
       <!-- Characters and Platform Section (Ground) -->
       <div class="ground">
         <!-- Platform -->
@@ -197,45 +197,90 @@
     </div>
   </div>
 
-    <!-- Victory Screen -->
-    <div id="victory-screen" class="victory-screen">
-      <div class="victory-box">
-        <h1 class="victory-text">VICTORY!</h1>
-        <div class="victory-buttons">
-          <button id="continue-btn" class="victory-btn">Continue</button>
-          <button id="retry-btn" class="victory-btn">Retry</button>
-          <button id="home-btn" class="victory-btn">Home</button>
-        </div>
-        <div class="reward-box">
-          <p class="reward-text">Rewards</p>
-          <div id="bonus-potion-img-container" class="bonus-container"></div>
-        </div>
+<!-- Victory Screen -->
+<div id="victory-screen" class="victory-screen">
+  <div class="victory-box">
+    <h1 class="victory-text">VICTORY!</h1>
+    <div class="victory-buttons">
+      <button id="continue-btn" class="victory-btn">Continue</button>
+      <button id="retry-btn" class="victory-btn">Retry</button>
+      <button id="home-btn" class="victory-btn">Home</button>
+    </div>
+    
+    <!-- Reward Box (Moved here) -->
+    <div class="reward-box">
+      <p class="reward-text">Rewards</p>
+      <div class="reward-container">
+        <!-- Multiplication Rewards -->
+        <img id="reward-multiplication-badge" class="reward-img hidden" alt="Badge Reward">
+        <img id="reward-multiplication-title" class="reward-img hidden" alt="Title Reward">
+        <img id="reward-multiplication-border" class="reward-img hidden" alt="Border Reward">
+        
+        <!-- Addition Rewards -->
+        <img id="reward-addition-badge" class="reward-img hidden" alt="Badge Reward">
+        <img id="reward-addition-title" class="reward-img hidden" alt="Title Reward">
+        <img id="reward-addition-border" class="reward-img hidden" alt="Border Reward">
+        
+        <!-- Subtraction Rewards -->
+        <img id="reward-subtraction-badge" class="reward-img hidden" alt="Badge Reward">
+        <img id="reward-subtraction-title" class="reward-img hidden" alt="Title Reward">
+        <img id="reward-subtraction-border" class="reward-img hidden" alt="Border Reward">
+        
+        <!-- Division Rewards -->
+        <img id="reward-division-badge" class="reward-img hidden" alt="Badge Reward">
+        <img id="reward-division-title" class="reward-img hidden" alt="Title Reward">
+        <img id="reward-division-border" class="reward-img hidden" alt="Border Reward">
+        
+        <!-- Counting Rewards -->
+        <img id="reward-counting-badge" class="reward-img hidden" alt="Badge Reward">
+        <img id="reward-counting-title" class="reward-img hidden" alt="Title Reward">
+        <img id="reward-counting-border" class="reward-img hidden" alt="Border Reward">
+        
+        <!-- Comparison Rewards -->
+        <img id="reward-comparison-badge" class="reward-img hidden" alt="Badge Reward">
+        <img id="reward-comparison-title" class="reward-img hidden" alt="Title Reward">
+        <img id="reward-comparison-border" class="reward-img hidden" alt="Border Reward">
+        
+        <!-- Numerals Rewards -->
+        <img id="reward-numerals-badge" class="reward-img hidden" alt="Badge Reward">
+        <img id="reward-numerals-title" class="reward-img hidden" alt="Title Reward">
+        <img id="reward-numerals-border" class="reward-img hidden" alt="Border Reward">
+        
+        <!-- Place Value Rewards -->
+        <img id="reward-placevalue-badge" class="reward-img hidden" alt="Badge Reward">
+        <img id="reward-placevalue-title" class="reward-img hidden" alt="Title Reward">
+        <img id="reward-placevalue-border" class="reward-img hidden" alt="Border Reward">
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Game Over Screen -->
-    <div id="gameover-screen" class="gameover-screen">
-      <div class="gameover-box">
-        <h1 class="gameover-text">Game Over!</h1>
-        <div class="gameover-buttons">
-          <button id="retry-btn" class="gameover-btn">Retry</button>
-          <button id="home-btn" class="gameover-btn">Home</button>
-        </div>
-      </div>
+<!-- Game Over Screen -->
+<div id="gameover-screen" class="gameover-screen">
+  <div class="gameover-box">
+    <h1 class="gameover-text">Game Over!</h1>
+    <div class="gameover-buttons">
+      <button id="retry-btn" class="gameover-btn">Retry</button>
+      <button id="home-btn" class="gameover-btn">Home</button>
     </div>
+  </div>
+</div>
 
-  </div>
-  <div id="potion-image-paths"
-       data-health="{{ url_for('static', filename='images/gameimg/health.png') }}"
-       data-freeze="{{ url_for('static', filename='images/gameimg/freeze.png') }}"
-       data-thunder="{{ url_for('static', filename='images/gameimg/thunder.png') }}">
-  </div>
+<!-- Route Paths -->
+<div id="route-paths"
+  data-roadmap="{{ url_for('roadmap') }}"
+  data-dashboard="{{ url_for('dashboard') }}">
+</div>
 
-  <!-- Route Paths -->
-  <div id="route-paths"
-    data-roadmap="{{ url_for('roadmap') }}"
-    data-dashboard="{{ url_for('dashboard') }}">
-  </div>
+
+
+  
+
+
+
+
+
+
 
   <script src="{{ url_for('static', filename='js/game.js') }}"></script>
 

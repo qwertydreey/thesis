@@ -51,7 +51,6 @@ body {
 
 .player-container {
   background-image: url('../images/gameimg/playerborder.png');
-  
   user-select: none;
   -webkit-user-drag: none; /* Prevents dragging in Safari/Chrome */
   -webkit-user-select: none; /* Prevents text/image selection in WebKit */
@@ -1762,30 +1761,25 @@ body {
   box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-
-
-
-/* Reward Box */
+/* Reward Box and Others — unchanged */
 .reward-box {
   margin: -1vh auto;
   padding: 2vh;
   border-radius: 2.5vh;
-  background-color: #f0c15d; /* Warm gold color */
+  background-color: #f0c15d;
   text-align: center;
-  width: 47vh; /* Based on screen height, not width */
-  height: 15vh; /* Based on screen height */
+  width: 47vh;
+  height: 15vh;
   border: 0.5vh solid #d79e3a;
   overflow: hidden;
   position: relative;
 }
 
-
-/* Reward label text */
 .reward-text {
   position: absolute;
   font-size: 2vh;
   font-weight: bold;
-  color: #3f210a; /* Dark brown */
+  color: #3f210a;
   margin-bottom: 1.5vh;
   margin-top: -2vh;
   padding: 0.1vh 0.4vw;
@@ -1795,45 +1789,230 @@ body {
   transform: translateX(-50%);
 }
 
-
-/* Potion image container */
-#bonus-potion-img-container {
+.reward-container {
   display: flex;
-  justify-content: center;  /* Center the items */
-  gap: 1.3vw; /* Space between images */
-  flex-wrap: nowrap;  /* Prevent wrapping, keep the images in a single row */
+  justify-content: center;
   align-items: center;
-  position: absolute; /* Remove from document flow */
-  top: 65%; /* Adjust to position within reward box */
-  left: 50%;  /* Center horizontally */
-  transform: translate(-50%, -50%); /* Center it within the box */
-  margin-top: 0; /* Reset any margin */
-  width: auto; /* Let the width adjust according to the content */
+  flex-direction: column;
+  gap: 1vh;
+  margin-top: 2vh;
 }
 
-/* Potion image */
-#bonus-potion-img-container img {
-  max-width: 4.2vw;
-  margin-top: 0;
-  margin-bottom: 0;
-  animation: popIn 0.4s ease-out forwards;
-  border-radius: 1.2vh;
-  background-image: contain;
+.reward-img {
+  position: absolute;
+
 }
 
-/* Hover effect for potion images */
-#bonus-potion-img-container img:hover {
-  transform: scale(1.04);
+.hidden {
+  display: none;
+}
+.reward-img.hidden {
+  display: none !important;
 }
 
-/* Quantity label */
-#bonus-potion-img-container p {
-  font-size: 2vh;
-  font-weight: 600;
-  color: #3f210a; /* Dark brown */
-  margin-top: 0.5vh;
-  text-align: center;
+/* ✅ NEW layout and sizing for rewards */
+/* Multiplication */
+#reward-multiplication-badge {
+  width: auto;
+  height: 11vh;
+  top: 3vh;
+  left: 50%;
+  transform: translateX(-50%);
 }
+
+#reward-multiplication-title {
+  width: 14vw;
+  height: auto;
+  top: 3.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-multiplication-border {
+  width: 17vw;
+  height: auto;
+  top: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Addition */
+#reward-addition-badge {
+  width: auto;
+  height: 11vh;
+  top: 3vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-addition-title {
+  width: 14vw;
+  height: auto;
+  top: 3.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-addition-border {
+  width: 17vw;
+  height: auto;
+  top: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Subtraction */
+#reward-subtraction-badge {
+  width: auto;
+  height: 11vh;
+  top: 3vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-subtraction-title {
+  width: 14vw;
+  height: auto;
+  top: 3.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-subtraction-border {
+  width: 17vw;
+  height: auto;
+  top: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Division */
+#reward-division-badge {
+  width: auto;
+  height: 11vh;
+  top: 3vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-division-title {
+  width: 14vw;
+  height: auto;
+  top: 3.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-division-border {
+  width: 17vw;
+  height: auto;
+  top: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Counting */
+#reward-counting-badge {
+  width: auto;
+  height: 11vh;
+  top: 3vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-counting-title {
+  width: 14vw;
+  height: auto;
+  top: 3.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-counting-border {
+  width: 17vw;
+  height: auto;
+  top: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Comparison */
+#reward-comparison-badge {
+  width: auto;
+  height: 11vh;
+  top: 3vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-comparison-title {
+  width: 14vw;
+  height: auto;
+  top: 3.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-comparison-border {
+  width: 17vw;
+  height: auto;
+  top: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Numerals */
+#reward-numerals-badge {
+  width: auto;
+  height: 11vh;
+  top: 3vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-numerals-title {
+  width: 14vw;
+  height: auto;
+  top: 3.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-numerals-border {
+  width: 17vw;
+  height: auto;
+  top: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Place Value */
+#reward-placevalue-badge {
+  width: auto;
+  height: 11vh;
+  top: 3vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-placevalue-title {
+  width: 14vw;
+  height: auto;
+  top: 3.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#reward-placevalue-border {
+  width: 17vw;
+  height: auto;
+  top: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
+
 
 
 /* Main screen (Game Over Background) */
@@ -2549,3 +2728,6 @@ body {
   margin-left: 75vw;
   top: -54vh;
 }
+
+
+

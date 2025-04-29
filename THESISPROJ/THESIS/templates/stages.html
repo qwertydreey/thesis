@@ -109,10 +109,18 @@
 <script>
   window.addEventListener('DOMContentLoaded', () => {
     const selectedMap = "{{ selected_map or '' }}";
-    
-    // Retrieve the stage progress data from localStorage
+
+          //=======================================================//
+         // ETO GAGALAWIN MO PAG UPDATE NG CONNECTION SA DATABASE // 
+        //=======================================================//
+
     const stageProgress = JSON.parse(localStorage.getItem('stageProgress')) || {}; 
-    
+
+     //=======================================================//
+    //=======================================================//
+   //=======================================================//
+
+   
     // Define the paths to the star images
     const starFilled = "{{ url_for('static', filename='images/stageimg/star-filled.png') }}";  // Filled star
     const starEmpty = "{{ url_for('static', filename='images/stageimg/star-empty.png') }}";   // Empty star
