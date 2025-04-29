@@ -241,14 +241,8 @@ function initMapAndStage() {
 }
 
 
-// on page load, initialize
-window.addEventListener('DOMContentLoaded', () => {
-  initMapAndStage();
 
-  // then your existing calls:
-  updateHealthBars();
-  fetchNewQuestion();
-});
+
 
 function spawnMonster(idx) {
   const m = monstersInStage[idx];
@@ -308,7 +302,6 @@ function spawnMonster(idx) {
 }
 
 
-
 function triggerMonsterDeathAnimation() {
   const monsterImg = document.getElementById('monster-sprite');
   if (!monsterImg) return;
@@ -329,10 +322,6 @@ function triggerMonsterDeathAnimation() {
     nextMonster();
   });
 }
-
-
-
-
 
 
 // Go to next monster
@@ -365,14 +354,6 @@ function startMonsterSpawnAnimation() {
     isMonsterSpawnAnimationInProgress = false;
   }, spawnAnimationDuration); // Use the actual duration of the spawn animation
 }
-
-
-
-
-
-
-
-
 
 
 // ======= HEALTH BAR LOGIC =======
@@ -484,8 +465,6 @@ function startMonsterSpawnAnimation() {
 
 
 
-
-
 // ======= GAME OVER =======
 function checkGameOver() {
   if (currentPlayerHealth <= 0) {
@@ -494,7 +473,6 @@ function checkGameOver() {
     }, 1000); // Delay to allow any final animation to finish
   }
 }
-
 
 
   // ======= ATTACK & QUESTION =======
@@ -556,230 +534,310 @@ function checkGameOver() {
   }
 
 
-// ======= POTIONS =======
-
-// Potion counts
-let healthPotions = 3;
-let thunderPotions = 3;
-let freezePotions = 3;
-
-let isMonsterSpawnAnimationInProgress = false;
-let isMonsterDeathAnimationInProgress = false;
-
-// Potion usage locks
-let isHealthPotionInUse = false;
-let isThunderPotionInUse = false;
-let isFreezePotionInUse = false;
-
-// Freeze-related variables
-let freezePotionUsed = false;
-let freezeTurns = 0;
-const freezeTurnsDisplay = document.getElementById('freeze-turn');
-const monsterContainer = document.querySelector('.monster');
-freezeTurnsDisplay.style.display = 'none';
-
-// ========== HEALTH POTION ==========
-function useHealthPotion() {
-  if (isHealthPotionInUse) return; // lock
-
-  if (currentPlayerHealth >= maxPlayerHealth) {
-    showFeedback("🧪 Full health already!");
-    return;
-  }
-
-  if (healthPotions <= 0) {
-    showFeedback("No Health Potions!");
-    return;
-  }
-
-  isHealthPotionInUse = true;
-  healthPotions--;
-  updatePotionUI();
-
-  playerHeal(4); // Heal the player
-  showFeedback("🧪 Health Potion used!");
-
-  // Add healing effect to the player image
-  const playerImg = document.querySelector('.player');
-  playerImg.classList.add('heal'); // Trigger the healing animation
-
-  // Remove the heal class after the animation ends to reset the effect
-  setTimeout(() => {
-    playerImg.classList.remove('heal');
-  }, 500); // Match the duration of your animation (2s)
-
-  setTimeout(() => {
-    isHealthPotionInUse = false; // Unlock after short delay
-  }, 200);
-}
-
-
-// ========== THUNDER POTION ==========
-const frames = document.querySelectorAll('.sprite-lightning');
-let currentFrame = 0;
-const monsterElement = document.querySelector('.monster');
-
-function resetFrames() {
-  frames.forEach(f => f.classList.remove('active'));
-  monsterElement.classList.remove('red');
-}
-
-function changeFrame() {
-  resetFrames();
-  frames[currentFrame].classList.add('active');
-  currentFrame++;
-  if (currentFrame >= frames.length) {
-    clearInterval(animationInterval);
-    currentFrame = 0;
-    resetFrames();
-    monsterElement.classList.add('red');
-    setTimeout(() => monsterElement.classList.remove('red'), 70);
-  }
-}
-
-function useThunderPotion() {
-  // Prevent using Thunder Potion if any animation is in progress
-  if (isThunderPotionInUse || isMonsterSpawnAnimationInProgress || isMonsterDeathAnimationInProgress) {
-    showFeedback("❌ Thunder Potion is on cooldown! Please wait.");
-    return;
-  }
-
-  if (thunderPotions <= 0) {
-    const feedback = document.getElementById('feedback');
-    feedback.innerText = '⚡ You have no Thunder Potions left!';
-    setTimeout(() => {
-      feedback.innerText = '';
-    }, 2000);
-    return;
-  }
-
-  if (currentMonsterHealth <= 0) {
-    console.log("❌ Monster is already defeated. Thunder Potion cannot be used.");
-    return;
-  }
-
-  isThunderPotionInUse = true;
-  thunderPotions--;
-  updatePotionUI();
-
-  setTimeout(() => {
-    if (currentMonsterHealth > 0) {
-      // Handle the Thunder Potion animation and damage
-      if (animationInterval !== null) {
-        clearInterval(animationInterval);
-        resetFrames();
-      }
-
-      console.log("Thunder Potion used!");
-      animationInterval = setInterval(changeFrame, 80); // faster lightning animation
-
-      setTimeout(() => {
-        const monster = document.querySelector(".monster");
-
-        if (!monster.classList.contains('frozen')) {
-          monster.classList.add("damaged");
-          setTimeout(() => {
-            monster.classList.remove("damaged");
-            if (currentMonsterHealth > 0) {
-              monsterTakeDamage();
-            }
-            setTimeout(() => {
-              isThunderPotionInUse = false;
-            }, 150);
-          }, 320);
-        } else {
-          console.log("❄️ Monster is frozen — no damage animation.");
-          if (currentMonsterHealth > 0) {
-            monsterTakeDamage();
-          }
-          setTimeout(() => {
-            isThunderPotionInUse = false;
-          }, 150);
+  function showVictoryScreen() {
+    const gameContainer = document.querySelector('.ground');
+    if (!gameContainer) {
+      console.error('Game container not found!');
+      return;
+    }
+  
+    const victoryScreen = document.getElementById('victory-screen');
+    const victoryBox = victoryScreen.querySelector('.victory-box');
+    const continueBtn = document.getElementById('continue-btn');
+    const retryBtn = document.getElementById('retry-btn');
+    const homeBtn = document.getElementById('home-btn');
+    const bonusContainer = document.getElementById('bonus-potion-img-container');
+  
+    // Remove monster elements
+    document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => el.remove());
+  
+    // Pause game
+    gameContainer.classList.add('paused');
+  
+    // Show victory screen
+    victoryScreen.style.visibility = 'visible';
+    victoryScreen.classList.add('visible');
+    victoryBox.classList.add('box-animation');
+  
+    // Bonus potion logic (no change)
+    const rewards = ['health', 'freeze', 'thunder'];
+    const noRewardChance = Math.random() < 0.4;
+  
+    let selectedPotions = [];
+    let potionCounts = { health: 0, freeze: 0, thunder: 0 };
+  
+    if (!noRewardChance) {
+      const numPotions = Math.random() < 0.2 ? 2 : 1;
+      for (let i = 0; i < numPotions; i++) {
+        const potionType = rewards[Math.floor(Math.random() * rewards.length)];
+        if (potionCounts[potionType] === 0) {
+          selectedPotions.push(potionType);
         }
-      }, 520);
-    } else {
-      console.log("❌ Monster is already defeated. Thunder Potion cannot be used.");
-      setTimeout(() => {
-        isThunderPotionInUse = false;
-      }, 150);
+        potionCounts[potionType]++;
+      }
     }
-  }, 600);
-}
-
-
-
-function useFreezePotion() {
-  // Prevent if a potion is in use, or spawn/death animation is in progress
-  if (isFreezePotionInUse || isMonsterSpawnAnimationInProgress || isMonsterDeathAnimationInProgress) {
-    showFeedback("❌ You can't use the Freeze Potion during monster animation!");
-    return;
-  }
-
-  if (freezeTurns > 0) {
-    showFeedback(`❄️ You still have ${freezeTurns} Freeze Turns left!`);
-    return;
-  }
-
-  if (freezePotions <= 0) {
-    showFeedback('❄️ You have no Freeze Potions left!');
-    return;
-  }
-
-  isFreezePotionInUse = true;
-  freezePotions--;
-  freezePotionUsed = true;
-  freezeTurns = 3;
-  updatePotionUI();
-  updateFreezeTurnsDisplay();
-  freezeTurnsDisplay.style.display = 'block';
-
-  // Apply the freeze effect after checking for spawn/death animations
-  setTimeout(() => {
-    if (!isMonsterSpawnAnimationInProgress && !isMonsterDeathAnimationInProgress) {
-      applyFreezeEffect(); // Freeze the monster if no animation is in progress
-    } else {
-      showFeedback("❌ Can't freeze during spawn or death animation!"); // Feedback if freeze is used during animation
+  
+    const potionPaths = document.getElementById("potion-image-paths").dataset;
+    const potionImages = {
+      health: potionPaths.health,
+      freeze: potionPaths.freeze,
+      thunder: potionPaths.thunder
+    };
+  
+    bonusContainer.innerHTML = '';
+    selectedPotions.forEach(potion => {
+      const imgElement = document.createElement('img');
+      imgElement.src = potionImages[potion];
+      imgElement.alt = `${potion} potion`;
+      imgElement.classList.add('bonus-potion-img');
+      bonusContainer.appendChild(imgElement);
+  
+      const quantityText = document.createElement('p');
+      quantityText.textContent = `${potionCounts[potion]}x`;
+      bonusContainer.appendChild(quantityText);
+    });
+  
+    // ✅ Update overall map progress stars
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedMap = urlParams.get('map');
+    const selectedStage = urlParams.get('stage');
+  
+    if (selectedMap) {
+      const starsEarned = 1; // Since it's a completed stage, 1 star will be earned
+      const currentStars = parseInt(localStorage.getItem(selectedMap)) || 0;
+      if (starsEarned > currentStars) {
+        localStorage.setItem(selectedMap, starsEarned); // Update map progress with the highest stars earned
+      }
     }
+  
+    // ✅ Update per-stage star rating
+    if (selectedMap && selectedStage) {
+      const starsEarnedStage = 1;  // Always 1 star per completed stage
+      updateStageProgress(selectedMap, selectedStage, starsEarnedStage);  // Store stage progress in localStorage
+      updateRoadmapStars();  // Update visual roadmap (stars displayed for the stages)
+    }
+  
+    // Close victory screen
+    function closeVictoryScreen() {
+      victoryScreen.style.visibility = 'hidden';
+      victoryScreen.classList.remove('visible');
+      gameContainer.classList.remove('paused');
+      bonusContainer.innerHTML = '';
+      victoryBox.classList.remove('box-animation');
+    }
+  
+    // Route button actions
+    continueBtn.onclick = () => {
+      // Redirect to the next stage or map
+      const nextMap = getNextMap();  // You can define this function to fetch the next map based on the player's progress
+      window.location.href = `/stages?map=${nextMap}`;
+      closeVictoryScreen();
+    };
+  
+    retryBtn.onclick = () => {
+      window.location.reload();
+      closeVictoryScreen();
+    };
+  
+    homeBtn.onclick = () => {
+      window.location.href = routePaths.dashboard;
+      closeVictoryScreen();
+    };
+  
+    console.log('selectedMap:', selectedMap);
+    console.log('selectedStage:', selectedStage);
+  }
+  
+  
+  
+  function getNextMap() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentMap = urlParams.get('map');
+    const currentStage = urlParams.get('stage');
+    
+    if (!currentMap || !currentStage) {
+      console.error('Map or Stage is missing from URL!');
+      return;
+    }
+    
+    // Example: Assuming your maps are named 'multiplication', 'addition', etc.
+    const mapOrder = ['multiplication', 'addition', 'subtraction', 'division', 'counting', 'comparison', 'numerals', 'placevalue'];
+    
+    // Find the current map's index in the map order
+    const currentMapIndex = mapOrder.indexOf(currentMap);
+    
+    if (currentMapIndex === -1) {
+      console.error('Current map not found in map order!');
+      return;
+    }
+    
+    // Move to the next map, if the current map is the last map, stay on the last one
+    const nextMap = currentMapIndex < mapOrder.length - 1 ? mapOrder[currentMapIndex + 1] : mapOrder[currentMapIndex];
+    
+    // Optionally, you can also define logic to move to the next stage of the current map instead of the next map
+    
+    return nextMap;
+  }
+  
+  
+  
+  
+  function incrementStageProgress(stageKey) {
+    let stageData = JSON.parse(localStorage.getItem(stageKey)) || { stars: 0, completed: false };
+  
+    if (stageData.stars < 3) {
+        stageData.stars++;
+    }
+  
+    if (stageData.stars === 3) {
+        stageData.completed = true;
+    }
+  
+    localStorage.setItem(stageKey, JSON.stringify(stageData));
+    setStars(`.${stageKey}-stars`, stageKey);
+  }
+  
 
-    // Reset the Freeze Potion use state after a short delay
-    setTimeout(() => {
-      isFreezePotionInUse = false; // Unlock potion after short delay
-    }, 400);
-  }, 400);
-}
 
-function applyFreezeEffect() {
-  // Freeze the monster only if it's not already frozen
-  if (!monsterContainer.classList.contains('frozen')) {
-    monsterContainer.classList.add('frozen');
+  
+
+
+// STARS UPDATE SA ROADMAP  //
+
+function updateStageProgress(selectedMap, selectedStage, starsEarned) {
+  const stageKey = `${selectedMap}-${selectedStage}`;
+
+  // Get existing progress from localStorage (if any)
+  const currentProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
+
+  // Check if the stage is completed and whether we earned more stars
+  const existingStars = currentProgress[stageKey]?.stars || 0;
+
+  if (starsEarned > existingStars) {
+    currentProgress[stageKey] = {
+      stars: starsEarned,
+      completed: true
+    };
+    localStorage.setItem('stageProgress', JSON.stringify(currentProgress));
   }
 }
 
-function removeFreezeEffect() {
-  monsterContainer.classList.remove('frozen');
+
+
+
+function updateRoadmapStars(stageKeyJustCompleted) {
+  const progress = JSON.parse(localStorage.getItem('stageProgress')) || {};
+  const stageProgress = progress[stageKeyJustCompleted];
+
+  if (!stageProgress) return;
+
+  const roadmapItem = document.querySelector(`.stage-item[data-stage-key="${stageKeyJustCompleted}"]`);
+
+  if (roadmapItem) {
+    const starWrapper = roadmapItem.querySelector('.star-wrapper');
+    const starImgs = starWrapper.querySelectorAll('.progress-star');
+    
+    starImgs.forEach((img, index) => {
+      if (index < stageProgress.stars) {
+        img.src = window.STAR_IMAGES.filled;  // 🔁 use global variable from HTML
+      } else {
+        img.src = window.STAR_IMAGES.empty;
+      }
+    });
+  }
 }
 
 
-function updateFreezeTurnsDisplay() {
-  freezeTurnsDisplay.innerText = `❄️ Freeze Turns Left: ${freezeTurns}`;
+
+
+function calculateStars() {
+  if (currentPlayerHealth === 0) {
+    return 0;  // Game over, no stars awarded
+  } else {
+    return 1;  // Always 1 star when the stage is completed
+  }
 }
 
 
 
-// ========== DAMAGE PLAYER (checks if frozen) ==========
 
-function damagePlayer() {
-  const monsterContainer = document.querySelector('.monster');
+// ======= INITIAL LOAD =======
+window.addEventListener('DOMContentLoaded', () => {
+  updateRoadmapStars();  // Update the roadmap stars when the page loads
+  initMapAndStage();
+  updateHealthBars();
+  fetchNewQuestion();
+});
+
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+
+// Show the game over screen
+function showGameOverScreen() {
+  const gameContainer = document.querySelector('.ground');
+  if (!gameContainer) {
+    console.error('Game container not found!');
+    return;
+  }
+
+  const gameOverScreen = document.getElementById('game-over-screen');
+  const retryBtn = document.getElementById('retry-btn');
+  const homeBtn = document.getElementById('home-btn');
+
+  // Remove monster elements
+  document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => el.remove());
+
+  // Pause game
+  gameContainer.classList.add('paused');
+
+  // Show game over screen
+  gameOverScreen.style.visibility = 'visible';
+  gameOverScreen.classList.add('visible');
+
+  // Close game over screen
+  function closeGameOverScreen() {
+    gameOverScreen.style.visibility = 'hidden';
+    gameOverScreen.classList.remove('visible');
+    gameContainer.classList.remove('paused');
+  }
+
+  // Route button actions
+  retryBtn.onclick = () => {
+    window.location.reload();
+    closeGameOverScreen();
+  };
+
+  homeBtn.onclick = () => {
+    window.location.href = routePaths.dashboard;
+    closeGameOverScreen();
+  };
+}
+
+
+
+// Function for monster's attack animation
+function monsterAttack() {
+  const monster = document.querySelector('.monster');
   const player = document.querySelector('.player');
 
-  if (!monsterContainer.classList.contains('frozen')) {
-    player.classList.add('player-damaged', 'shake');
+  // Add the attack animation class to the monster
+  monster.classList.add("monster-attack");
+
+  // After the attack animation ends, apply the damage to the player
+  setTimeout(() => {
+    monster.classList.remove("monster-attack"); // Remove the animation class
+
+    // ✅ Gamitin natin yung damagePlayer() function
+    damagePlayer();
+    
+    // Optional: actual damage logic pa rin
     setTimeout(() => {
-      player.classList.remove('player-damaged', 'shake');
-    }, 600);
-  } else {
-    console.log("❄️ Monster is frozen — no damage to player.");
-  }
+      playerTakeDamage(); // Call the function to apply damage to the player
+    }, 600); // Match sa animation duration
+  }, 800); // Match sa monster attack animation
 }
 
 
@@ -883,191 +941,269 @@ function updatePotionUI() {
 
 
 
+// ==================================START OF POTION SCRIPT ======================================= //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
 
-// Function for monster's attack animation
-function monsterAttack() {
-  const monster = document.querySelector('.monster');
+// Potion counts
+let healthPotions = 3;
+let thunderPotions = Infinity;
+let freezePotions = 3;
+
+let isMonsterSpawnAnimationInProgress = false;
+let isMonsterDeathAnimationInProgress = false;
+
+// Potion usage locks
+let isHealthPotionInUse = false;
+let isThunderPotionInUse = false;
+let isFreezePotionInUse = false;
+
+// Freeze-related variables
+let freezePotionUsed = false;
+let freezeTurns = 0;
+const freezeTurnsDisplay = document.getElementById('freeze-turn');
+const monsterContainer = document.querySelector('.monster');
+freezeTurnsDisplay.style.display = 'none';
+
+
+
+// ========== HEALTH POTION ========== //
+function useHealthPotion() {
+  if (isHealthPotionInUse) return; // lock
+
+  if (currentPlayerHealth >= maxPlayerHealth) {
+    showFeedback("🧪 Full health already!");
+    return;
+  }
+
+  if (healthPotions <= 0) {
+    showFeedback("No Health Potions!");
+    return;
+  }
+
+  isHealthPotionInUse = true;
+  healthPotions--;
+  updatePotionUI();
+
+  playerHeal(4); // Heal the player
+  showFeedback("🧪 Health Potion used!");
+
+  // Add healing effect to the player image
+  const playerImg = document.querySelector('.player');
+  playerImg.classList.add('heal'); // Trigger the healing animation
+
+  // Remove the heal class after the animation ends to reset the effect
+  setTimeout(() => {
+    playerImg.classList.remove('heal');
+  }, 500); // Match the duration of your animation (2s)
+
+  setTimeout(() => {
+    isHealthPotionInUse = false; // Unlock after short delay
+  }, 200);
+}
+
+function useFreezePotion() {
+  // Prevent if a potion is in use, or spawn/death animation is in progress
+  if (isFreezePotionInUse || isMonsterSpawnAnimationInProgress || isMonsterDeathAnimationInProgress) {
+    showFeedback("❌ You can't use the Freeze Potion during monster animation!");
+    return;
+  }
+
+  if (freezeTurns > 0) {
+    showFeedback(`❄️ You still have ${freezeTurns} Freeze Turns left!`);
+    return;
+  }
+
+  if (freezePotions <= 0) {
+    showFeedback('❄️ You have no Freeze Potions left!');
+    return;
+  }
+
+  isFreezePotionInUse = true;
+  freezePotions--;
+  freezePotionUsed = true;
+  freezeTurns = 3;
+  updatePotionUI();
+  updateFreezeTurnsDisplay();
+  freezeTurnsDisplay.style.display = 'block';
+
+  // Apply the freeze effect after checking for spawn/death animations
+  setTimeout(() => {
+    if (!isMonsterSpawnAnimationInProgress && !isMonsterDeathAnimationInProgress) {
+      applyFreezeEffect(); // Freeze the monster if no animation is in progress
+    } else {
+      showFeedback("❌ Can't freeze during spawn or death animation!"); // Feedback if freeze is used during animation
+    }
+
+    // Reset the Freeze Potion use state after a short delay
+    setTimeout(() => {
+      isFreezePotionInUse = false; // Unlock potion after short delay
+    }, 400);
+  }, 400);
+}
+
+function applyFreezeEffect() {
+  // Freeze the monster only if it's not already frozen
+  if (!monsterContainer.classList.contains('frozen')) {
+    monsterContainer.classList.add('frozen');
+  }
+}
+
+function removeFreezeEffect() {
+  monsterContainer.classList.remove('frozen');
+}
+
+
+function updateFreezeTurnsDisplay() {
+  freezeTurnsDisplay.innerText = `❄️ Freeze Turns Left: ${freezeTurns}`;
+}
+
+
+// ========== DAMAGE PLAYER (checks if frozen) ==========
+
+function damagePlayer() {
+  const monsterContainer = document.querySelector('.monster');
   const player = document.querySelector('.player');
 
-  // Add the attack animation class to the monster
-  monster.classList.add("monster-attack");
-
-  // After the attack animation ends, apply the damage to the player
-  setTimeout(() => {
-    monster.classList.remove("monster-attack"); // Remove the animation class
-
-    // ✅ Gamitin natin yung damagePlayer() function
-    damagePlayer();
-    
-    // Optional: actual damage logic pa rin
+  if (!monsterContainer.classList.contains('frozen')) {
+    player.classList.add('player-damaged', 'shake');
     setTimeout(() => {
-      playerTakeDamage(); // Call the function to apply damage to the player
-    }, 600); // Match sa animation duration
-  }, 800); // Match sa monster attack animation
+      player.classList.remove('player-damaged', 'shake');
+    }, 600);
+  } else {
+    console.log("❄️ Monster is frozen — no damage to player.");
+  }
 }
 
 
 
-// Show the victory screen
-function showVictoryScreen() {
-  const gameContainer = document.querySelector('.ground');
-  if (!gameContainer) {
-    console.error('Game container not found!');
+// ========== THUNDER POTION ==========
+const frames = document.querySelectorAll('.sprite-lightning');
+let currentFrame = 0;
+const monsterElement = document.querySelector('.monster');
+
+function resetFrames() {
+  frames.forEach(f => f.classList.remove('active'));
+  monsterElement.classList.remove('red');
+}
+
+function changeFrame() {
+  resetFrames();
+  frames[currentFrame].classList.add('active');
+  currentFrame++;
+  if (currentFrame >= frames.length) {
+    clearInterval(animationInterval);
+    currentFrame = 0;
+    resetFrames();
+    monsterElement.classList.add('red');
+    setTimeout(() => monsterElement.classList.remove('red'), 70);
+  }
+}
+
+function useThunderPotion() {
+  // Prevent using Thunder Potion if any animation is in progress
+  if (isThunderPotionInUse || isMonsterSpawnAnimationInProgress || isMonsterDeathAnimationInProgress) {
+    showFeedback("❌ Thunder Potion is on cooldown! Please wait.");
     return;
   }
 
-  const victoryScreen = document.getElementById('victory-screen');
-  const victoryBox = victoryScreen.querySelector('.victory-box');
-  const continueBtn = document.getElementById('continue-btn');
-  const retryBtn = document.getElementById('retry-btn');
-  const homeBtn = document.getElementById('home-btn');
-  const bonusContainer = document.getElementById('bonus-potion-img-container');
+  if (thunderPotions <= 0) {
+    const feedback = document.getElementById('feedback');
+    feedback.innerText = '⚡ You have no Thunder Potions left!';
+    setTimeout(() => {
+      feedback.innerText = '';
+    }, 2000);
+    return;
+  }
 
-  // Remove monster elements
-  document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => el.remove());
+  if (currentMonsterHealth <= 0) {
+    console.log("❌ Monster is already defeated. Thunder Potion cannot be used.");
+    return;
+  }
 
-  // Pause game
-  gameContainer.classList.add('paused');
+  isThunderPotionInUse = true;
+  thunderPotions--;
+  updatePotionUI();
 
-  // Show victory screen
-  victoryScreen.style.visibility = 'visible';
-  victoryScreen.classList.add('visible');
-  victoryBox.classList.add('box-animation');
-
-  // Bonus potion logic
-  const rewards = ['health', 'freeze', 'thunder'];
-  const noRewardChance = Math.random() < 0.4;
-
-  let selectedPotions = [];
-  let potionCounts = { health: 0, freeze: 0, thunder: 0 };
-
-  if (!noRewardChance) {
-    const numPotions = Math.random() < 0.2 ? 2 : 1;
-    for (let i = 0; i < numPotions; i++) {
-      const potionType = rewards[Math.floor(Math.random() * rewards.length)];
-      if (potionCounts[potionType] === 0) {
-        selectedPotions.push(potionType);
+  setTimeout(() => {
+    if (currentMonsterHealth > 0) {
+      // Handle the Thunder Potion animation and damage
+      if (animationInterval !== null) {
+        clearInterval(animationInterval);
+        resetFrames();
       }
-      potionCounts[potionType]++;
+
+      console.log("Thunder Potion used!");
+      animationInterval = setInterval(changeFrame, 80); // faster lightning animation
+
+      setTimeout(() => {
+        const monster = document.querySelector(".monster");
+
+        if (!monster.classList.contains('frozen')) {
+          monster.classList.add("damaged");
+          setTimeout(() => {
+            monster.classList.remove("damaged");
+            if (currentMonsterHealth > 0) {
+              monsterTakeDamage();
+            }
+            setTimeout(() => {
+              isThunderPotionInUse = false;
+            }, 150);
+          }, 320);
+        } else {
+          console.log("❄️ Monster is frozen — no damage animation.");
+          if (currentMonsterHealth > 0) {
+            monsterTakeDamage();
+          }
+          setTimeout(() => {
+            isThunderPotionInUse = false;
+          }, 150);
+        }
+      }, 520);
+    } else {
+      console.log("❌ Monster is already defeated. Thunder Potion cannot be used.");
+      setTimeout(() => {
+        isThunderPotionInUse = false;
+      }, 150);
     }
-  }
-
-  const potionPaths = document.getElementById("potion-image-paths").dataset;
-  const potionImages = {
-    health: potionPaths.health,
-    freeze: potionPaths.freeze,
-    thunder: potionPaths.thunder
-  };
-
-  bonusContainer.innerHTML = '';
-  selectedPotions.forEach(potion => {
-    const imgElement = document.createElement('img');
-    imgElement.src = potionImages[potion];
-    imgElement.alt = `${potion} potion`;
-    imgElement.classList.add('bonus-potion-img');
-    bonusContainer.appendChild(imgElement);
-
-    const quantityText = document.createElement('p');
-    quantityText.textContent = `${potionCounts[potion]}x`;
-    bonusContainer.appendChild(quantityText);
-  });
-
-  // Close victory screen
-  function closeVictoryScreen() {
-    victoryScreen.style.visibility = 'hidden';
-    victoryScreen.classList.remove('visible');
-    gameContainer.classList.remove('paused');
-    bonusContainer.innerHTML = '';
-    victoryBox.classList.remove('box-animation');
-  }
-
-  const routePaths = document.getElementById("route-paths").dataset;
-
-  continueBtn.onclick = () => {
-    window.location.href = `/stages?map=${selectedMap}`;  // Redirect based on selected map
-    closeVictoryScreen();
-  };
-  
-
-  retryBtn.onclick = () => {
-    window.location.reload();
-    closeVictoryScreen();
-  };
-
-  homeBtn.onclick = () => {
-    window.location.href = routePaths.dashboard;
-    closeVictoryScreen();
-  };
+  }, 600);
 }
-
-// Show the game over screen
-function showGameOverScreen() {
-  const gameContainer = document.querySelector('.ground');
-  if (!gameContainer) {
-    console.error('Game container not found!');
-    return;
-  }
-
-  const gameoverScreen = document.getElementById('gameover-screen');
-  const gameoverBox = gameoverScreen.querySelector('.gameover-box');
-  const gameoverButtons = document.querySelector('.gameover-buttons');
-  const retryBtn = gameoverButtons.querySelector('#retry-btn');
-  const homeBtn = gameoverButtons.querySelector('#home-btn');
-
-  // Remove monsters
-  document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => el.remove());
-
-  // Pause game
-  gameContainer.classList.add('paused');
-
-  // Show game over screen
-  gameoverScreen.style.visibility = 'visible';
-  gameoverScreen.classList.add('visible');
-  gameoverBox.classList.add('box-animation');
-
-  // Button events
-  retryBtn.onclick = () => {
-    window.location.reload();
-    closeGameOverScreen();
-  };
-
-  const routePaths = document.getElementById("route-paths").dataset;
-
-  homeBtn.onclick = () => {
-    window.location.href = routePaths.dashboard;
-    closeGameOverScreen();
-  };
-
-  function closeGameOverScreen() {
-    gameoverScreen.style.visibility = 'hidden';
-    gameoverScreen.classList.remove('visible');
-    gameContainer.classList.remove('paused');
-    gameoverBox.classList.remove('box-animation');
-  }
-}
-
-// ======= INITIAL LOAD =======
-window.addEventListener('DOMContentLoaded', () => {
-  initMapAndStage();
-  updateHealthBars();
-  fetchNewQuestion();
-});
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ===================================END OF POTION SCRIPT ======================================== //
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
+// ================================================================================================ //
 
 // ===== SETTINGS MENU HANDLING =====
 function openSettings() {
