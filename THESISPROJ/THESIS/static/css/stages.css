@@ -112,15 +112,19 @@ body {
 /* Stage styles */
 
 .stage {
-  position: absolute; /* Reverted to absolute for correct positioning */
-  transition: all 0.3s ease;
-  width: auto;
-  height: 9%;
+  position: absolute;
+  width: 24vh;
+  height: auto;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   z-index: 3;
-  transition: transform 0.4s ease; /* Smooth transition */
+  transition: transform 0.3s ease;
+  transform-origin: center center; /* <<-- ITO ANG IMPORTANTE */
+}
+
+.stage:hover {
+  transform: scale(1.03); /* Slight scale up */
 }
 
 .stage:hover {

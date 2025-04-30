@@ -149,7 +149,8 @@ const badges = [
       img.alt = 'Skin';
       img.className = 'skin-image';
       if (!isClaimed) {
-        img.classList.add('grayscale');
+        img.style.filter = 'grayscale(100%)'; // optional: make unclaimed badge grayscale
+        img.style.opacity = '0.3'; // optional: make it look locked
       }
 
       skinDiv.appendChild(img);

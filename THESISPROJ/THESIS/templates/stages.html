@@ -1,4 +1,4 @@
-s<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -23,16 +23,18 @@ s<!DOCTYPE html>
     </div>
     <div class="map-img">
       <div class="buttons">
-        <button id="{{ selected_map }}-stage1">
-          <img src="{{ url_for('static', filename='images/stageimg/stage1.png') }}" alt="stage" class="stage s1" />
+        <button class="stage s1" id="{{ selected_map }}-stage1">
+          <img src="{{ url_for('static', filename='images/stageimg/stage1.png') }}" alt="stage 1">
         </button>
-        <button id="{{ selected_map }}-stage2">
-          <img src="{{ url_for('static', filename='images/stageimg/stage2.png') }}" alt="stage" class="stage s2" />
+        <button class="stage s2" id="{{ selected_map }}-stage2">
+          <img src="{{ url_for('static', filename='images/stageimg/stage2.png') }}" alt="stage 2">
         </button>
-        <button id="{{ selected_map }}-stage3">
-          <img src="{{ url_for('static', filename='images/stageimg/stage3.png') }}" alt="stage" class="stage s3" />
+        <button class="stage s3" id="{{ selected_map }}-stage3">
+          <img src="{{ url_for('static', filename='images/stageimg/stage3.png') }}" alt="stage 3">
         </button>
       </div>
+
+    
     
       <div class="stars">
         <img src="{{ url_for('static', filename='images/stageimg/star-empty.png') }}" class="star st1" />
@@ -113,6 +115,7 @@ s<!DOCTYPE html>
 <script>
   window.addEventListener('DOMContentLoaded', () => {
     const selectedMap = "{{ selected_map or '' }}";
+    //================CONNECTION > DATABASE==========================//
     const stageProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
 
     const starFilled = "{{ url_for('static', filename='images/stageimg/star-filled.png') }}";  // Filled star
@@ -146,6 +149,8 @@ s<!DOCTYPE html>
       const stage3Key = `${selectedMap}-3`;
       const stage3Data = stageProgress[stage3Key];
       const rewardBubbleShownKey = `rewardBubbleShown-${selectedMap}`; // Unique key per map
+
+      //================CONNECTION > DATABASE==========================//
       const rewardBubbleShown = localStorage.getItem(rewardBubbleShownKey) === 'true'; // Check if it's already shown for this map
 
       if (stage3Data && stage3Data.stars > 0 && !rewardBubbleShown) {
@@ -155,6 +160,7 @@ s<!DOCTYPE html>
     }
   });
   </script>
+
 <script>
   // Function to show the reward bubble and mark as claimed
   function showRewardBubble(selectedMap) {
@@ -172,10 +178,13 @@ s<!DOCTYPE html>
 
     // Mark as claimed in localStorage
     const rewardKey = `${selectedMap}-stage3-skin`;
+
+    //================CONNECTION > DATABASE==========================//
     localStorage.setItem(rewardKey, 'claimed');
 
     // Also mark that reward bubble was already shown
     const rewardBubbleShownKey = `rewardBubbleShown-${selectedMap}`;
+    //================CONNECTION > DATABASE==========================//
     localStorage.setItem(rewardBubbleShownKey, 'true');
 
     // OK button to close the bubble
@@ -214,6 +223,63 @@ s<!DOCTYPE html>
   }
 </script>
 
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const selectedMap = "{{ selected_map or '' }}";
+  const stageProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
+
+  // Track Stage Completion and Enable/Disable Buttons
+  function updateStageLock() {
+    const stage1Completed = stageProgress[`${selectedMap}-1`] && stageProgress[`${selectedMap}-1`].stars > 0;
+    const stage2Completed = stageProgress[`${selectedMap}-2`] && stageProgress[`${selectedMap}-2`].stars > 0;
+
+    // Stage buttons based on completion
+    const stageButtons = document.querySelectorAll('.stage');
+
+    stageButtons.forEach(button => {
+      const stageId = button.closest('button') ? button.closest('button').getAttribute('id') : null;
+
+      // Check if the button has a valid id
+      if (stageId && stageId.startsWith(selectedMap)) {
+        const stageNumber = parseInt(stageId.split('-')[1].replace('stage', ''));
+
+        if (stageNumber === 2 && !stage1Completed) {
+          // Stage 2 is locked
+          button.closest('button').style.filter = 'grayscale(100%)';
+          button.closest('button').style.pointerEvents = 'none';
+        } else if (stageNumber === 3 && !stage2Completed) {
+          // Stage 3 is locked
+          button.closest('button').style.filter = 'grayscale(100%)';
+          button.closest('button').style.pointerEvents = 'none';
+        } else {
+          // Stage is unlocked
+          button.closest('button').style.filter = 'none';
+          button.closest('button').style.pointerEvents = 'auto';
+        }
+      } else {
+        console.warn(`Invalid stage id: ${stageId}`);
+      }
+    });
+  }
+
+  // Hover effect using JS instead of CSS
+  const stageElements = document.querySelectorAll('.stage');
+  
+  stageElements.forEach(stage => {
+    stage.addEventListener('mouseover', () => {
+      stage.style.transform = 'scale(1.01)'; // Slight zoom on hover
+      stage.style.transition = 'transform 0.3s ease'; // Smooth transition
+    });
+
+    stage.addEventListener('mouseout', () => {
+      stage.style.transform = 'scale(1)'; // Reset scale when hover ends
+    });
+  });
+
+  updateStageLock(); // Call function to update button states on page load
+});
+
+</script>
 
   
 

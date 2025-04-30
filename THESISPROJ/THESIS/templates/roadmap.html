@@ -105,6 +105,7 @@
   function setStars(wrapperSelector, mapPrefix) {
   const wrapper = document.querySelector(wrapperSelector);
   const stars = wrapper.querySelectorAll('.progress-star');
+    //================CONNECTION > DATABASE==========================//
   const progress = JSON.parse(localStorage.getItem('stageProgress')) || {};
 
   for (let i = 0; i < stars.length; i++) {

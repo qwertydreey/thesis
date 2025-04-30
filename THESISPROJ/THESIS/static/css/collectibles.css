@@ -134,8 +134,3 @@ body {
     height: auto;
     object-fit: contain;
   }
-  .skin-image.grayscale {
-    filter: grayscale(100%);
-    opacity: 0.6;
-  }
-  

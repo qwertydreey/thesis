@@ -654,7 +654,7 @@ function checkGameOver() {
       if (badgeElement) badgeElement.classList.add('hidden');
       if (titleElement) titleElement.classList.add('hidden');
       if (borderElement) borderElement.classList.add('hidden');
-  
+      //================CONNECTION > DATABASE==========================//
       const rewardClaimed = localStorage.getItem(`${selectedMap}-stage${selectedStage}-claimed`);
       const existingStatus = document.getElementById('reward-claimed-text');
       if (existingStatus) existingStatus.remove();
@@ -678,11 +678,12 @@ function checkGameOver() {
           borderElement.style.display = 'block';
           rewardItem = { map: selectedMap, stage: selectedStage, type: 'border', image: reward.border };
         }
-  
+      //================CONNECTION > DATABASE==========================//
         localStorage.setItem(`${selectedMap}-stage${selectedStage}-claimed`, 'true');
   
         // ✅ PUSH to collectedRewards (no duplicates)
         if (rewardItem) {
+              //================CONNECTION > DATABASE==========================//
           const collectedRewards = JSON.parse(localStorage.getItem('collectedRewards')) || [];
           const alreadyExists = collectedRewards.some(item =>
             item.map === rewardItem.map &&
@@ -691,6 +692,7 @@ function checkGameOver() {
           );
           if (!alreadyExists) {
             collectedRewards.push(rewardItem);
+                //================CONNECTION > DATABASE==========================//
             localStorage.setItem('collectedRewards', JSON.stringify(collectedRewards));
           }
         }
@@ -705,8 +707,10 @@ function checkGameOver() {
   
     if (selectedMap) {
       const starsEarned = 1;
+          //================CONNECTION > DATABASE==========================//
       const currentStars = parseInt(localStorage.getItem(selectedMap)) || 0;
       if (starsEarned > currentStars) {
+            //================CONNECTION > DATABASE==========================//
         localStorage.setItem(selectedMap, starsEarned);
       }
     }
@@ -792,6 +796,7 @@ function getNextMap(currentMap, currentStage) {
   
   
   function incrementStageProgress(stageKey) {
+        //================CONNECTION > DATABASE==========================//
     let stageData = JSON.parse(localStorage.getItem(stageKey)) || { stars: 0, completed: false };
   
     if (stageData.stars < 3) {
@@ -801,7 +806,7 @@ function getNextMap(currentMap, currentStage) {
     if (stageData.stars === 3) {
         stageData.completed = true;
     }
-  
+      //================CONNECTION > DATABASE==========================//
     localStorage.setItem(stageKey, JSON.stringify(stageData));
     setStars(`.${stageKey}-stars`, stageKey);
   }
@@ -827,6 +832,7 @@ function updateStageProgress(selectedMap, selectedStage, starsEarned) {
       stars: starsEarned,
       completed: true
     };
+        //================CONNECTION > DATABASE==========================//
     localStorage.setItem('stageProgress', JSON.stringify(currentProgress));
   }
 }
@@ -835,6 +841,7 @@ function updateStageProgress(selectedMap, selectedStage, starsEarned) {
 
 
 function updateRoadmapStars(stageKeyJustCompleted) {
+      //================CONNECTION > DATABASE==========================//
   const progress = JSON.parse(localStorage.getItem('stageProgress')) || {};
   const stageProgress = progress[stageKeyJustCompleted];
 
@@ -872,7 +879,7 @@ function calculateStars() {
 
 // ======= INITIAL LOAD =======
 window.addEventListener('DOMContentLoaded', () => {
-  updateRoadmapStars();  // Update stars from localStorage
+  updateRoadmapStars(); 
   initMapAndStage();
   updateHealthBars();
   fetchNewQuestion();
