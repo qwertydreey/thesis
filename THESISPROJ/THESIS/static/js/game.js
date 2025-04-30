@@ -633,18 +633,12 @@ function checkGameOver() {
     const retryBtn = document.getElementById('retry-btn');
     const homeBtn = document.getElementById('home-btn');
   
-    // Remove monster elements
     document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => el.remove());
-  
-    // Pause game
     gameContainer.classList.add('paused');
-  
-    // Show victory screen
     victoryScreen.style.visibility = 'visible';
     victoryScreen.classList.add('visible');
     victoryBox.classList.add('box-animation');
   
-    // ✅ MAP & STAGE REWARD LOGIC
     const urlParams = new URLSearchParams(window.location.search);
     const selectedMap = urlParams.get('map') || 'multiplication';
     const selectedStage = parseInt(urlParams.get('stage'));
@@ -662,33 +656,45 @@ function checkGameOver() {
       if (borderElement) borderElement.classList.add('hidden');
   
       const rewardClaimed = localStorage.getItem(`${selectedMap}-stage${selectedStage}-claimed`);
-  
-      // Remove old reward text kung meron
       const existingStatus = document.getElementById('reward-claimed-text');
       if (existingStatus) existingStatus.remove();
   
       if (!rewardClaimed) {
+        let rewardItem = null;
+  
         if (selectedStage === 1 && badgeElement) {
           badgeElement.src = reward.badge;
           badgeElement.classList.remove('hidden');
           badgeElement.style.display = 'block';
-          console.log("Stage 1: Showing Badge");
+          rewardItem = { map: selectedMap, stage: selectedStage, type: 'badge', image: reward.badge };
         } else if (selectedStage === 2 && titleElement) {
           titleElement.src = reward.title;
           titleElement.classList.remove('hidden');
           titleElement.style.display = 'block';
-          console.log("Stage 2: Showing Title");
+          rewardItem = { map: selectedMap, stage: selectedStage, type: 'title', image: reward.title };
         } else if (selectedStage === 3 && borderElement) {
           borderElement.src = reward.border;
           borderElement.classList.remove('hidden');
           borderElement.style.display = 'block';
-          console.log("Stage 3: Showing Border");
+          rewardItem = { map: selectedMap, stage: selectedStage, type: 'border', image: reward.border };
         }
   
-        // Mark as claimed
         localStorage.setItem(`${selectedMap}-stage${selectedStage}-claimed`, 'true');
+  
+        // ✅ PUSH to collectedRewards (no duplicates)
+        if (rewardItem) {
+          const collectedRewards = JSON.parse(localStorage.getItem('collectedRewards')) || [];
+          const alreadyExists = collectedRewards.some(item =>
+            item.map === rewardItem.map &&
+            item.stage === rewardItem.stage &&
+            item.type === rewardItem.type
+          );
+          if (!alreadyExists) {
+            collectedRewards.push(rewardItem);
+            localStorage.setItem('collectedRewards', JSON.stringify(collectedRewards));
+          }
+        }
       } else {
-        // Show styled reward claimed text
         const rewardStatusText = document.createElement('div');
         rewardStatusText.id = "reward-claimed-text";
         rewardStatusText.className = "reward-claimed-text";
@@ -697,7 +703,6 @@ function checkGameOver() {
       }
     }
   
-    // ✅ Update overall map progress stars
     if (selectedMap) {
       const starsEarned = 1;
       const currentStars = parseInt(localStorage.getItem(selectedMap)) || 0;
@@ -706,14 +711,12 @@ function checkGameOver() {
       }
     }
   
-    // ✅ Update per-stage star rating
     if (selectedMap && selectedStage) {
       const starsEarnedStage = 1;
       updateStageProgress(selectedMap, selectedStage, starsEarnedStage);
       updateRoadmapStars(`${selectedMap}-${selectedStage}`);
     }
   
-    // ✅ Close screen function
     function closeVictoryScreen() {
       victoryScreen.style.visibility = 'hidden';
       victoryScreen.classList.remove('visible');
@@ -721,7 +724,6 @@ function checkGameOver() {
       victoryBox.classList.remove('box-animation');
     }
   
-    // ✅ Button actions
     continueBtn.onclick = () => {
       const nextMapUrl = getNextMap(selectedMap, selectedStage);
       if (nextMapUrl) {
@@ -755,6 +757,7 @@ function checkGameOver() {
       console.log("Border:", reward.border);
     }
   }
+  
   
   
   

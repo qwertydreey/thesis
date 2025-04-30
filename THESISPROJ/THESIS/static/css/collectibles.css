@@ -123,3 +123,19 @@ body {
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+.badge-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  
+  .skin-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  .skin-image.grayscale {
+    filter: grayscale(100%);
+    opacity: 0.6;
+  }
+  

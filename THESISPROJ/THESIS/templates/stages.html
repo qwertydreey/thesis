@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+s<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -111,116 +111,111 @@
 </script>
 
 <script>
-window.addEventListener('DOMContentLoaded', () => {
-  const selectedMap = "{{ selected_map or '' }}";
-  const stageProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
+  window.addEventListener('DOMContentLoaded', () => {
+    const selectedMap = "{{ selected_map or '' }}";
+    const stageProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
 
-  const starFilled = "{{ url_for('static', filename='images/stageimg/star-filled.png') }}";  // Filled star
-  const starEmpty = "{{ url_for('static', filename='images/stageimg/star-empty.png') }}";   // Empty star
+    const starFilled = "{{ url_for('static', filename='images/stageimg/star-filled.png') }}";  // Filled star
+    const starEmpty = "{{ url_for('static', filename='images/stageimg/star-empty.png') }}";   // Empty star
 
-  // Check if we have progress data for the selected map
-  if (selectedMap) {
-    let allStagesCompleted = true;
+    // Check if we have progress data for the selected map
+    if (selectedMap) {
+      let allStagesCompleted = true;
 
-    // Loop through the stages (Stage 1, 2, 3) and check the stars
-    for (let stage = 1; stage <= 3; stage++) {
-      const stageKey = `${selectedMap}-${stage}`;
-      const stageData = stageProgress[stageKey];
-      const stars = stageData ? stageData.stars : 0; // Default to 0 stars if not set
+      // Loop through the stages (Stage 1, 2, 3) and check the stars
+      for (let stage = 1; stage <= 3; stage++) {
+        const stageKey = `${selectedMap}-${stage}`;
+        const stageData = stageProgress[stageKey];
+        const stars = stageData ? stageData.stars : 0; // Default to 0 stars if not set
 
-      const starElements = document.querySelectorAll(`.st${stage}`);
-      for (let i = 0; i < starElements.length; i++) {
-        if (i < stars) {
-          starElements[i].src = starFilled;
-        } else {
-          starElements[i].src = starEmpty;
+        const starElements = document.querySelectorAll(`.st${stage}`);
+        for (let i = 0; i < starElements.length; i++) {
+          if (i < stars) {
+            starElements[i].src = starFilled;
+          } else {
+            starElements[i].src = starEmpty;
+          }
+        }
+
+        if (stars === 0) {
+          allStagesCompleted = false;
         }
       }
 
-      if (stars === 0) {
-        allStagesCompleted = false;
+      // Check if Stage 3 is completed and if the reward bubble has not been shown before for this map
+      const stage3Key = `${selectedMap}-3`;
+      const stage3Data = stageProgress[stage3Key];
+      const rewardBubbleShownKey = `rewardBubbleShown-${selectedMap}`; // Unique key per map
+      const rewardBubbleShown = localStorage.getItem(rewardBubbleShownKey) === 'true'; // Check if it's already shown for this map
+
+      if (stage3Data && stage3Data.stars > 0 && !rewardBubbleShown) {
+        console.log("Stage 3 completed! Showing reward bubble.");
+        showRewardBubble(selectedMap); // Pass selectedMap to show specific reward
       }
     }
+  });
+  </script>
+<script>
+  // Function to show the reward bubble and mark as claimed
+  function showRewardBubble(selectedMap) {
+    const rewardBubble = document.getElementById('rewardBubble');
+    const rewardImage = document.getElementById('rewardImage');
+    const rewardOkButton = document.getElementById('rewardOkButton');
 
-    // Check if Stage 3 is completed and if the reward bubble has not been shown before for this map
-    const stage3Key = `${selectedMap}-3`;
-    const stage3Data = stageProgress[stage3Key];
-    const rewardBubbleShownKey = `rewardBubbleShown-${selectedMap}`; // Unique key per map
-    const rewardBubbleShown = localStorage.getItem(rewardBubbleShownKey) === 'true'; // Check if it's already shown for this map
+    // Set the reward image based on selected map
+    const rewardImageUrl = getRewardImage(selectedMap);
+    rewardImage.src = rewardImageUrl || " "; // fallback
 
-    if (stage3Data && stage3Data.stars > 0 && !rewardBubbleShown) {
-      console.log("Stage 3 completed! Showing reward bubble.");
-      showRewardBubble(selectedMap); // Pass selectedMap to show specific reward
-    }
+    // Show the reward bubble
+    rewardBubble.classList.remove('hidden');
+    rewardBubble.classList.add('visible');
+
+    // Mark as claimed in localStorage
+    const rewardKey = `${selectedMap}-stage3-skin`;
+    localStorage.setItem(rewardKey, 'claimed');
+
+    // Also mark that reward bubble was already shown
+    const rewardBubbleShownKey = `rewardBubbleShown-${selectedMap}`;
+    localStorage.setItem(rewardBubbleShownKey, 'true');
+
+    // OK button to close the bubble
+    rewardOkButton.addEventListener('click', closeRewardBubble);
   }
-});
 
-// Function to show the reward bubble
-function showRewardBubble(selectedMap) {
-  const rewardBubble = document.getElementById('rewardBubble');
-  const rewardImage = document.getElementById('rewardImage');
-  const rewardOkButton = document.getElementById('rewardOkButton');
-
-  console.log("Reward bubble function called.");
-
-  // Set the reward image based on selected map
-  const rewardImageUrl = getRewardImage(selectedMap);
-  rewardImage.src = rewardImageUrl;
-  console.log("Reward image source set to:", rewardImage.src);
-
-  // Check if the image is being loaded
-  rewardImage.onload = function () {
-    console.log("Reward image loaded successfully!");
-  };
-  rewardImage.onerror = function () {
-    console.log("Error loading reward image.");
-  };
-
-  // Show the reward bubble
-  rewardBubble.classList.remove('hidden');
-  rewardBubble.classList.add('visible');
-  console.log("Reward bubble made visible.");
-
-  // Mark the reward bubble as shown in localStorage for the current map
-  const rewardBubbleShownKey = `rewardBubbleShown-${selectedMap}`;
-  localStorage.setItem(rewardBubbleShownKey, 'true');
-
-  // Add event listener for the 'OK' button to close the bubble
-  rewardOkButton.addEventListener('click', () => {
+  // Function to close the reward bubble
+  function closeRewardBubble() {
+    const rewardBubble = document.getElementById('rewardBubble');
     rewardBubble.classList.remove('visible');
     rewardBubble.classList.add('hidden');
-    console.log("Reward bubble closed.");
-  });
-}
-
-// Function to get the reward image based on the selected map
-function getRewardImage(selectedMap) {
-  switch (selectedMap) {
-    case 'multiplication':
-      return "{{ url_for('static', filename='images/gameimg/rewardimg/b1.png') }}";
-    case 'addition':
-      return "{{ url_for('static', filename='images/gameimg/rewardimg/b2.png') }}";
-    case 'subtraction':
-      return "{{ url_for('static', filename='images/gameimg/rewardimg/b3.png') }}";
-    case 'division':
-      return "{{ url_for('static', filename='images/gameimg/rewardimg/b4.png') }}";
-    case 'counting':
-      return "{{ url_for('static', filename='images/gameimg/rewardimg/b5.png') }}";
-    case 'comparison':
-      return "{{ url_for('static', filename='images/gameimg/rewardimg/b6.png') }}";
-    case 'numerals':
-      return "{{ url_for('static', filename='images/gameimg/rewardimg/b7.png') }}";
-    case 'placevalue':
-      return "{{ url_for('static', filename='images/gameimg/rewardimg/b8.png') }}";
-    // Add cases for any other maps you might add
-    default:
-      return ""; // Return empty if no image for the map
   }
-}
 
-
-
+  // Function to get the reward image based on the selected map
+  function getRewardImage(selectedMap) {
+    switch (selectedMap) {
+      case 'multiplication':
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/b1.png') }}";
+      case 'addition':
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/b2.png') }}";
+      case 'subtraction':
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/b3.png') }}";
+      case 'division':
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/b4.png') }}";
+      case 'counting':
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/b5.png') }}";
+      case 'comparison':
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/b6.png') }}";
+      case 'numerals':
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/b7.png') }}";
+      case 'placevalue':
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/b8.png') }}";
+      default:
+        return "";
+    }
+  }
 </script>
+
+
+  
 
 
 

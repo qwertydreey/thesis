@@ -8,82 +8,167 @@
 </head>
 <body>
 
-    <div class="container">
-        <!-- Header Section -->
-        <div class="header">
-          <a href="{{ url_for('dashboard') }}" class="back-button">Back</a>
-          <div class="title">COLLECTIONS</div>
-          <div></div>
-        </div>
-      
-        <!-- Tabs Section -->
-        <div class="tabs">
-          <button class="tab-button active" onclick="showTab('medals')">Medals</button>
-          <button class="tab-button" onclick="showTab('skins')">Skins</button>
-          <button class="tab-button" onclick="showTab('borders')">Borders</button>
-        </div>
-      
-        <!-- Content Section -->
-        <div class="tab-content active" id="medals">
-          <div class="grid">
-            <!-- Medal squares -->
-            <div class="square">Medal 1</div>
-            <div class="square">Medal 2</div>
-            <div class="square">Medal 3</div>
-            <div class="square">Medal 4</div>
-            <div class="square">Medal 5</div>
-            <div class="square">Medal 6</div>
-            <div class="square">Medal 7</div>
-          </div>
-        </div>
-      
-        <div class="tab-content" id="skins">
-          <div class="grid">
-            <!-- Skins squares -->
-            <div class="square">Skin 1</div>
-            <div class="square">Skin 2</div>
-            <div class="square">Skin 3</div>
-            <div class="square">Skin 4</div>
-            <div class="square">Skin 5</div>
-            <div class="square">Skin 6</div>
-            <div class="square">Skin 7</div>
-          </div>
-        </div>
-      
-        <div class="tab-content" id="borders">
-          <div class="grid">
-            <!-- Borders squares -->
-            <div class="square">Border 1</div>
-            <div class="square">Border 2</div>
-            <div class="square">Border 3</div>
-            <div class="square">Border 4</div>
-            <div class="square">Border 5</div>
-            <div class="square">Border 6</div>
-            <div class="square">Border 7</div>
-          </div>
-        </div>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="header">
+      <a href="{{ url_for('dashboard') }}" class="back-button">Back</a>
+      <div class="title">COLLECTIONS</div>
+      <div></div>
+    </div>
+
+    <!-- Tabs Section -->
+    <div class="tabs">
+      <button class="tab-button active" onclick="showTab('medals')">Medals</button>
+      <button class="tab-button" onclick="showTab('skins')">Skins</button>
+    </div>
+
+    <!-- Content Section -->
+    <div class="tab-content active" id="medals">
+      <div class="grid" id="medals-grid">
+        <!-- Badges will be injected here -->
       </div>
+    </div>
 
-      <script>
-        function showTab(tabId) {
-          // Hide all tab contents
-          document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.remove('active');
-          });
+    <!-- Skins Tab -->
+    <div class="tab-content" id="skins">
+      <div class="grid" id="skins-grid">
+        <!-- Skins will be injected here -->
+      </div>
+    </div>
+  </div>
 
-          // Remove active state from all tab buttons
-          document.querySelectorAll('.tab-button').forEach(button => {
-            button.classList.remove('active');
-          });
+  <script>
+    function showTab(tabId) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
 
-          // Show the clicked tab
-          document.getElementById(tabId).classList.add('active');
+      // Remove active state from all tab buttons
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+      });
 
-          // Set the clicked tab button as active
-          const activeButton = Array.from(document.querySelectorAll('.tab-button')).find(button => button.innerText.toLowerCase() === tabId);
-          activeButton.classList.add('active');
-        }
-      </script>
+      // Show the clicked tab
+      document.getElementById(tabId).classList.add('active');
 
+      // Set the clicked tab button as active
+      const activeButton = Array.from(document.querySelectorAll('.tab-button')).find(button => button.innerText.toLowerCase() === tabId);
+      if (activeButton) activeButton.classList.add('active');
+    }
+  </script>
+<script>
+const badges = [
+// Multiplication
+{ id: 'multiplication-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-1.png") }}' },
+{ id: 'multiplication-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-1.png") }}' },
+{ id: 'multiplication-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-1.png") }}' },
+
+// Addition
+{ id: 'addition-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-2.png") }}' },
+{ id: 'addition-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-2.png") }}' },
+{ id: 'addition-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-2.png") }}' },
+
+// Subtraction
+{ id: 'subtraction-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-3.png") }}' },
+{ id: 'subtraction-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-3.png") }}' },
+{ id: 'subtraction-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-3.png") }}' },
+
+// Division
+{ id: 'division-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-4.png") }}' },
+{ id: 'division-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-4.png") }}' },
+{ id: 'division-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-4.png") }}' },
+
+// Counting
+{ id: 'counting-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-5.png") }}' },
+{ id: 'counting-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-5.png") }}' },
+{ id: 'counting-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-5.png") }}' },
+
+// Comparison
+{ id: 'comparison-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-6.png") }}' },
+{ id: 'comparison-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-6.png") }}' },
+{ id: 'comparison-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-6.png") }}' },
+
+// Numerals
+{ id: 'numerals-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-7.png") }}' },
+{ id: 'numerals-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-7.png") }}' },
+{ id: 'numerals-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-7.png") }}' },
+
+// Place Value
+{ id: 'placevalue-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-8.png") }}' },
+{ id: 'placevalue-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-8.png") }}' },
+{ id: 'placevalue-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-8.png") }}' }
+
+];
+
+
+  const medalsGrid = document.getElementById('medals-grid');
+
+  badges.forEach(badge => {
+    const badgeDiv = document.createElement('div');
+    badgeDiv.className = 'square';
+
+    const img = document.createElement('img');
+    img.src = badge.src;
+    img.alt = 'Badge';
+    img.className = 'badge-image';
+
+    const claimed = localStorage.getItem(badge.id);
+    if (!claimed) {
+      img.style.filter = 'grayscale(100%)'; // optional: make unclaimed badge grayscale
+      img.style.opacity = '0.3'; // optional: make it look locked
+    }
+
+    badgeDiv.appendChild(img);
+    medalsGrid.appendChild(badgeDiv);
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const skins = [
+      { id: 'multiplication-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b1.png' },
+      { id: 'addition-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b2.png' },
+      { id: 'subtraction-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b3.png' },
+      { id: 'division-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b4.png' },
+      { id: 'counting-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b5.png' },
+      { id: 'comparison-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b6.png' },
+      { id: 'numerals-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b7.png' },
+      { id: 'placevalue-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b8.png' }
+    ];
+
+    function injectSkin(imageSrc, isClaimed) {
+      const skinsGrid = document.getElementById('skins-grid');
+      if (!skinsGrid) return;
+
+      const skinDiv = document.createElement('div');
+      skinDiv.className = 'square';
+
+      const img = document.createElement('img');
+      img.src = imageSrc;
+      img.alt = 'Skin';
+      img.className = 'skin-image';
+      if (!isClaimed) {
+        img.classList.add('grayscale');
+      }
+
+      skinDiv.appendChild(img);
+      skinsGrid.appendChild(skinDiv);
+    }
+
+    skins.forEach(skin => {
+      const claimed = localStorage.getItem(skin.id) === 'claimed';
+      injectSkin(skin.src, claimed);
+    });
+  });
+</script>
+
+
+
+
+
+
+
+  
 </body>
 </html>
