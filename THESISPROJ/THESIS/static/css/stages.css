@@ -7,6 +7,7 @@ body {
   overflow: hidden; /* Prevent body from showing extra background */
 }
 
+
 .main-wrapper {
   width: 100vw;
   height: 100vh;
@@ -122,13 +123,8 @@ body {
   transition: transform 0.3s ease;
   transform-origin: center center; /* <<-- ITO ANG IMPORTANTE */
 }
-
 .stage:hover {
-  transform: scale(1.03); /* Slight scale up */
-}
-
-.stage:hover {
-  transform: scale(1.02); /* Scale up on hover */
+  transform: scale(1.03); /* Scale up on hover */
 }
 
 .s1 {

@@ -42,7 +42,7 @@
       <!-- HP Bar Path -->
       <div id="hp-bar-path" data-base-url="{{ url_for('static', filename='images/gameimg/hpbars/') }}"></div>
 
-      <!-- ⚡ Attack Image Paths (AYOS na pwesto) -->
+      <!-- ⚡ Attack Image Paths -->
       <div id="attack-image-paths"
         data-add="{{ url_for('static', filename='images/anim/charattack/Addition Attack.png') }}"
         data-sub="{{ url_for('static', filename='images/anim/charattack/Subtraction Attack.png') }}"
@@ -58,7 +58,9 @@
         <img id="platform-image" src="" alt="Platform" class="platform">
 
         <!-- Characters -->
-        <img src="{{ url_for('static', filename='images/gameimg/char/char.png') }}" alt="Wizard" class="character player">
+        <img src="{{ url_for('static', filename='images/gameimg/char/char.png') }}" alt="Wizard"id="player-idle" class="character player hidden">
+        <img src="{{ url_for('static', filename='images/anim/sprite/idle.png') }}"         class="character player-spawn" id="player-spawn">
+
         <div class="fireball"></div>
 
         <img id="monster-sprite" src="" alt="Monster" class="monster">
@@ -79,7 +81,7 @@
       <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="useFreezePotion()">
       <img src="{{ url_for('static', filename='images/gameimg/freeze box.png') }}" class="freeze-box">
     </div>
-    <span class="potion-quantity" id="freeze-quantity">3</span>
+    <span class="potion-quantity" id="freeze-quantity">1</span>
   </div>
 
   <div class="potion-item">
@@ -87,7 +89,7 @@
       <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="useHealthPotion()">
       <img src="{{ url_for('static', filename='images/gameimg/health box.png') }}" class="health-box">
     </div>
-    <span class="potion-quantity" id="health-quantity">3</span>
+    <span class="potion-quantity" id="health-quantity">1</span>
   </div>
 
   <div class="potion-item">

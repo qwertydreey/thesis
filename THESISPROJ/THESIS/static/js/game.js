@@ -979,18 +979,17 @@ function updatePotionUI() {
 }
 
 
-  // ======= ANIMATIONS (unchanged) =======
-  function fireballAttack() {
-    if (sessionStorage.getItem('fireballTriggered')) return;
-  
-    const paths = document.getElementById("attack-image-paths").dataset;
-  
-    const attackEffects = [
-      paths.add,
-      paths.sub,
-      paths.mul,
-      paths.div,
-    ];
+function fireballAttack() {
+  if (sessionStorage.getItem('fireballTriggered')) return;
+
+  const paths = document.getElementById("attack-image-paths").dataset;
+
+  const attackEffects = [
+    paths.add,
+    paths.sub,
+    paths.mul,
+    paths.div,
+  ];
 
   const selectedAttack = attackEffects[Math.floor(Math.random() * attackEffects.length)];
 
@@ -1005,55 +1004,87 @@ function updatePotionUI() {
   fireball.style.left = `${player.offsetLeft + player.offsetWidth}px`;
   fireball.style.bottom = "120px";
 
-  // 🔋 1. Add CHARGING class first
+  // 🧪 1. Add CHARGING visual (optional class effect)
   player.classList.add("charging");
 
   setTimeout(() => {
-    // 🔥 2. Remove charging, start ATTACK
+    // 🔥 2. Start ATTACK (change the image)
     player.classList.remove("charging");
-    player.classList.add("attack");
+    player.src = "/static/images/anim/sprite/attack.png";
+    player.style.height = "35vh";
+    player.style.width = "auto";
 
+    // 🟢 3. Reset to IDLE sprite
     setTimeout(() => {
-      player.classList.remove("attack");
-    }, 1000);
+      player.src = "/static/images/anim/sprite/idle.png";
+      player.style.height = "35vh";
+      player.style.width = "auto";
+    }, 700); // duration of attack pose
 
-    // 🟢 3. Append the fireball after charge
+    // 🟠 4. Fireball appears
     groundContainer.appendChild(fireball);
     sessionStorage.setItem('fireballTriggered', true);
 
-    // 💥 4-A. Monster damage animation (decoupled shake and damage)
+    // 💢 5. Monster takes visual damage
     setTimeout(() => {
-      monster.classList.add("damaged"); // Visual damage effect
-
+      monster.classList.add("damaged");
       setTimeout(() => {
-        monster.classList.remove("damaged"); // Remove damage class
-      }, 600); // Damage visual duration
-    }, 860); // When animation should start
+        monster.classList.remove("damaged");
+      }, 600);
+    }, 770);
 
-    // 💥 4-B. Shake animation (separately timed)
+    // 🌀 6. Shake effect
     setTimeout(() => {
-      monster.classList.add("shake"); // Shake animation
-
+      monster.classList.add("shake");
       setTimeout(() => {
-        monster.classList.remove("shake"); // Remove shake effect
-      }, 600); // Shake duration
-    }, 1100); // Shake starts separately
+        monster.classList.remove("shake");
+      }, 600);
+    }, 1100);
 
-    // 💥 4-C. Apply actual damage (totally separate timing)
+    // 💀 7. Apply actual HP reduction
     setTimeout(() => {
       if (currentMonsterHealth > 0) {
-        monsterTakeDamage(); // Reduce monster HP
+        monsterTakeDamage();
       }
-    }, 1400); // Apply damage after visuals
+    }, 1400);
 
-    // 🧼 6. Remove fireball and reset
+    // 🧼 8. Remove fireball and unlock attack
     setTimeout(() => {
       fireball.remove();
       sessionStorage.removeItem('fireballTriggered');
     }, 1000);
 
-  }, 600); // charging duration before attack
+  }, 600); // charging time
 }
+
+
+
+window.addEventListener("DOMContentLoaded", () => {
+  const spawn = document.getElementById("player-spawn");
+  const player = document.querySelector(".player");
+
+  // Initially show the spawn effect (player-spawn image)
+  spawn.classList.remove("hidden");
+
+  setTimeout(() => {
+    // Hide the spawn image after the spawn effect duration
+    spawn.classList.add("hidden");
+
+    // Instantly show the player (idle state) without animation delay
+    player.classList.remove("hidden");
+  }, 1000); // Delay before the spawn image disappears (adjust if needed)
+});
+
+
+window.addEventListener("DOMContentLoaded", () => {
+  const monster = document.querySelector(".monster");
+});
+
+
+
+
+
+
 
 
 
@@ -1065,9 +1096,9 @@ function updatePotionUI() {
 // ================================================================================================ //
 
 // Potion counts
-let healthPotions = 3;
+let healthPotions = 1;
 let thunderPotions = Infinity;
-let freezePotions = 3;
+let freezePotions = 1;
 
 let isMonsterSpawnAnimationInProgress = false;
 let isMonsterDeathAnimationInProgress = false;
@@ -1104,7 +1135,7 @@ function useHealthPotion() {
   healthPotions--;
   updatePotionUI();
 
-  playerHeal(4); // Heal the player
+  playerHeal(3); // Heal the player
   showFeedback("🧪 Health Potion used!");
 
   // Add healing effect to the player image
