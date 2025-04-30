@@ -1789,6 +1789,20 @@ body {
   transform: translateX(-50%);
 }
 
+/* Reward claimed text styling */
+.reward-claimed-text {
+  position: absolute;
+  top: 76%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.2vh;
+  font-weight: bold;
+  color: #3f210a;
+  padding: 1vh 2vh;
+  border-radius: 1vh;
+  z-index: 5;
+}
+
 .reward-container {
   display: flex;
   justify-content: center;
@@ -1800,7 +1814,6 @@ body {
 
 .reward-img {
   position: absolute;
-
 }
 
 .hidden {
@@ -1809,6 +1822,7 @@ body {
 .reward-img.hidden {
   display: none !important;
 }
+
 
 /* ✅ NEW layout and sizing for rewards */
 /* Multiplication */

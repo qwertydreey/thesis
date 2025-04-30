@@ -168,3 +168,61 @@ body {
   filter: grayscale(100%);
 }
 
+/* Reward Bubble Styles */
+.reward-bubble {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 88vh;
+  height: 90vh;
+  transform: translate(-50%, -50%);
+  background-image: url('../images/gameimg/rewardimg/bubble.png');
+  background-size: contain; /* Scale image to fit container */
+  background-position: center;
+  background-repeat: no-repeat;
+  text-align: center;
+  z-index: 10000;
+  display: none; /* Initially hidden */
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out; /* Fade-in effect */
+}
+
+.reward-bubble.visible {
+  opacity: 1; /* Make visible */
+  display: block; /* Ensure it's shown */
+}
+
+.reward-bubble.hidden {
+  display: none;
+}
+
+.reward-img {
+  position: absolute;
+  width: auto;
+  height: 26vh;
+  margin-top: 3vh;
+  display: block;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 51%;
+}
+
+.reward-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 63vh;
+  margin-left: 2vh;
+}
+
+.reward-btn:hover {
+  background-color: #45a049;
+}
+
+
+
+

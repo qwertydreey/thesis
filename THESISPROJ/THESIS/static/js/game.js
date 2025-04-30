@@ -647,55 +647,59 @@ function checkGameOver() {
     // ✅ MAP & STAGE REWARD LOGIC
     const urlParams = new URLSearchParams(window.location.search);
     const selectedMap = urlParams.get('map') || 'multiplication';
-    const selectedStage = parseInt(urlParams.get('stage')); // make sure to parse it as an integer
+    const selectedStage = parseInt(urlParams.get('stage'));
   
     const rewardCategories = rewardMap[selectedMap];
     const reward = rewardData[selectedMap];
   
-    // Check if the reward categories and reward data exist
     if (rewardCategories && reward) {
       const badgeElement = document.getElementById(rewardCategories[1]);
       const titleElement = document.getElementById(rewardCategories[2]);
       const borderElement = document.getElementById(rewardCategories[3]);
   
-      // Log the elements and reward data (for debugging)
-      console.log("Reward Elements:");
-      console.log("Badge Element:", badgeElement);
-      console.log("Title Element:", titleElement);
-      console.log("Border Element:", borderElement);
-  
-      console.log("Reward Data:");
-      console.log("Badge Image Path:", reward.badge);
-      console.log("Title Image Path:", reward.title);
-      console.log("Border Image Path:", reward.border);
-  
-      // Hide all rewards first
       if (badgeElement) badgeElement.classList.add('hidden');
       if (titleElement) titleElement.classList.add('hidden');
       if (borderElement) borderElement.classList.add('hidden');
   
-      // Set reward images and show them based on stage
-      if (selectedStage === 1 && badgeElement) {
-        badgeElement.src = reward.badge;
-        badgeElement.classList.remove('hidden'); // Show badge
-        badgeElement.style.display = 'block'; // Ensure it's visible
-        console.log("Stage 1: Showing Badge");
-      } else if (selectedStage === 2 && titleElement) {
-        titleElement.src = reward.title;
-        titleElement.classList.remove('hidden'); // Show title
-        titleElement.style.display = 'block'; // Ensure it's visible
-        console.log("Stage 2: Showing Title");
-      } else if (selectedStage === 3 && borderElement) {
-        borderElement.src = reward.border;
-        borderElement.classList.remove('hidden'); // Show border
-        borderElement.style.display = 'block'; // Ensure it's visible
-        console.log("Stage 3: Showing Border");
+      const rewardClaimed = localStorage.getItem(`${selectedMap}-stage${selectedStage}-claimed`);
+  
+      // Remove old reward text kung meron
+      const existingStatus = document.getElementById('reward-claimed-text');
+      if (existingStatus) existingStatus.remove();
+  
+      if (!rewardClaimed) {
+        if (selectedStage === 1 && badgeElement) {
+          badgeElement.src = reward.badge;
+          badgeElement.classList.remove('hidden');
+          badgeElement.style.display = 'block';
+          console.log("Stage 1: Showing Badge");
+        } else if (selectedStage === 2 && titleElement) {
+          titleElement.src = reward.title;
+          titleElement.classList.remove('hidden');
+          titleElement.style.display = 'block';
+          console.log("Stage 2: Showing Title");
+        } else if (selectedStage === 3 && borderElement) {
+          borderElement.src = reward.border;
+          borderElement.classList.remove('hidden');
+          borderElement.style.display = 'block';
+          console.log("Stage 3: Showing Border");
+        }
+  
+        // Mark as claimed
+        localStorage.setItem(`${selectedMap}-stage${selectedStage}-claimed`, 'true');
+      } else {
+        // Show styled reward claimed text
+        const rewardStatusText = document.createElement('div');
+        rewardStatusText.id = "reward-claimed-text";
+        rewardStatusText.className = "reward-claimed-text";
+        rewardStatusText.textContent = "🎉 Reward Claimed!";
+        victoryBox.appendChild(rewardStatusText);
       }
     }
   
     // ✅ Update overall map progress stars
     if (selectedMap) {
-      const starsEarned = 1; // Logic for earned stars, can be updated as needed
+      const starsEarned = 1;
       const currentStars = parseInt(localStorage.getItem(selectedMap)) || 0;
       if (starsEarned > currentStars) {
         localStorage.setItem(selectedMap, starsEarned);
@@ -704,12 +708,12 @@ function checkGameOver() {
   
     // ✅ Update per-stage star rating
     if (selectedMap && selectedStage) {
-      const starsEarnedStage = 1; // Logic for earned stars per stage
+      const starsEarnedStage = 1;
       updateStageProgress(selectedMap, selectedStage, starsEarnedStage);
-      updateRoadmapStars(selectedMap, selectedStage);
+      updateRoadmapStars(`${selectedMap}-${selectedStage}`);
     }
   
-    // ✅ Close victory screen helper
+    // ✅ Close screen function
     function closeVictoryScreen() {
       victoryScreen.style.visibility = 'hidden';
       victoryScreen.classList.remove('visible');
@@ -731,7 +735,6 @@ function checkGameOver() {
       closeVictoryScreen();
     };
   
-    // Get route paths from the HTML data attributes
     const routePathsElement = document.getElementById('route-paths');
     const routePaths = {
       roadmap: routePathsElement.getAttribute('data-roadmap'),
@@ -752,6 +755,7 @@ function checkGameOver() {
       console.log("Border:", reward.border);
     }
   }
+  
   
   
   
