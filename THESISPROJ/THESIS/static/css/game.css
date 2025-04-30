@@ -2770,34 +2770,20 @@ body {
   top: -54vh;
 }
 
-.player-appear {
-  animation: playerSpawn 1s ease-out forwards;
+/* CSS para sa cooldown effect at grayscale */
+.potion {
+  transition: all 1s ease;  /* Smooth transition for effects */
 }
 
-.monster-appear {
-  animation: monsterSpawn 1s ease-out forwards;
+.potion.cooldown {
+  filter: grayscale(100%);
+  transform: translateY(-10px); /* Mag-aangat ng kaunti */
 }
 
-@keyframes playerSpawn {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes monsterSpawn {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+/* Optional: Pagbalik ng potion image sa normal */
+.potion.cooldown-reset {
+  filter: grayscale(0%);
+  transform: translateY(0);
 }
 
 

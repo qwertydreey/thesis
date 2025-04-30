@@ -392,7 +392,7 @@ function triggerMonsterDeathAnimation() {
   const monsterImg = document.getElementById('monster-sprite');
   if (!monsterImg) return;
 
-  // Start death animation
+  // Start death animationplayer
   monsterImg.classList.add('monster-death');
   
   // Set death animation flag
@@ -484,22 +484,33 @@ function startMonsterSpawnAnimation() {
     updateHealthBars();
   }
   function playerTakeDamage() {
-    if (freezePotionUsed && freezeTurns > 0) {
-      freezeTurns--;
-      updateFreezeTurnsDisplay();
-    } else if (currentPlayerHealth > 0) {
+    const monsterContainer = document.querySelector('.monster');
+    const player = document.querySelector('.player');
+  
+    // ❄️ No damage if monster is frozen
+    if (monsterContainer.classList.contains('frozen')) {
+      console.log('❄️ Monster is frozen — no damage or animation.');
+      return;
+    }
+  
+    // 🔥 Apply damage animation
+    player.classList.add('player-damaged', 'shake');
+    setTimeout(() => {
+      player.classList.remove('player-damaged', 'shake');
+    }, 600);
+  
+    // ❤️ Deduct HP
+    if (currentPlayerHealth > 0) {
       currentPlayerHealth--;
       updateHealthBars();
       console.log('💔 Player HP →', currentPlayerHealth);
     }
-    if (freezeTurns <= 0) {
-      freezePotionUsed = false;
-      removeFreezeEffect();
-      freezeTurnsDisplay.style.display = 'none';
-    }
+  
     checkGameOver();
   }
-
+  
+  
+  
 
   function monsterTakeDamage() {
   const monsterImg = document.getElementById('monster-sprite');
@@ -565,21 +576,52 @@ function checkGameOver() {
   function handleAttack() {
     const input  = document.getElementById('number-input').value.trim();
     const answer = document.getElementById('correct-answer').value.trim();
-    if (!answer) {
-    }
+  
+    if (!answer) return;
+  
     if (input === '') {
-      displayFeedback('Please enter a number!'); // Display feedback using your function
+      displayFeedback('Please enter a number!');
       return;
     }
-    if (parseFloat(input) === parseFloat(answer)) {
+  
+    const isCorrect = parseFloat(input) === parseFloat(answer);
+  
+    if (isCorrect) {
       fireballAttack();
       fetchNewQuestion();
     } else {
-      monsterAttack();
+      // Only call monsterAttack if freeze turns are over
+      if (freezeTurns <= 0) {
+        monsterAttack(); // ← This calls playerTakeDamage() inside
+      } else {
+        console.log("❄️ Monster is frozen — no damage to player.");
+      }
       displayFeedback('❌ Incorrect! Try again.');
     }
+  
+    // 🧊 Deduct freeze turn AFTER attack logic
+    if (freezeTurns > 0) {
+      freezeTurns--;
+  
+      if (freezeTurns === 0) {
+        // Do NOT remove freeze now — wait until next attack
+        setTimeout(() => {
+          removeFreezeEffect();
+          freezeTurnsDisplay.style.display = 'none';
+          console.log("⏹ Freeze effect has ended.");
+        }, 100); // small delay para di agad mawala
+      }
+  
+      updateFreezeTurnsDisplay();
+    }
+  
     document.getElementById('number-input').value = '';
   }
+  
+  
+  
+  
+  
 
   function fetchNewQuestion() {
     fetch('/get-new-question')
@@ -899,38 +941,35 @@ function showGameOverScreen() {
     return;
   }
 
-  const gameOverScreen = document.getElementById('game-over-screen');
-  const retryBtn = document.getElementById('retry-btn');
-  const homeBtn = document.getElementById('home-btn');
+  const gameoverScreen = document.getElementById('gameover-screen');
+  const gameoverBox = gameoverScreen.querySelector('.gameover-box');
+  const gameoverButtons = document.querySelector('.gameover-buttons');
+  const retryBtn = gameoverButtons.querySelector('#retry-btn');
+  const homeBtn = gameoverButtons.querySelector('#home-btn');
 
-  // Remove monster elements
+  // Remove monsters
   document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => el.remove());
 
   // Pause game
   gameContainer.classList.add('paused');
 
   // Show game over screen
-  gameOverScreen.style.visibility = 'visible';
-  gameOverScreen.classList.add('visible');
+  gameoverScreen.style.visibility = 'visible';
+  gameoverScreen.classList.add('visible');
+  gameoverBox.classList.add('box-animation');
 
-  // Close game over screen
-  function closeGameOverScreen() {
-    gameOverScreen.style.visibility = 'hidden';
-    gameOverScreen.classList.remove('visible');
-    gameContainer.classList.remove('paused');
-  }
-
-  // Route button actions
+  // Button events
   retryBtn.onclick = () => {
     window.location.reload();
-    closeGameOverScreen();
   };
+
+  const routePaths = document.getElementById("route-paths").dataset;
 
   homeBtn.onclick = () => {
     window.location.href = routePaths.dashboard;
-    closeGameOverScreen();
   };
 }
+
 
 
 
@@ -942,18 +981,17 @@ function monsterAttack() {
   // Add the attack animation class to the monster
   monster.classList.add("monster-attack");
 
-  // After the attack animation ends, apply the damage to the player
+  // After the attack animation ends, apply the damage
   setTimeout(() => {
-    monster.classList.remove("monster-attack"); // Remove the animation class
+    monster.classList.remove("monster-attack");
 
-    // ✅ Gamitin natin yung damagePlayer() function
-    damagePlayer();
-    
-    // Optional: actual damage logic pa rin
+    // ✅ Apply damage and animation in one function
     setTimeout(() => {
-      playerTakeDamage(); // Call the function to apply damage to the player
-    }, 600); // Match sa animation duration
-  }, 800); // Match sa monster attack animation
+      playerTakeDamage();
+    }, 600);
+  }, 800);
+
+  checkGameOver();
 }
 
 
@@ -1211,19 +1249,8 @@ function updateFreezeTurnsDisplay() {
 
 // ========== DAMAGE PLAYER (checks if frozen) ==========
 
-function damagePlayer() {
-  const monsterContainer = document.querySelector('.monster');
-  const player = document.querySelector('.player');
 
-  if (!monsterContainer.classList.contains('frozen')) {
-    player.classList.add('player-damaged', 'shake');
-    setTimeout(() => {
-      player.classList.remove('player-damaged', 'shake');
-    }, 600);
-  } else {
-    console.log("❄️ Monster is frozen — no damage to player.");
-  }
-}
+
 
 
 
@@ -1253,7 +1280,7 @@ function changeFrame() {
 function useThunderPotion() {
   // Prevent using Thunder Potion if any animation is in progress
   if (isThunderPotionInUse || isMonsterSpawnAnimationInProgress || isMonsterDeathAnimationInProgress) {
-    showFeedback("❌ Thunder Potion is on cooldown! Please wait.");
+    showFeedback("❌ Thunder Potion is on cooldown!");
     return;
   }
 
