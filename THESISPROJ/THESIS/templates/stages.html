@@ -236,7 +236,7 @@
   function getRewardImage(selectedMap) {
     switch (selectedMap) {
       case 'multiplication':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/b1.png') }}";
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/idle1.png') }}";
       case 'addition':
         return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/b2.png') }}";
       case 'subtraction':
@@ -258,63 +258,97 @@
 </script>
 
 <script>
-window.addEventListener('DOMContentLoaded', () => {
-  const selectedMap = "{{ selected_map or '' }}";
-  const stageProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
+  document.addEventListener('DOMContentLoaded', function () {
+    const skins = [
+      { id: 'multiplication-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b1.png' },
+      { id: 'addition-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b2.png' },
+      { id: 'subtraction-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b3.png' },
+      { id: 'division-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b4.png' },
+      { id: 'counting-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b5.png' },
+      { id: 'comparison-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b6.png' },
+      { id: 'numerals-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b7.png' },
+      { id: 'placevalue-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b8.png' }
+    ];
 
-  // Track Stage Completion and Enable/Disable Buttons
-  function updateStageLock() {
-    const stage1Completed = stageProgress[`${selectedMap}-1`] && stageProgress[`${selectedMap}-1`].stars > 0;
-    const stage2Completed = stageProgress[`${selectedMap}-2`] && stageProgress[`${selectedMap}-2`].stars > 0;
+    function injectSkin(imageSrc, isClaimed, id) {
+      const skinsGrid = document.getElementById('skins-grid');
+      if (!skinsGrid) return;
 
-    // Stage buttons based on completion
-    const stageButtons = document.querySelectorAll('.stage');
+      const skinDiv = document.createElement('div');
+      skinDiv.className = 'square';
 
-    stageButtons.forEach(button => {
-      const stageId = button.closest('button') ? button.closest('button').getAttribute('id') : null;
+      const img = document.createElement('img');
+      img.src = imageSrc;
+      img.alt = 'Skin';
+      img.className = 'skin-image';
 
-      // Check if the button has a valid id
-      if (stageId && stageId.startsWith(selectedMap)) {
-        const stageNumber = parseInt(stageId.split('-')[1].replace('stage', ''));
-
-        if (stageNumber === 2 && !stage1Completed) {
-          // Stage 2 is locked
-          button.closest('button').style.filter = 'grayscale(100%)';
-          button.closest('button').style.pointerEvents = 'none';
-        } else if (stageNumber === 3 && !stage2Completed) {
-          // Stage 3 is locked
-          button.closest('button').style.filter = 'grayscale(100%)';
-          button.closest('button').style.pointerEvents = 'none';
-        } else {
-          // Stage is unlocked
-          button.closest('button').style.filter = 'none';
-          button.closest('button').style.pointerEvents = 'auto';
-        }
-      } else {
-        console.warn(`Invalid stage id: ${stageId}`);
+      if (!isClaimed) {
+        img.style.filter = 'grayscale(100%)';
+        img.style.opacity = '0.3';
       }
-    });
-  }
 
-  // Hover effect using JS instead of CSS
-  const stageElements = document.querySelectorAll('.stage');
-  
-  stageElements.forEach(stage => {
-    stage.addEventListener('mouseover', () => {
-      stage.style.transform = 'scale(1.01)'; // Slight zoom on hover
-      stage.style.transition = 'transform 0.3s ease'; // Smooth transition
-    });
+      skinDiv.appendChild(img);
 
-    stage.addEventListener('mouseout', () => {
-      stage.style.transform = 'scale(1)'; // Reset scale when hover ends
+      if (isClaimed) {
+        const equipBtn = document.createElement('button');
+        equipBtn.innerText = 'Equip';
+        equipBtn.className = 'equip-btn';
+        skinDiv.appendChild(equipBtn);
+      }
+
+      skinsGrid.appendChild(skinDiv);
+    }
+
+    skins.forEach(skin => {
+      const claimed = localStorage.getItem(skin.id) === 'claimed';
+      injectSkin(skin.src, claimed, skin.id);
     });
   });
-
-  updateStageLock(); // Call function to update button states on page load
-});
-
 </script>
 
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const selectedMap = "{{ selected_map or '' }}";
+    const stageProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
+  
+    function updateStageLock() {
+      const stage1Completed = stageProgress[`${selectedMap}-1`] && stageProgress[`${selectedMap}-1`].stars > 0;
+      const stage2Completed = stageProgress[`${selectedMap}-2`] && stageProgress[`${selectedMap}-2`].stars > 0;
+  
+      // Stage buttons based on completion
+      const stageButtons = document.querySelectorAll('.stage');
+  
+      stageButtons.forEach(button => {
+        const stageId = button.closest('button') ? button.closest('button').getAttribute('id') : null;
+  
+        // Check if the button has a valid id
+        if (stageId && stageId.startsWith(selectedMap)) {
+          const stageNumber = parseInt(stageId.split('-')[1].replace('stage', ''));
+  
+          if (stageNumber === 2 && !stage1Completed) {
+            // Stage 2 is locked
+            button.closest('button').style.filter = 'grayscale(100%)';
+            button.closest('button').style.pointerEvents = 'none';
+          } else if (stageNumber === 3 && !stage2Completed) {
+            // Stage 3 is locked
+            button.closest('button').style.filter = 'grayscale(100%)';
+            button.closest('button').style.pointerEvents = 'none';
+          } else {
+            // Stage is unlocked
+            button.closest('button').style.filter = 'none';
+            button.closest('button').style.pointerEvents = 'auto';
+          }
+        } else {
+          console.warn(`Invalid stage id: ${stageId}`);
+        }
+      });
+    }
+  
+    // Call the function to update the stage locks
+    updateStageLock();
+  });
+  </script>
   
 
 

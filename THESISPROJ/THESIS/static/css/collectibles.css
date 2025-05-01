@@ -105,21 +105,22 @@ body {
     padding: 15px;
 }
 
-.square {
+.squarebadge  {
     background-color: #5C6BC0; /* Muted Purple */
     border-radius: 10px;
     aspect-ratio: 1;
     height: 150px;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column; /* Ensure content is stacked vertically */
+    justify-content: space-between; /* Space between image and button */
     color: #FFEB3B; /* Gold */
     font-weight: bold;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    position: relative; /* Needed for absolute positioning of Equip button */
 }
 
-.square:hover {
+.squarebadge:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
@@ -128,9 +129,192 @@ body {
     height: auto;
     object-fit: contain;
   }
-  
-  .skin-image {
-    width: 100%;
-    height: auto;
+
+/* Main container for skins and equip display */
+.skins-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 2vh;
+    flex-wrap: wrap;
+}
+
+/* Skins Grid (4 per row) */
+#skins-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 2vh;
+    justify-items: start;
+    flex: 1;
+}
+
+/* Skin Squares */
+.squareskin {
+    background-color: #5C6BC0;
+    border-radius: 10px;
+    aspect-ratio: 1;
+    height: 49vh;
+    width: 32vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    color: #FFEB3B;
+    font-weight: bold;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.squareskin img {
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
-  }
+    border-radius: 8px;
+    display: block;
+    /* No animation applied globally */
+}
+
+/* Equip Display Area */
+.equip-display {
+    position: sticky;
+    top: 2vh;
+    height: 78vh;
+    width: 56vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center the content vertically */
+    align-items: center;
+    background-color: #5C6BC0;
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    color: #FFEB3B;
+}
+
+/* Equip Skin Image Container with Arrows */
+.equip-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    height: 50vh; /* Fixed height for consistency */
+    overflow: hidden; /* Prevents the image from spilling out of container */
+}
+
+/* Image inside Equip Display */
+.equip-image-container img {
+    max-height: 100%;
+    max-width: 70%; /* Ensure it doesn't take up too much space */
+    object-fit: contain;
+    border-radius: 8px;
+    display: block;
+}
+
+/* Left and Right Arrow Buttons */
+.arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #FFEB3B;
+    font-size: 36px;
+    cursor: pointer;
+    padding: 1vh;
+    user-select: none;
+}
+
+.arrow-btn.left {
+    left: 2vh; /* Position the left arrow on the left side with slight padding */
+}
+
+.arrow-btn.right {
+    right: 6vh; /* Position the right arrow on the right side with slight padding */
+}
+
+/* Equip skin image inside the equip display box */
+#equip-skin-image {
+    max-width: 100%;
+    max-height: 30vh; /* Set max-height to avoid it growing too large */
+    object-fit: contain; /* Preserve aspect ratio and avoid stretching */
+    border-radius: 8px;
+    display: block;
+}
+
+/* Add a class to trigger the animation for a specific image */
+.squareskin.selected img {
+    animation: subtleStretchIdle 1s ease-in-out infinite; /* Animation applied only when selected */
+}
+
+@keyframes subtleStretchIdle {
+    0%, 100% {
+      transform: scaleY(1); /* Original size */
+    }
+    25% {
+      transform: scaleY(1.05); /* Slight stretch down */
+    }
+    50% {
+      transform: scaleY(1.03); /* Slight contraction after stretch */
+    }
+    75% {
+      transform: scaleY(1.05); /* Stretch down again, but still subtle */
+    }
+}
+
+/* Equip Button */
+.equip-btn {
+    margin-top: 2vh;
+    padding: 1vh 2vh;
+    background-color: #FFEB3B;
+    color: #5C6BC0;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Equip Button - Equipped State */
+.equip-btn.equipped {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    cursor: not-allowed;
+}
+
+/* Lock Status Label */
+.lock-label {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #FFEB3B;
+}
+
+/* Highlight for Equipped Skin */
+.squareskin.equipped {
+    outline: 4px solid #FFEB3B;
+    box-shadow: 0 0 15px #FFEB3B;
+}
+
+/* Click animation */
+.squareskin {
+    transition: transform 0.3s ease;
+}
+.squareskin.click-animation {
+    transform: scale(1.05);
+}
+
+/* Styling for Not Yet Acquired label */
+.not-acquired-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}

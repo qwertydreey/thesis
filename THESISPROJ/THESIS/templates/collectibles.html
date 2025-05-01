@@ -15,27 +15,39 @@
       <div class="title">COLLECTIONS</div>
       <div></div>
     </div>
-
+  
     <!-- Tabs Section -->
     <div class="tabs">
       <button class="tab-button active" onclick="showTab('medals')">Medals</button>
       <button class="tab-button" onclick="showTab('skins')">Skins</button>
     </div>
-
+  
     <!-- Content Section -->
     <div class="tab-content active" id="medals">
       <div class="grid" id="medals-grid">
         <!-- Badges will be injected here -->
       </div>
     </div>
+  
+<!-- Skins Tab -->
+<div class="tab-content" id="skins">
+  <div class="skins-container">
+    <div class="grid" id="skins-grid">
+      <!-- Skins will be injected here -->
+    </div>
 
-    <!-- Skins Tab -->
-    <div class="tab-content" id="skins">
-      <div class="grid" id="skins-grid">
-        <!-- Skins will be injected here -->
+    <!-- Equip Skin Display Area (Sticky right-side) -->
+    <div class="equip-display">
+      <div id="equip-skin-display">
+        <img id="equip-skin-image" src="" alt="Equip Skin" />
+        <!-- Equip button or other content here -->
       </div>
     </div>
   </div>
+</div>
+
+  
+
 
   <script>
     function showTab(tabId) {
@@ -106,7 +118,7 @@ const badges = [
 
   badges.forEach(badge => {
     const badgeDiv = document.createElement('div');
-    badgeDiv.className = 'square';
+    badgeDiv.className = 'squarebadge';
 
     const img = document.createElement('img');
     img.src = badge.src;
@@ -125,44 +137,197 @@ const badges = [
 </script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     const skins = [
-      { id: 'multiplication-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b1.png' },
-      { id: 'addition-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b2.png' },
-      { id: 'subtraction-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b3.png' },
-      { id: 'division-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b4.png' },
-      { id: 'counting-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b5.png' },
-      { id: 'comparison-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b6.png' },
-      { id: 'numerals-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b7.png' },
-      { id: 'placevalue-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b8.png' }
+        { id: 'default-skin', src: '/static/images/gameimg/rewardimg/skins/idle.png' },
+        { id: 'multiplication-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle1.png' },
+        { id: 'addition-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b2.png' },
+        { id: 'subtraction-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b3.png' },
+        { id: 'division-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b4.png' },
+        { id: 'counting-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b5.png' },
+        { id: 'comparison-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b6.png' },
+        { id: 'numerals-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b7.png' },
+        { id: 'placevalue-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b8.png' }
     ];
 
-    function injectSkin(imageSrc, isClaimed) {
-      const skinsGrid = document.getElementById('skins-grid');
-      if (!skinsGrid) return;
+    const skinsGrid = document.getElementById('skins-grid');
+    const equipDisplay = document.querySelector('.equip-display');
+    const equipImage = document.getElementById('equip-skin-image');
+    const equipBtn = document.createElement('button');
+    equipBtn.className = 'equip-btn';
+    equipBtn.innerText = 'Equip';
 
-      const skinDiv = document.createElement('div');
-      skinDiv.className = 'square';
+    const playerIdle = document.getElementById('player-idle');
+    const playerSpawn = document.getElementById('player-spawn');
 
-      const img = document.createElement('img');
-      img.src = imageSrc;
-      img.alt = 'Skin';
-      img.className = 'skin-image';
-      if (!isClaimed) {
-        img.style.filter = 'grayscale(100%)'; // optional: make unclaimed badge grayscale
-        img.style.opacity = '0.3'; // optional: make it look locked
-      }
-
-      skinDiv.appendChild(img);
-      skinsGrid.appendChild(skinDiv);
+    // Ensure default skin is always claimed
+    if (!localStorage.getItem('default-skin')) {
+        localStorage.setItem('default-skin', 'claimed');
     }
 
-    skins.forEach(skin => {
-      const claimed = localStorage.getItem(skin.id) === 'claimed';
-      injectSkin(skin.src, claimed);
+    let currentEquippedSkin = localStorage.getItem('equippedCharacterId');
+    if (!currentEquippedSkin) {
+        currentEquippedSkin = 'default-skin';
+        localStorage.setItem('equippedCharacterId', 'default-skin');
+    }
+
+    let currentSkinIndex = skins.findIndex(skin => skin.id === currentEquippedSkin);
+    if (currentSkinIndex === -1) currentSkinIndex = 0;
+
+    // Function to update the equipped skin display
+    function updateEquipDisplay() {
+        const skin = skins[currentSkinIndex];
+        const isClaimed = skin.id === 'default-skin' || localStorage.getItem(skin.id) === 'claimed';
+
+        equipImage.src = skin.src;
+
+        if (isClaimed) {
+            equipImage.style.filter = 'none';
+            equipImage.style.opacity = '1';
+            equipBtn.style.display = 'block';
+            equipBtn.disabled = false;
+            equipBtn.innerText = 'Equip';
+            equipBtn.onclick = function () {
+                equipSkin(skin.id);
+            };
+        } else {
+            equipImage.style.filter = 'grayscale(100%)';
+            equipImage.style.opacity = '0.3';
+            equipBtn.style.display = 'none';
+        }
+
+        if (currentEquippedSkin === skin.id) {
+            equipBtn.innerText = 'Equipped';
+            equipBtn.disabled = true;
+        }
+
+        highlightEquippedSkin();
+    }
+
+    // Equip the selected skin and update localStorage
+    function equipSkin(skinId) {
+        console.log("Equipping skin with ID:", skinId);
+        const selectedSkin = skins.find(skin => skin.id === skinId);
+        if (!selectedSkin) {
+            console.error("Selected skin not found:", skinId);
+            return;
+        }
+
+        console.log("Selected skin:", selectedSkin);
+
+        // Save the skin ID to localStorage
+        localStorage.setItem('equippedCharacterId', selectedSkin.id);
+
+        // Update equipped skin immediately after equipping
+        currentEquippedSkin = selectedSkin.id;
+
+        // Update the display for the equipped skin and button
+        updateEquipDisplay();
+
+        // Use window.onload or a higher delay for better timing
+        window.onload = function() {
+            const player = document.getElementById("player-idle");
+            console.log("Player element found:", player);  // Debugging line
+
+            if (!player) {
+                console.error("Player element not found");
+                return;
+            }
+
+            // Ensure the player element is visible by removing the 'hidden' class
+            player.classList.remove('hidden');
+
+            // Update player image source to the selected skin
+            player.src = selectedSkin.src;
+
+            console.log("Skin equipped:", selectedSkin.src);
+        };
+    }
+
+    // Reset visuals for all skins
+    function updateAllSkinsDisplay() {
+        document.querySelectorAll('.equip-btn').forEach(button => {
+            button.innerText = 'Equip';
+            button.disabled = false;
+        });
+        highlightEquippedSkin();
+    }
+
+    // Inject skin image to grid
+    function injectSkin(imageSrc, isClaimed, id) {
+        const skinDiv = document.createElement('div');
+        skinDiv.className = 'squareskin';
+        skinDiv.setAttribute('data-skin-id', id);
+
+        const img = document.createElement('img');
+        img.src = imageSrc;
+        img.alt = 'Skin';
+        img.className = 'skin-image';
+        img.style.width = '100%';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '8px';
+
+        const notAcquiredLabel = document.createElement('div');
+        notAcquiredLabel.className = 'not-acquired-label';
+        notAcquiredLabel.innerText = 'Not Yet Acquired';
+
+        if (!isClaimed) {
+            img.style.filter = 'grayscale(100%)';
+            img.style.opacity = '0.3';
+            skinDiv.appendChild(notAcquiredLabel);
+        }
+
+        skinDiv.appendChild(img);
+
+        skinDiv.addEventListener('click', () => {
+            currentSkinIndex = skins.findIndex(skin => skin.id === id);
+            updateEquipDisplay();
+            skinDiv.classList.add('click-animation');
+            setTimeout(() => skinDiv.classList.remove('click-animation'), 300);
+        });
+
+        skinsGrid.appendChild(skinDiv);
+    }
+
+    // Highlight the equipped skin
+    function highlightEquippedSkin() {
+        document.querySelectorAll('.squareskin').forEach(card => {
+            card.style.border = 'none';
+        });
+
+        if (currentEquippedSkin) {
+            const equippedSkin = skins.find(skin => skin.id === currentEquippedSkin);
+            if (equippedSkin) {
+                const skinCard = document.querySelector(`.squareskin[data-skin-id="${equippedSkin.id}"]`);
+                if (skinCard) {
+                    skinCard.style.border = '3px solid #FFD700';
+                }
+            }
+        }
+    }
+
+    // Initialize skins
+    skins.forEach((skin) => {
+        const isClaimed = skin.id === 'default-skin' || localStorage.getItem(skin.id) === 'claimed';
+        injectSkin(skin.src, isClaimed, skin.id);
     });
-  });
+
+    equipDisplay.appendChild(equipBtn);
+    highlightEquippedSkin();
+    updateEquipDisplay();
+});
 </script>
+
+  
+
+  
+  
+
+
+  
+  
+
+
 
 
 

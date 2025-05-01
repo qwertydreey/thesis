@@ -281,7 +281,22 @@ const rewardData = {
   }
 };
 
-
+// Define skins
+const skins = [
+  {
+    id: 'default-skin', // <- ito ang tama at consistent
+    name: 'Default Skin',
+    src: '/static/images/anim/sprite/idle.png',
+    attackSrc: '/static/images/anim/sprite/attack.png',
+  },
+  {
+    id: 'multiplication-stage3-skin',
+    name: 'Multiplication Skin',
+    src: '/static/images/anim/sprite/idle1.png',
+    attackSrc: '/static/images/anim/sprite/attack1.png',
+  },
+  // Add more skins as needed
+];
 
 // Global state for current stage
 let currentMonsterIndex = 0;
@@ -1017,16 +1032,34 @@ function updatePotionUI() {
 }
 
 
+// In the fireballAttack function, replace the static idle image with the equipped skin
+document.addEventListener('DOMContentLoaded', function () {
+  const player = document.querySelector(".player");
+
+  // Get equipped skin ID from localStorage
+  const equippedSkinId = localStorage.getItem('equippedCharacterId');
+  if (equippedSkinId) {
+      // Find the skin by its ID in the skins array
+      const skin = skins.find(s => s.id === equippedSkinId);
+      if (skin) {
+          player.src = skin.src; // Update the player's image
+      }
+  } else {
+      // Fallback to default idle skin if no equipped skin found
+      player.src = "/static/images/anim/sprite/idle.png";
+  }
+});
+
 function fireballAttack() {
   if (sessionStorage.getItem('fireballTriggered')) return;
 
   const paths = document.getElementById("attack-image-paths").dataset;
 
   const attackEffects = [
-    paths.add,
-    paths.sub,
-    paths.mul,
-    paths.div,
+      paths.add,
+      paths.sub,
+      paths.mul,
+      paths.div,
   ];
 
   const selectedAttack = attackEffects[Math.floor(Math.random() * attackEffects.length)];
@@ -1047,17 +1080,11 @@ function fireballAttack() {
 
   setTimeout(() => {
     // 🔥 2. Start ATTACK (change the image)
-    player.classList.remove("charging");
-    player.src = "/static/images/anim/sprite/attack.png";
+    const equippedSkinId = localStorage.getItem('equippedCharacterId');
+    const skin = skins.find(s => s.id === equippedSkinId) || skins[0]; // Default to the first skin if none is found
+    player.src = skin.attackSrc;  // Change to attack animation based on equipped skin
     player.style.height = "35vh";
     player.style.width = "auto";
-
-    // 🟢 3. Reset to IDLE sprite
-    setTimeout(() => {
-      player.src = "/static/images/anim/sprite/idle.png";
-      player.style.height = "35vh";
-      player.style.width = "auto";
-    }, 700); // duration of attack pose
 
     // 🟠 4. Fireball appears
     groundContainer.appendChild(fireball);
@@ -1092,26 +1119,58 @@ function fireballAttack() {
       sessionStorage.removeItem('fireballTriggered');
     }, 1000);
 
+    // 🟢 3. Reset to IDLE sprite after the attack animation
+    setTimeout(() => {
+      // Reset back to idle animation based on equipped skin
+      player.src = skin.src;
+      player.style.height = "35vh";
+      player.style.width = "auto";
+      player.classList.remove("charging"); // Remove the charging effect to resume idle state
+    }, 700); // Duration of attack pose
   }, 600); // charging time
 }
 
 
 
-window.addEventListener("DOMContentLoaded", () => {
-  const spawn = document.getElementById("player-spawn");
-  const player = document.querySelector(".player");
 
-  // Initially show the spawn effect (player-spawn image)
-  spawn.classList.remove("hidden");
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+  const spawn = document.getElementById("player-spawn");
+  const player = document.getElementById("player-idle");
+
+  // Check if elements exist before proceeding
+  if (!spawn || !player) {
+      console.error("Player elements not found in the DOM");
+      return;
+  }
+
+  // Get the equipped skin (or default to the first skin)
+  const equippedSkinId = localStorage.getItem('equippedCharacterId');
+  console.log("Equipped skin ID:", equippedSkinId);
+
+  const skin = skins.find(s => s.id === equippedSkinId) || skins[0]; // Default to the first skin if none is found
+  console.log("Using skin:", skin);
+
+  // Set the idle and spawn images based on the equipped skin
+  player.src = skin.src;  // Set the idle image
+  spawn.src = skin.src;   // Set the spawn image
 
   setTimeout(() => {
-    // Hide the spawn image after the spawn effect duration
-    spawn.classList.add("hidden");
+      // Hide the spawn image after the spawn effect duration
+      spawn.classList.add("hidden");
 
-    // Instantly show the player (idle state) without animation delay
-    player.classList.remove("hidden");
-  }, 1000); // Delay before the spawn image disappears (adjust if needed)
+      // Instantly show the player (idle state) without animation delay
+      player.classList.remove("hidden");
+  }, 1000); // Adjust this delay if needed
 });
+
+
+
+
+
+
 
 
 window.addEventListener("DOMContentLoaded", () => {
