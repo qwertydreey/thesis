@@ -29,6 +29,8 @@ openai.api_key = "sk-or-v1-b597d07eab3351fa21a6cbf6ace9f9ef260204e2e73b03e155f97
 def index():
     return render_template('index.html')
 
+from flask import session
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -39,11 +41,29 @@ def login():
         user = cursor.fetchone()
 
         if user and bcrypt.check_password_hash(user['password'], password):
+            # Set session for user ID
+            session['user_id'] = user['id']  # Assuming 'id' is the primary key of your users table
+            print(f"User ID saved to session: {session['user_id']}")  # Debug print
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid username or password.', 'danger')
 
     return render_template('login.html')
+def get_user_from_db():
+    user_id = session.get('user_id')  # Get the user_id from session
+    if not user_id:
+        # Kung walang session, redirect to login
+        flash('You must be logged in to view your profile.', 'warning')
+        return redirect(url_for('login'))  # Redirect to login page if user_id not found in session
+    
+    cursor.execute("SELECT first_name, last_name FROM users WHERE id = %s", (user_id,))
+    user = cursor.fetchone()
+    
+    if user:
+        return user
+    else:
+        return None  # In case walang user found
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -125,7 +145,13 @@ def stages():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    user = get_user_from_db()
+    if not user:
+        flash('User not found or not logged in.', 'danger')
+        return redirect(url_for('login'))
+    
+    return render_template('dashboard.html', first_name=user['first_name'], last_name=user['last_name'])
+
 
 @app.route('/roadmap')
 def roadmap():
@@ -155,6 +181,7 @@ def forgot_password():
 def game():
     user_id = 1  # Hardcoded user ID
 
+    # Get current difficulty
     cursor.execute("SELECT current_difficulty FROM user_progress WHERE user_id = %s", (user_id,))
     row = cursor.fetchone()
 
@@ -165,11 +192,19 @@ def game():
     else:
         difficulty = row['current_difficulty']
 
+    # Get questions for current difficulty
     cursor.execute("SELECT * FROM questions WHERE difficulty = %s", (difficulty,))
     questions = cursor.fetchall()
     question = random.choice(questions) if questions else None
 
-    return render_template('game.html', question=question)
+    # Get user's first name
+    cursor.execute("SELECT first_name FROM users WHERE id = %s", (user_id,))
+    user_row = cursor.fetchone()
+    first_name = user_row['first_name'] if user_row and 'first_name' in user_row else "PLAYER"
+
+    # Render template with question and first name
+    return render_template('game.html', question=question, first_name=first_name)
+
 
 @app.route('/submit-answer', methods=['POST'])
 def submit_answer():
@@ -256,3 +291,5 @@ def get_new_question():
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
+
+    

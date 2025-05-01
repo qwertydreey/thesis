@@ -1,3 +1,13 @@
+@font-face {
+  font-family: "FSP DEMO - Merlo Neue Bold";
+  src: url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.eot");
+  src: url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.eot?#iefix")format("embedded-opentype"),
+  url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.woff2")format("woff2"),
+  url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.woff")format("woff"),
+  url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.ttf")format("truetype"),
+  url("https://db.onlinewebfonts.com/t/8d461bab99a9a970a10bca9246b1f1ae.svg#FSP DEMO - Merlo Neue Bold")format("svg");
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -72,10 +82,47 @@ body {
   width: 22.5%;
   height: 41.8%;
   background-image: url('../images/dshbrdimg/Profile.png');
+  cursor: default;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
 
+.user-name {
+  color: #603002;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: left;
+  font-family: "FSP DEMO - Merlo Neue Bold";
+  position: absolute;
+  top: 13vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 35vh;
+  max-width: 35vh;
+  word-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.4;
+  text-transform: uppercase;
+
+
+  /* Mas contrasty stroke-style */
+  text-shadow:
+    -1px -1px 0 #fcd516,
+     1px -1px 0 #fcd516,
+    -1px  1px 0 #fcd516,
+     1px  1px 0 #fcd516;
 }
 
 
+
+
+
+
+.profile:hover {
+  transform: none; /* Walang effect sa hover */
+}
 /* Button positions and sizes based on 1920x1080 */
 .adventure {
   top: 13.2%;

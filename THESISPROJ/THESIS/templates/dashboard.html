@@ -23,10 +23,15 @@
           </div>
           
 
-        <!-- Subtraction Sands -->
+        <!-- PROFILE -->
         <div class="dashboard-btn-wrapper">
-          <button class="dashboard-btn profile" onclick="startHoverEffect(this); window.location.href='#';"></button>
+          <div class="dashboard-btn profile">
+            <span class="user-name">{{ first_name }} {{ last_name }}</span>
+          </div>
         </div>
+        
+        
+        
 
           <!-- ADVENTURE -->
           <div class="dashboard-btn-wrapper">
@@ -36,7 +41,7 @@
           </div>
 
 
-          <!-- ADVENTURE -->
+          <!-- COLLECTIBLES -->
           <div class="dashboard-btn-wrapper">
             <a href="{{ url_for('collectibles') }}">
               <button class="dashboard-btn collections"></button>
@@ -60,7 +65,7 @@
             </a>
           </div>
 
-        <!-- Subtraction Sands -->
+        <!-- SETTINGS -->
         <div class="dashboard-btn-wrapper">
           <button class="dashboard-btn settings" onclick="startHoverEffect(this); window.location.href='#';"></button>
         </div>

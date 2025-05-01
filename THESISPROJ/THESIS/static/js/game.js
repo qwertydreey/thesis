@@ -36,161 +36,161 @@ const mapStages = {
   multiplication: {
     1: [
       { name: 'Multiplication-Mob-1', displayName: "OASIS OGRES", maxHp: 1, image: 'Multiplication-Mob-1.png' },
-      { name: 'Multiplication-Mob-2', displayName: "SANDY STOMPERS", maxHp: 1, image: 'Multiplication-Mob-2.png' },//3
-      { name: 'Multiplication-Mob-3', displayName: "CACTUS CREEPERS", maxHp: 1, image: 'Multiplication-Mob-3.png' },//4
-      { name: 'Multiplication-Boss-1', displayName: "SCORCH SCARAB", maxHp: 1, image: 'Multiplication-Boss-1.png' }//5
+      { name: 'Multiplication-Mob-2', displayName: "PRODUCT PIRANHAS", maxHp: 1, image: 'Multiplication-Mob-2.png' },//3
+      { name: 'Multiplication-Mob-3', displayName: "MULTIPLEX MONKEY", maxHp: 1, image: 'Multiplication-Mob-3.png' },//4
+      { name: 'Multiplication-Boss-1', displayName: "THE PRODUCT GOLEM", maxHp: 1, image: 'Multiplication-Boss-1.png' }//5
     ],
     2: [
-      { name: 'Multiplication-Mob-4', displayName: "DUNE DWELLERS", maxHp: 2, image: 'Multiplication-Mob-4.png' },
-      { name: 'Multiplication-Mob-5', displayName: "SUNBURST STALKERS", maxHp: 4, image: 'Multiplication-Mob-5.png' },//4
-      { name: 'Multiplication-Mob-6', displayName: "SUNBURST STALKERS", maxHp: 3, image: 'Multiplication-Mob-6.png' },//
-      { name: 'Multiplication-Boss-2', displayName: "PYRAMID PHANTOM", maxHp: 5, image: 'Multiplication-Boss-2.png' }
+      { name: 'Multiplication-Mob-4', displayName: "TIME TURTLE", maxHp: 2, image: 'Multiplication-Mob-4.png' },
+      { name: 'Multiplication-Mob-5', displayName: "SERPENT SOLVER", maxHp: 4, image: 'Multiplication-Mob-5.png' },
+      { name: 'Multiplication-Mob-6', displayName: "CRUNCH CROCODILE", maxHp: 3, image: 'Multiplication-Mob-6.png' },
+      { name: 'Multiplication-Boss-2', displayName: "THE MULTI REX", maxHp: 5, image: 'Multiplication-Boss-2.png' }
     ],
     3: [
-      { name: 'Multiplication-Mob-7', displayName: "HEAT HOUNDS", maxHp: 2, image: 'Multiplication-Mob-7.png' },
-      { name: 'Multiplication-Mob-8', displayName: "HEAT HOUNDS", maxHp: 4, image: 'Multiplication-Mob-8.png' },
-      { name: 'Multiplication-Mob-9', displayName: "HEAT HOUNDS", maxHp: 3, image: 'Multiplication-Mob-9.png' },
-      { name: 'Multiplication-Boss-3', displayName: "ANUBIS WRATH", maxHp: 5, image: 'Multiplication-Boss-3.png' }
+      { name: 'Multiplication-Mob-7', displayName: "ECHO ELEPANT", maxHp: 2, image: 'Multiplication-Mob-7.png' },
+      { name: 'Multiplication-Mob-8', displayName: "MULTI MAGPIE", maxHp: 4, image: 'Multiplication-Mob-8.png' },
+      { name: 'Multiplication-Mob-9', displayName: "WHIRL WHALE", maxHp: 3, image: 'Multiplication-Mob-9.png' },
+      { name: 'Multiplication-Boss-3', displayName: "THE EQUATION BEAST", maxHp: 5, image: 'Multiplication-Boss-3.png' }
     ]
   },
   division: {
     1: [
-      { name: 'Division-Mob-1', displayName: "DIVINE DRAGONS", maxHp: 1, image: 'Division-Mob-1.png' },
-      { name: 'Division-Mob-2', displayName: "SPLIT SPIRITS", maxHp: 3, image: 'Division-Mob-2.png' },
-      { name: 'Division-Mob-3', displayName: "DIVIDED DEMONS", maxHp: 4, image: 'Division-Mob-3.png' },
-      { name: 'Division-Boss-1', displayName: "DIVIDER PHANTOM", maxHp: 5, image: 'Division-Boss-1.png' }
+      { name: 'Division-Mob-1', displayName: "DIVIDE GATOR", maxHp: 1, image: 'Division-Mob-1.png' },
+      { name: 'Division-Mob-2', displayName: "RATIO LOBSTER", maxHp: 3, image: 'Division-Mob-2.png' },
+      { name: 'Division-Mob-3', displayName: "SILK STRANGLERS", maxHp: 4, image: 'Division-Mob-3.png' },
+      { name: 'Division-Boss-1', displayName: "THE FRACTION HOUSE", maxHp: 5, image: 'Division-Boss-1.png' }
     ],
     2: [
       { name: 'Division-Mob-4', displayName: "SPLIT PHANTOMS", maxHp: 2, image: 'Division-Mob-4.png' },
-      { name: 'Division-Mob-5', displayName: "SHATTERED WOLVES", maxHp: 4, image: 'Division-Mob-5.png' },
-      { name: 'Division-Mob-6', displayName: "DIVIDING DRAGONS", maxHp: 3, image: 'Division-Mob-6.png' },
-      { name: 'Division-Boss-2', displayName: "SPLIT TITAN", maxHp: 5, image: 'Division-Boss-2.png' }
+      { name: 'Division-Mob-5', displayName: "GROWTH GUARD", maxHp: 4, image: 'Division-Mob-5.png' },
+      { name: 'Division-Mob-6', displayName: "TENTACLE TERROR", maxHp: 3, image: 'Division-Mob-6.png' },
+      { name: 'Division-Boss-2', displayName: "THE TIDAL DRAGON", maxHp: 5, image: 'Division-Boss-2.png' }
     ],
     3: [
-      { name: 'Division-Mob-7', displayName: "SPLIT SHADOWS", maxHp: 2, image: 'Division-Mob-7.png' },
-      { name: 'Division-Mob-8', displayName: "DIVIDED SPIRITS", maxHp: 3, image: 'Division-Mob-8.png' },
-      { name: 'Division-Mob-9', displayName: "ECLIPSE WOLVES", maxHp: 4, image: 'Division-Mob-9.png' },
-      { name: 'Division-Boss-3', displayName: "DIVISION MONSTER", maxHp: 5, image: 'Division-Boss-3.png' }
+      { name: 'Division-Mob-7', displayName: "DEEP SEA SERPENT", maxHp: 2, image: 'Division-Mob-7.png' },
+      { name: 'Division-Mob-8', displayName: "DIVIDE DEMON", maxHp: 3, image: 'Division-Mob-8.png' },
+      { name: 'Division-Mob-9', displayName: "SWAMP STOMPER", maxHp: 4, image: 'Division-Mob-9.png' },
+      { name: 'Division-Boss-3', displayName: "THE MURKY MAJESTY", maxHp: 5, image: 'Division-Boss-3.png' }
     ]
   },
   addition: {
     1: [
-      { name: 'Addition-Mob-1', displayName: "SWEET SNOWMEN", maxHp: 1, image: 'Addition-Mob-1.png' },
-      { name: 'Addition-Mob-2', displayName: "CHERRY PIXIES", maxHp: 3, image: 'Addition-Mob-2.png' },
-      { name: 'Addition-Mob-3', displayName: "GLOWING GNOMES", maxHp: 4, image: 'Addition-Mob-3.png' },
-      { name: 'Addition-Boss-1', displayName: "FROST GIANT", maxHp: 5, image: 'Addition-Boss-1.png' }
+      { name: 'Addition-Mob-1', displayName: "JUNGLE VIPER", maxHp: 1, image: 'Addition-Mob-1.png' },
+      { name: 'Addition-Mob-2', displayName: "MARCHING ANT", maxHp: 3, image: 'Addition-Mob-2.png' },
+      { name: 'Addition-Mob-3', displayName: "MOSSBACK TURTLE", maxHp: 4, image: 'Addition-Mob-3.png' },
+      { name: 'Addition-Boss-1', displayName: "THE ADD CHIEFTAIN", maxHp: 5, image: 'Addition-Boss-1.png' }
     ],
     2: [
-      { name: 'Addition-Mob-4', displayName: "FLUFFY YETIS", maxHp: 1, image: 'Addition-Mob-4.png' },
-      { name: 'Addition-Mob-5', displayName: "SNOWY MONSTERS", maxHp: 4, image: 'Addition-Mob-5.png' },
-      { name: 'Addition-Mob-6', displayName: "WINTER WOLVES", maxHp: 3, image: 'Addition-Mob-6.png' },
-      { name: 'Addition-Boss-2', displayName: "ICE BEHEMOTH", maxHp: 5, image: 'Addition-Boss-2.png' }
+      { name: 'Addition-Mob-4', displayName: "TRIBE WARRIOR", maxHp: 1, image: 'Addition-Mob-4.png' },
+      { name: 'Addition-Mob-5', displayName: "CROWING CONDOR", maxHp: 4, image: 'Addition-Mob-5.png' },
+      { name: 'Addition-Mob-6', displayName: "TREEMANCER", maxHp: 3, image: 'Addition-Mob-6.png' },
+      { name: 'Addition-Boss-2', displayName: "THE SUM TITAN", maxHp: 5, image: 'Addition-Boss-2.png' }
     ],
     3: [
-      { name: 'Addition-Mob-7', displayName: "FROSTY DRAGONS1", maxHp: 2, image: 'Addition-Mob-7.png' },
-      { name: 'Addition-Mob-8', displayName: "FROSTY DRAGONS2", maxHp: 3, image: 'Addition-Mob-8.png' },
-      { name: 'Addition-Mob-9', displayName: "FROSTY DRAGONS3", maxHp: 4, image: 'Addition-Mob-9.png' },
-      { name: 'Addition-Boss-3', displayName: "ICE TITAN", maxHp: 5, image: 'Addition-Boss-3.png' }
+      { name: 'Addition-Mob-7', displayName: "JUNGLE CUB", maxHp: 2, image: 'Addition-Mob-7.png' },
+      { name: 'Addition-Mob-8', displayName: "SCALY STRIKER", maxHp: 3, image: 'Addition-Mob-8.png' },
+      { name: 'Addition-Mob-9', displayName: "TREETOP TALONS", maxHp: 4, image: 'Addition-Mob-9.png' },
+      { name: 'Addition-Boss-3', displayName: "THE TOTEM FURIES", maxHp: 5, image: 'Addition-Boss-3.png' }
     ]
   },
   subtraction: {
     1: [
-      { name: 'Subtraction-Mob-1', displayName: "FIRE SPIRITS", maxHp: 1, image: 'Subtraction-Mob-1.png' },
-      { name: 'Subtraction-Mob-2', displayName: "BURNING PHANTOMS", maxHp: 3, image: 'Subtraction-Mob-2.png' },
-      { name: 'Subtraction-Mob-3', displayName: "FLAMING HOUNDS", maxHp: 4, image: 'Subtraction-Mob-3.png' },
-      { name: 'Subtraction-Boss-1', displayName: "LAVA BEAST", maxHp: 5, image: 'Subtraction-Boss-1.png' }
+      { name: 'Subtraction-Mob-1', displayName: "MUMMY REBIRTH", maxHp: 1, image: 'Subtraction-Mob-1.png' },
+      { name: 'Subtraction-Mob-2', displayName: "ANUBIS CHOSEN", maxHp: 3, image: 'Subtraction-Mob-2.png' },
+      { name: 'Subtraction-Mob-3', displayName: "TART TERRITOR", maxHp: 4, image: 'Subtraction-Mob-3.png' },
+      { name: 'Subtraction-Boss-1', displayName: "THE SOARING SENTINEL", maxHp: 5, image: 'Subtraction-Boss-1.png' }
     ],
     2: [
-      { name: 'Subtraction-Mob-4', displayName: "MAGMA TROLLS", maxHp: 1, image: 'Subtraction-Mob-4.png' },
-      { name: 'Subtraction-Mob-5', displayName: "VOLCANIC DRAGONS", maxHp: 4, image: 'Subtraction-Mob-5.png' },
-      { name: 'Subtraction-Mob-6', displayName: "FIRE GARGOYLES", maxHp: 3, image: 'Subtraction-Mob-6.png' },
-      { name: 'Subtraction-Boss-2', displayName: "MOLTEN TITAN", maxHp: 5, image: 'Subtraction-Boss-2.png' }
+      { name: 'Subtraction-Mob-4', displayName: "DUNE DRAINER", maxHp: 1, image: 'Subtraction-Mob-4.png' },
+      { name: 'Subtraction-Mob-5', displayName: "SCARAB SENTINELS", maxHp: 4, image: 'Subtraction-Mob-5.png' },
+      { name: 'Subtraction-Mob-6', displayName: "SAND SCORPIONS", maxHp: 3, image: 'Subtraction-Mob-6.png' },
+      { name: 'Subtraction-Boss-2', displayName: "THE PYRAMID SPHINX", maxHp: 5, image: 'Subtraction-Boss-2.png' }
     ],
     3: [
-      { name: 'Subtraction-Mob-7', displayName: "FIRE DEMONS", maxHp: 2, image: 'Subtraction-Mob-7.png' },
-      { name: 'Subtraction-Mob-8', displayName: "LAVA SPIRITS", maxHp: 3, image: 'Subtraction-Mob-8.png' },
-      { name: 'Subtraction-Mob-9', displayName: "MAGMA WOLVES", maxHp: 4, image: 'Subtraction-Mob-9.png' },
-      { name: 'Subtraction-Boss-3', displayName: "VOLCANIC LORD", maxHp: 5, image: 'Subtraction-Boss-3.png' }
+      { name: 'Subtraction-Mob-7', displayName: "TOMB STALKER", maxHp: 2, image: 'Subtraction-Mob-7.png' },
+      { name: 'Subtraction-Mob-8', displayName: "ANCIENT WARDEN", maxHp: 3, image: 'Subtraction-Mob-8.png' },
+      { name: 'Subtraction-Mob-9', displayName: "SAND JINN", maxHp: 4, image: 'Subtraction-Mob-9.png' },
+      { name: 'Subtraction-Boss-3', displayName: "THE ANCIENT RULER", maxHp: 5, image: 'Subtraction-Boss-3.png' }
     ]
   },
   counting: {
     1: [
-      { name: 'Counting-Mob-1', displayName: "GOLDEN GNOMES", maxHp: 1, image: 'Counting-Mob-1.png' },
-      { name: 'Counting-Mob-2', displayName: "HARMONY PHANTOMS", maxHp: 3, image: 'Counting-Mob-2.png' },
-      { name: 'Counting-Mob-3', displayName: "DRAGONIC WOLVES", maxHp: 4, image: 'Counting-Mob-3.png' },
-      { name: 'Counting-Boss-1', displayName: "TIME WIZARD", maxHp: 5, image: 'Counting-Boss-1.png' }
+      { name: 'Counting-Mob-1', displayName: "COLORFUL BIRD", maxHp: 1, image: 'Counting-Mob-1.png' },
+      { name: 'Counting-Mob-2', displayName: "AURORA TREE", maxHp: 3, image: 'Counting-Mob-2.png' },
+      { name: 'Counting-Mob-3', displayName: "PRISMATIC FROG", maxHp: 4, image: 'Counting-Mob-3.png' },
+      { name: 'Counting-Boss-1', displayName: "THE JUMP JESTER", maxHp: 5, image: 'Counting-Boss-1.png' }
     ],
     2: [
-      { name: 'Counting-Mob-4', displayName: "MYSTIC TROLLS", maxHp: 2, image: 'Counting-Mob-4.png' },
-      { name: 'Counting-Mob-5', displayName: "LOST PHANTOMS", maxHp: 4, image: 'Counting-Mob-5.png' },
-      { name: 'Counting-Mob-6', displayName: "SHADOW DEMONS", maxHp: 3, image: 'Counting-Mob-6.png' },
-      { name: 'Counting-Boss-2', displayName: "LUNAR WITCH", maxHp: 5, image: 'Counting-Boss-2.png' }
+      { name: 'Counting-Mob-4', displayName: "COLORFALL UNICORN", maxHp: 2, image: 'Counting-Mob-4.png' },
+      { name: 'Counting-Mob-5', displayName: "SPECTRAL LILY", maxHp: 4, image: 'Counting-Mob-5.png' },
+      { name: 'Counting-Mob-6', displayName: "CHROMA FLORA", maxHp: 3, image: 'Counting-Mob-6.png' },
+      { name: 'Counting-Boss-2', displayName: "THE RAINBOW WISHER", maxHp: 5, image: 'Counting-Boss-2.png' }
     ],
     3: [
-      { name: 'Counting-Mob-7', displayName: "THUNDER OWLS", maxHp: 1, image: 'Counting-Mob-7.png' },
-      { name: 'Counting-Mob-8', displayName: "DARK SKELETONS", maxHp: 4, image: 'Counting-Mob-8.png' },
-      { name: 'Counting-Mob-9', displayName: "SPIRIT PHANTOMS", maxHp: 3, image: 'Counting-Mob-9.png' },
-      { name: 'Counting-Boss-3', displayName: "COSMIC DRAGON", maxHp: 5, image: 'Counting-Boss-3.png' }
+      { name: 'Counting-Mob-7', displayName: "SPECTRAL FINNED", maxHp: 1, image: 'Counting-Mob-7.png' },
+      { name: 'Counting-Mob-8', displayName: "SPECTRAL PIXIE", maxHp: 4, image: 'Counting-Mob-8.png' },
+      { name: 'Counting-Mob-9', displayName: "COLORSPROUT", maxHp: 3, image: 'Counting-Mob-9.png' },
+      { name: 'Counting-Boss-3', displayName: "THE PRISMATIC HEXER", maxHp: 5, image: 'Counting-Boss-3.png' }
     ]
   },
   comparison: {
     1: [
-      { name: 'Comparison-Mob-1', displayName: "SHIMMERING GHOSTS", maxHp: 1, image: 'Comparison-Mob-1.png' },
-      { name: 'Comparison-Mob-2', displayName: "MYSTIC WOLVES", maxHp: 3, image: 'Comparison-Mob-2.png' },
-      { name: 'Comparison-Mob-3', displayName: "GLIMMERING VAMPIRES", maxHp: 4, image: 'Comparison-Mob-3.png' },
-      { name: 'Comparison-Boss-1', displayName: "LUMINESCENT WIZARD", maxHp: 5, image: 'Comparison-Boss-1.png' }
+      { name: 'Comparison-Mob-1', displayName: "CAVERN GREMLINS", maxHp: 1, image: 'Comparison-Mob-1.png' },
+      { name: 'Comparison-Mob-2', displayName: "IRONCLAD ANTS", maxHp: 3, image: 'Comparison-Mob-2.png' },
+      { name: 'Comparison-Mob-3', displayName: "TREEHOPPERS", maxHp: 4, image: 'Comparison-Mob-3.png' },
+      { name: 'Comparison-Boss-1', displayName: "THE CAVERN FLYERS", maxHp: 5, image: 'Comparison-Boss-1.png' }
     ],
     2: [
-      { name: 'Comparison-Mob-4', displayName: "FROST PHANTOMS", maxHp: 2, image: 'Comparison-Mob-4.png' },
-      { name: 'Comparison-Mob-5', displayName: "GHOSTLY VAMPIRES", maxHp: 4, image: 'Comparison-Mob-5.png' },
-      { name: 'Comparison-Mob-6', displayName: "SHADOWS OF THE VOID", maxHp: 3, image: 'Comparison-Mob-6.png' },
-      { name: 'Comparison-Boss-2', displayName: "LURKING WITCH", maxHp: 5, image: 'Comparison-Boss-2.png' }
+      { name: 'Comparison-Mob-4', displayName: "TWISTED BRANCHES", maxHp: 2, image: 'Comparison-Mob-4.png' },
+      { name: 'Comparison-Mob-5', displayName: "FLUTTERBLOODS", maxHp: 4, image: 'Comparison-Mob-5.png' },
+      { name: 'Comparison-Mob-6', displayName: "STARDUST OWLS", maxHp: 3, image: 'Comparison-Mob-6.png' },
+      { name: 'Comparison-Boss-2', displayName: "THE SKYCLAW HAWKS", maxHp: 5, image: 'Comparison-Boss-2.png' }
     ],
     3: [
-      { name: 'Comparison-Mob-7', displayName: "PHANTOM WOLVES", maxHp: 2, image: 'Comparison-Mob-7.png' },
-      { name: 'Comparison-Mob-8', displayName: "SHADOW DEMONS", maxHp: 3, image: 'Comparison-Mob-8.png' },
-      { name: 'Comparison-Mob-9', displayName: "SPOOKY GHOSTS", maxHp: 4, image: 'Comparison-Mob-9.png' },
-      { name: 'Comparison-Boss-3', displayName: "WICKED WIZARD", maxHp: 5, image: 'Comparison-Boss-3.png' }
+      { name: 'Comparison-Mob-7', displayName: "EQUALIZER", maxHp: 2, image: 'Comparison-Mob-7.png' },
+      { name: 'Comparison-Mob-8', displayName: "MISTY WOOLS", maxHp: 3, image: 'Comparison-Mob-8.png' },
+      { name: 'Comparison-Mob-9', displayName: "FLITFURY GNATS", maxHp: 4, image: 'Comparison-Mob-9.png' },
+      { name: 'Comparison-Boss-3', displayName: "THE VOLCA GOLEM", maxHp: 5, image: 'Comparison-Boss-3.png' }
     ]
   },
   numerals: {
     1: [
-      { name: 'Numerals-Mob-1', displayName: "TRICKSTER SPIRITS", maxHp: 1, image: 'Numerals-Mob-1.png' },
-      { name: 'Numerals-Mob-2', displayName: "MYSTIC WOLVES", maxHp: 3, image: 'Numerals-Mob-2.png' },
-      { name: 'Numerals-Mob-3', displayName: "WISE PHANTOMS", maxHp: 4, image: 'Numerals-Mob-3.png' },
-      { name: 'Numerals-Boss-1', displayName: "NUMERAL DEMON", maxHp: 5, image: 'Numerals-Boss-1.png' }
+      { name: 'Numerals-Mob-1', displayName: "CRYPT DEFENDERS", maxHp: 1, image: 'Numerals-Mob-1.png' },
+      { name: 'Numerals-Mob-2', displayName: "WRAITHBONE", maxHp: 3, image: 'Numerals-Mob-2.png' },
+      { name: 'Numerals-Mob-3', displayName: "BOWMASTER CENTAUR", maxHp: 4, image: 'Numerals-Mob-3.png' },
+      { name: 'Numerals-Boss-1', displayName: "THE SWORDHALL KNIGHT", maxHp: 5, image: 'Numerals-Boss-1.png' }
     ],
     2: [
-      { name: 'Numerals-Mob-4', displayName: "WIZARD DEMONS", maxHp: 2, image: 'Numerals-Mob-4.png' },
-      { name: 'Numerals-Mob-5', displayName: "MAGICAL TROLLS", maxHp: 4, image: 'Numerals-Mob-5.png' },
-      { name: 'Numerals-Mob-6', displayName: "SPELLBOUND GNOMES", maxHp: 3, image: 'Numerals-Mob-6.png' },
-      { name: 'Numerals-Boss-2', displayName: "NUMERAL TITAN", maxHp: 5, image: 'Numerals-Boss-2.png' }
+      { name: 'Numerals-Mob-4', displayName: "IRONHORN WARRIOR", maxHp: 2, image: 'Numerals-Mob-4.png' },
+      { name: 'Numerals-Mob-5', displayName: "SIREN'S MARKSMAN", maxHp: 4, image: 'Numerals-Mob-5.png' },
+      { name: 'Numerals-Mob-6', displayName: "WINGED EQUUS", maxHp: 3, image: 'Numerals-Mob-6.png' },
+      { name: 'Numerals-Boss-2', displayName: "THE CHIMERA KING", maxHp: 5, image: 'Numerals-Boss-2.png' }
     ],
     3: [
-      { name: 'Numerals-Mob-7', displayName: "FANTASY SPIRITS", maxHp: 2, image: 'Numerals-Mob-7.png' },
-      { name: 'Numerals-Mob-8', displayName: "WIZARD BEASTS", maxHp: 3, image: 'Numerals-Mob-8.png' },
-      { name: 'Numerals-Mob-9', displayName: "DRAGON MAGES", maxHp: 4, image: 'Numerals-Mob-9.png' },
-      { name: 'Numerals-Boss-3', displayName: "NUMERAL BEAST", maxHp: 5, image: 'Numerals-Boss-3.png' }
+      { name: 'Numerals-Mob-7', displayName: "FERAL TIGER", maxHp: 2, image: 'Numerals-Mob-7.png' },
+      { name: 'Numerals-Mob-8', displayName: "FLAMEWING EAGLE", maxHp: 3, image: 'Numerals-Mob-8.png' },
+      { name: 'Numerals-Mob-9', displayName: "STONEFIST GOLEM", maxHp: 4, image: 'Numerals-Mob-9.png' },
+      { name: 'Numerals-Boss-3', displayName: "THE THREEFURY KNIGHT", maxHp: 5, image: 'Numerals-Boss-3.png' }
     ]
   },
   placevalue: {
     1: [
-      { name: 'PlaceValue-Mob-1', displayName: "WIZARD BEASTS", maxHp: 1, image: 'PlaceValue-Mob-1.png' },
-      { name: 'PlaceValue-Mob-2', displayName: "SPELLBOUND WOLVES", maxHp: 3, image: 'PlaceValue-Mob-2.png' },
-      { name: 'PlaceValue-Mob-3', displayName: "MAGICAL PHANTOMS", maxHp: 4, image: 'PlaceValue-Mob-3.png' },
-      { name: 'PlaceValue-Boss-1', displayName: "NUMERAL KING", maxHp: 5, image: 'PlaceValue-Boss-1.png' }
+      { name: 'PlaceValue-Mob-1', displayName: "CROP CRUSHER", maxHp: 1, image: 'PlaceValue-Mob-1.png' },
+      { name: 'PlaceValue-Mob-2', displayName: "BARNHOG BEAST", maxHp: 3, image: 'PlaceValue-Mob-2.png' },
+      { name: 'PlaceValue-Mob-3', displayName: "SHEEP TRIO", maxHp: 4, image: 'PlaceValue-Mob-3.png' },
+      { name: 'PlaceValue-Boss-1', displayName: "THE CORNFIELD SENTINEL", maxHp: 5, image: 'PlaceValue-Boss-1.png' }
     ],
     2: [
-      { name: 'PlaceValue-Mob-4', displayName: "MYSTICAL DRAGONS", maxHp: 2, image: 'PlaceValue-Mob-4.png' },
-      { name: 'PlaceValue-Mob-5', displayName: "MAGICAL WIZARDS", maxHp: 4, image: 'PlaceValue-Mob-5.png' },
-      { name: 'PlaceValue-Mob-6', displayName: "FIRE PHANTOMS", maxHp: 3, image: 'PlaceValue-Mob-6.png' },
-      { name: 'PlaceValue-Boss-2', displayName: "FANTASY LORD", maxHp: 5, image: 'PlaceValue-Boss-2.png' }
+      { name: 'PlaceValue-Mob-4', displayName: "WOLFSTORM", maxHp: 2, image: 'PlaceValue-Mob-4.png' },
+      { name: 'PlaceValue-Mob-5', displayName: "INFERNO HORSE", maxHp: 4, image: 'PlaceValue-Mob-5.png' },
+      { name: 'PlaceValue-Mob-6', displayName: "RAGING TUSK", maxHp: 3, image: 'PlaceValue-Mob-6.png' },
+      { name: 'PlaceValue-Boss-2', displayName: "THE WINDMILL HAVEN", maxHp: 5, image: 'PlaceValue-Boss-2.png' }
     ],
     3: [
-      { name: 'PlaceValue-Mob-7', displayName: "SPELLBOUND WIZARDS", maxHp: 2, image: 'PlaceValue-Mob-7.png' },
-      { name: 'PlaceValue-Mob-8', displayName: "WIZARD WOLVES", maxHp: 3, image: 'PlaceValue-Mob-8.png' },
-      { name: 'PlaceValue-Mob-9', displayName: "MYTHICAL SPIRITS", maxHp: 4, image: 'PlaceValue-Mob-9.png' },
-      { name: 'PlaceValue-Boss-3', displayName: "PLACE VALUE TITAN", maxHp: 5, image: 'PlaceValue-Boss-3.png' }
+      { name: 'PlaceValue-Mob-7', displayName: "MUDHAVEN BEAST", maxHp: 2, image: 'PlaceValue-Mob-7.png' },
+      { name: 'PlaceValue-Mob-8', displayName: "FALLOW SENTRY", maxHp: 3, image: 'PlaceValue-Mob-8.png' },
+      { name: 'PlaceValue-Mob-9', displayName: "HARVEST SCARECROW", maxHp: 4, image: 'PlaceValue-Mob-9.png' },
+      { name: 'PlaceValue-Boss-3', displayName: "THE CINDERSCORCH", maxHp: 5, image: 'PlaceValue-Boss-3.png' }
     ]
   }
 };
