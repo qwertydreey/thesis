@@ -587,51 +587,55 @@ function checkGameOver() {
 }
 
 
-  // ======= ATTACK & QUESTION =======
-  function handleAttack() {
-    const input  = document.getElementById('number-input').value.trim();
-    const answer = document.getElementById('correct-answer').value.trim();
-  
-    if (!answer) return;
-  
-    if (input === '') {
-      displayFeedback('Please enter a number!');
-      return;
-    }
-  
-    const isCorrect = parseFloat(input) === parseFloat(answer);
-  
-    if (isCorrect) {
-      fireballAttack();
-      fetchNewQuestion();
-    } else {
-      // Only call monsterAttack if freeze turns are over
-      if (freezeTurns <= 0) {
-        monsterAttack(); // ← This calls playerTakeDamage() inside
-      } else {
-        console.log("❄️ Monster is frozen — no damage to player.");
-      }
-      displayFeedback('❌ Incorrect! Try again.');
-    }
-  
-    // 🧊 Deduct freeze turn AFTER attack logic
-    if (freezeTurns > 0) {
-      freezeTurns--;
-  
-      if (freezeTurns === 0) {
-        // Do NOT remove freeze now — wait until next attack
-        setTimeout(() => {
-          removeFreezeEffect();
-          freezeTurnsDisplay.style.display = 'none';
-          console.log("⏹ Freeze effect has ended.");
-        }, 100); // small delay para di agad mawala
-      }
-  
-      updateFreezeTurnsDisplay();
-    }
-  
-    document.getElementById('number-input').value = '';
+function handleAttack() {
+  const input = document.getElementById('number-input').value.trim();
+  const answer = document.getElementById('correct-answer').value.trim();
+
+  if (!answer) return;
+
+  if (input === '') {
+    displayFeedback('Please enter a number!');
+    return;
   }
+
+  const isCorrect = parseFloat(input) === parseFloat(answer);
+
+  // Use the correct function name here
+  showSpeechBubble(isCorrect); // Show speech bubble after each answer
+
+  if (isCorrect) {
+    fireballAttack();
+    fetchNewQuestion();
+  } else {
+    // Only call monsterAttack if freeze turns are over
+    if (freezeTurns <= 0) {
+      monsterAttack(); // ← This calls playerTakeDamage() inside
+    } else {
+      console.log("❄️ Monster is frozen — no damage to player.");
+    }
+    displayFeedback('❌ Incorrect! Try again.');
+  }
+
+  // 🧊 Deduct freeze turn AFTER attack logic
+  if (freezeTurns > 0) {
+    freezeTurns--;
+
+    if (freezeTurns === 0) {
+      // Do NOT remove freeze now — wait until next attack
+      setTimeout(() => {
+        removeFreezeEffect();
+        freezeTurnsDisplay.style.display = 'none';
+        console.log("⏹ Freeze effect has ended.");
+      }, 100); // small delay para di agad mawala
+    }
+
+    updateFreezeTurnsDisplay();
+  }
+
+  document.getElementById('number-input').value = '';
+}
+
+
   
   
   
@@ -1697,6 +1701,100 @@ function showFeedback(message, duration = 3000) { // Default duration set to 300
 }
 
 
+const correctSuggestions = [
+  "Wooooo! You did it! Counticus is impressed with your magical math powers!",
+  "Bravo, young wizard! You're on your way to becoming a true math master!",
+  "Hooray! Your math skills are growing stronger with each answer!",
+  "Boom! Counticus is cheering for you! Keep casting those correct answers!",
+  "Superb work, math wizard! You’ve unlocked a new level of awesome!",
+  "Yes! You’ve mastered this spell! Now let's conquer the next challenge!",
+  "Magic at work! Counticus says ‘Well done!’ Keep going!",
+  "Perfect spell cast! Keep it up and you'll be a math legend!",
+  "Amazing! Counticus is giving you a big thumbs up!",
+  "Fantastic! Your magic powers are unstoppable! Ready for more?",
+  "Yay! Another win! Keep your wand at the ready for the next adventure!",
+  "You're on fire! Counticus says ‘Great job! Keep shining, wizard!’",
+  "Excellent! You’ve done it like a true wizard-in-training!",
+  "Awesome! Counticus believes you're one step closer to being a math hero!",
+  "Look at you go! You've mastered the art of numbers!"
+];
+
+
+const wrongSuggestions = [
+  "Oops! Looks like the spell needs a little more practice. Let’s try again!",
+  "Hmm, not quite, young wizard. Try breaking the problem down and casting your answer again.",
+  "Oh no! Looks like the numbers got tricky! Maybe Counticus can offer a helping spell?",
+  "Close, but no magic yet! Counticus says to check your math signs and give it another shot!",
+  "Don’t worry! Every mistake is a step toward becoming a math wizard! Try again with a fresh spell!",
+  "It’s okay! Mistakes are part of the learning process. Counticus is here to help!",
+  "Whoops! Take a deep breath, check your work, and try a new approach with Counticus' guidance.",
+  "Hmm, something’s a bit off. Try breaking it down into smaller steps and ask Counticus for help!",
+  "Oh no, but don't worry! Let’s take a deep breath and try again — Counticus will show the way!",
+  "Close! Check your math signs carefully, and ask Counticus to guide you through it!",
+  "Don’t give up, young wizard! You’ve got this! Try again and let Counticus help you along the way!",
+  "It’s okay to make mistakes, but you’re getting better every time! Ready to try again?",
+  "Hmm, not quite, but you’re getting close! Counticus suggests trying a different approach!",
+  "Uh-oh, looks like we missed a step. Let’s try counting on our fingers or asking Counticus!",
+  "Not the right spell just yet, but Counticus believes in your math magic! Try again!",
+  "Take your time and check the numbers again — Counticus is cheering you on!"
+];
+
+
+// Show the speech bubble with the appropriate suggestion
+let speechBubbleTimeout; // Global variable to store the timeout ID
+
+function showSpeechBubble(isCorrect) {
+  const bubble = document.getElementById('speech-bubble');
+  const suggestions = isCorrect ? correctSuggestions : wrongSuggestions;
+  const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+
+  // Dynamic title based on correctness
+  const title = isCorrect ? 
+    "<strong>Well done, math wizard!</strong>" : 
+    "<strong>Hmm, need a little help?</strong>";
+
+  // Combine title and suggestion text with added margin at the bottom for spacing
+  bubble.innerHTML = `
+    <p>${title}</p>
+    <p>${randomSuggestion}</p>
+  `;
+  
+  // Add margin to the bottom of the paragraphs
+  const paragraphs = bubble.getElementsByTagName('p');
+  for (let p of paragraphs) {
+    p.style.marginBottom = '1.5vh'; // Space between title and suggestion
+  }
+
+  bubble.style.display = 'block'; // Show the bubble
+
+  // Clear any existing timeout before setting a new one
+  if (speechBubbleTimeout) {
+    clearTimeout(speechBubbleTimeout);
+  }
+
+  // Set a new timeout to hide the bubble after 5 seconds
+  speechBubbleTimeout = setTimeout(() => {
+    bubble.style.display = 'none'; // Hide the bubble after 5 seconds
+  }, 5000); // 5 seconds
+}
+
+
+
+// Example of how you would use it when the user answers a question
+function handleAnswer(input, correctAnswer) {
+  const isCorrect = input === correctAnswer;
+
+  // Show the speech bubble with the appropriate suggestion
+  showSpeechBubble(isCorrect);
+
+  // Your other game logic, such as updating score, etc.
+}
+
+// Ensure that the bubble is initially hidden when the game starts
+window.onload = function() {
+  const bubble = document.getElementById('speech-bubble');
+  bubble.style.display = 'none'; // Initially hide the speech bubble
+};
 
 
 

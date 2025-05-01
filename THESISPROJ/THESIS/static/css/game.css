@@ -1164,39 +1164,38 @@ body {
 
 .speech-bubble {
   position: absolute;
-  bottom: 3vh;
+  bottom: 4vh;
   right: 30vh;
-  background: #f5e0b7; /* Lighter shade */
+  background: #f5e0b7;
   border: 0.3vh solid #d97706;
-  border-radius: 2vh; /* More rounded corners */
+  border-radius: 2vh;
   padding: 2vh 3vh;
-  max-width: 35vh;
   width: 35vh;
-  height: auto;
-  max-height: 20vh;
-  font-weight: normal; /* Normal text weight for clarity */
-  color: #4b2c12; /* Darker brown for readability */
-  font-size: 1.8vh; /* Slightly smaller font */
+  height: 20vh;
+  font-weight: normal;
+  color: #4b2c12;
+  font-size: 1.8vh;
   word-wrap: break-word;
   white-space: normal;
   z-index: 999;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Soft shadow */
-  background-image: linear-gradient(135deg, #f9ebc3, #fef3c7); /* Gradient for depth */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background-image: linear-gradient(135deg, #f9ebc3, #fef3c7);
+  display: none; /* Initially hidden */
+  transition: opacity 0.5s ease-in-out; /* Fade out effect */
 }
 
-/* New Tail Style */
 .speech-bubble::after {
   content: '';
   position: absolute;
-  bottom: 7.5vh;
-  right: -8%;
+  top: 8vh;
+  right: -2.5vh;
   width: 0;
   height: 0;
   border-top: 1.5vh solid transparent;
-  border-left: 3vh solid #fdf1c5;
   border-bottom: 1.5vh solid transparent;
-  z-index: 1000;
+  border-left: 2.5vh solid #fdf1c5;
 }
+
 
 
 

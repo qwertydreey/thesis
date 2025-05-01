@@ -62,6 +62,7 @@
         <img src="{{ url_for('static', filename='images/anim/sprite/idle.png') }}" alt="Wizard" id="player-idle" class="character player hidden">
         
         
+        
 
 
         <div class="fireball"></div>
@@ -130,11 +131,11 @@
 
 
         <div class="chatbot-container">
-          <div class="speech-bubble">
-            <p><strong>Need help solving?</strong></p>
-            <p>Start by identifying the key numbers in the problem. Look for the + sign and break into smaller steps!</p>
-            <p>Ask for hints if stuck!</p>
+          <div class="speech-bubble" id="speech-bubble">
+            <!-- No initial text, will be updated dynamically -->
           </div>
+          
+          
           <a href="{{ url_for('chatbot') }}">
             <img src="{{ url_for('static', filename='images/gameimg/counticus.png') }}" alt="Wizard Counticus" class="chatbot-img">
           </a>
