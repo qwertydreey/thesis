@@ -1210,7 +1210,7 @@ function fireballAttack() {
   fireball.style.left = `${player.offsetLeft + player.offsetWidth}px`;
   fireball.style.bottom = "120px";
 
-  // 🧪 1. Charging effect
+  // 🧪 Charging effect
   player.classList.add("charging");
 
   setTimeout(() => {
@@ -1220,11 +1220,11 @@ function fireballAttack() {
     player.style.height = "35vh";
     player.style.width = "auto";
 
-    // 🟠 4. Fireball appears
+    // 🔥 Fireball appears
     groundContainer.appendChild(fireball);
     sessionStorage.setItem('fireballTriggered', true);
 
-    // 💢 5. Monster takes visual damage
+    // 💢 Monster takes visual damage
     setTimeout(() => {
       monster.classList.add("damaged");
       setTimeout(() => {
@@ -1232,7 +1232,7 @@ function fireballAttack() {
       }, 600);
     }, 770);
 
-    // 🌀 6. Shake effect
+    // 🌀 Shake effect
     setTimeout(() => {
       monster.classList.add("shake");
       setTimeout(() => {
@@ -1240,33 +1240,38 @@ function fireballAttack() {
       }, 600);
     }, 1100);
 
-    // 💀 7. Apply actual HP reduction + check for death
+    // 💀 Apply damage + wait for animation to end
     setTimeout(() => {
       const damage = 1;
       currentMonsterHealth -= damage;
       updateHealthBars();
 
       if (currentMonsterHealth <= 0) {
-        // ⚰️ Play death animation before respawning monster
+        console.log("Death animation added"); // Add log when death animation starts
         isMonsterDeathAnimationInProgress = true;
         monster.classList.add("monster-death");
 
-        setTimeout(() => {
+        // ✔️ Wait for death animation to finish
+        const onDeath = () => {
+          console.log("Death animation ended (fireball)"); // Log when death animation ends
+          monster.removeEventListener("animationend", onDeath);
           monster.classList.remove("monster-death");
-          currentMonsterIndex++;  // Move to next monster
+          currentMonsterIndex++;
           spawnMonster(currentMonsterIndex, true);
           isMonsterDeathAnimationInProgress = false;
-        }, 1000); // ⏱ Adjust to match .death animation duration
+        };
+
+        monster.addEventListener("animationend", onDeath);
       }
     }, 1400);
 
-    // 🧼 8. Remove fireball
+    // 🧼 Remove fireball
     setTimeout(() => {
       fireball.remove();
       sessionStorage.removeItem('fireballTriggered');
     }, 1000);
 
-    // 🟢 3. Reset to idle
+    // 🟢 Reset to idle
     setTimeout(() => {
       player.src = skin.src;
       player.style.height = "35vh";
@@ -1274,7 +1279,10 @@ function fireballAttack() {
       player.classList.remove("charging");
     }, 700);
   }, 600);
+
+  
 }
+
 
 
 
