@@ -662,6 +662,9 @@ function handleAttack() {
 
   const isCorrect = parseFloat(input) === parseFloat(answer);
 
+  // 👉 Show speech bubble whether correct or not
+  showSpeechBubble(isCorrect);
+
   if (isCorrect) {
     fireballAttack();
     fetchNewQuestion();
@@ -693,6 +696,7 @@ function handleAttack() {
 
   document.getElementById('number-input').value = '';
 }
+
 
 
 
