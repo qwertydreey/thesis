@@ -422,38 +422,44 @@ function spawnMonster(idx, shouldFetchQuestion = true) {
     monsterNameEl.textContent = m.displayName || m.name.replace(/-/g, ' ');
   }
 
-  isMonsterSpawnAnimationInProgress = true;
-
   // Start spawn animation (fade-in and shake effect)
-  monsterImg.classList.remove('monster-spawn');
-  void monsterImg.offsetWidth; // Force reflow
-  monsterImg.classList.add('monster-spawn');
+  if (!isMonsterSpawnAnimationInProgress) {
+    isMonsterSpawnAnimationInProgress = true;
 
-  monsterImg.addEventListener('animationend', function clearSpawn() {
     monsterImg.classList.remove('monster-spawn');
-    isMonsterSpawnAnimationInProgress = false;
-    monsterImg.removeEventListener('animationend', clearSpawn);
+    void monsterImg.offsetWidth; // Force reflow
+    monsterImg.classList.add('monster-spawn');
 
-    // Update health bars after monster spawns
-    updateHealthBars();
+    monsterImg.addEventListener('animationend', function clearSpawn() {
+      monsterImg.classList.remove('monster-spawn');
+      isMonsterSpawnAnimationInProgress = false;
+      monsterImg.removeEventListener('animationend', clearSpawn);
 
-    // Add fade-in effect for new question
-    const qText = document.getElementById('question-text');
-    qText.classList.remove('fade-in');
-    qText.classList.add('fade-out'); // Fade out current question
+      // Update health bars after monster spawns
+      updateHealthBars();
 
-    setTimeout(() => {
-      // ✅ Only fetch a question if instructed
-      if (shouldFetchQuestion) {
-        fetchNewQuestion();
-      }
+      // Add fade-in effect for new question
+      const qText = document.getElementById('question-text');
+      qText.classList.remove('fade-in');
+      qText.classList.add('fade-out'); // Fade out current question
 
-      // Apply fade-in effect for the new question
-      qText.classList.remove('fade-out');
-      qText.classList.add('fade-in');
-    }, 500); // Wait for fade-out to complete before transitioning
-  });
+      setTimeout(() => {
+        // ✅ Only fetch a question if instructed
+        if (shouldFetchQuestion) {
+          fetchNewQuestion();
+        }
+
+        // Apply fade-in effect for the new question
+        qText.classList.remove('fade-out');
+        qText.classList.add('fade-in');
+      }, 500); // Wait for fade-out to complete before transitioning
+    });
+  } else {
+    console.log("Spawn in progress, skipping spawn for now.");
+  }
 }
+
+
 
 
 
@@ -656,33 +662,24 @@ function handleAttack() {
 
   const isCorrect = parseFloat(input) === parseFloat(answer);
 
-  showSpeechBubble(isCorrect); // Show speech bubble for visual feedback
-
   if (isCorrect) {
-    const damage = 1; // 🛠️ Set your actual damage value here if dynamic
-
     fireballAttack();
-
-    const projectedHealth = currentMonsterHealth - damage;
-    
-    if (projectedHealth <= 0) {
-      // Monster dies, call spawnMonster for the next monster
-      spawnMonster(1); // Use index of the next monster to spawn
-    } else {
-      fetchNewQuestion(); // Only fetch if monster survives
-    }
+    fetchNewQuestion();
   } else {
+    // ⚠️ If freeze is active, no damage taken
     if (freezeTurns <= 0) {
-      monsterAttack();
+      monsterAttack(); // This should call playerTakeDamage()
     } else {
       console.log("❄️ Monster is frozen — no damage to player.");
     }
+
     displayFeedback('❌ Incorrect! Try again.');
   }
 
-  // Handle Freeze Turns
+  // 🧊 Deduct freeze turn AFTER attack logic
   if (freezeTurns > 0) {
     freezeTurns--;
+
     if (freezeTurns === 0) {
       setTimeout(() => {
         removeFreezeEffect();
@@ -690,12 +687,16 @@ function handleAttack() {
         console.log("⏹ Freeze effect has ended.");
       }, 100);
     }
+
     updateFreezeTurnsDisplay();
   }
 
-  // Clear input after attack
   document.getElementById('number-input').value = '';
 }
+
+
+
+
 
 
 
@@ -709,11 +710,11 @@ function fetchNewQuestion() {
 
   const questionSet = questions[selectedMap]?.[selectedStageKey]?.[selectedDifficulty];
 
-  console.log('Fetching new question...');
-  console.log('Selected Map:', selectedMap);
-  console.log('Selected Stage:', selectedStageKey);
-  console.log('Selected Difficulty:', selectedDifficulty);
-  console.log('Current Question Index:', currentQuestionIndex);
+  // console.log('Fetching new question...');
+  // console.log('Selected Map:', selectedMap);
+  // console.log('Selected Stage:', selectedStageKey);
+  // console.log('Selected Difficulty:', selectedDifficulty);
+  // console.log('Current Question Index:', currentQuestionIndex);
 
   if (questionSet) {
     if (currentQuestionIndex < questionSet.length) {
@@ -1093,7 +1094,6 @@ window.addEventListener('DOMContentLoaded', () => {
   updateRoadmapStars(); 
   initMapAndStage();
   updateHealthBars();
-  spawnMonster(0, true);  // ✅ Now tells spawnMonster to also fetch question
 });
 
 
@@ -1192,14 +1192,7 @@ function fireballAttack() {
   if (sessionStorage.getItem('fireballTriggered')) return;
 
   const paths = document.getElementById("attack-image-paths").dataset;
-
-  const attackEffects = [
-      paths.add,
-      paths.sub,
-      paths.mul,
-      paths.div,
-  ];
-
+  const attackEffects = [paths.add, paths.sub, paths.mul, paths.div];
   const selectedAttack = attackEffects[Math.floor(Math.random() * attackEffects.length)];
 
   const fireball = document.createElement("img");
@@ -1250,8 +1243,16 @@ function fireballAttack() {
       updateHealthBars();
 
       if (currentMonsterHealth <= 0) {
-        currentMonsterIndex++;  // Move to next monster
-        spawnMonster(currentMonsterIndex, true);  // ✅ Also fetch next question
+        // ⚰️ Play death animation before respawning monster
+        isMonsterDeathAnimationInProgress = true;
+        monster.classList.add("monster-death");
+
+        setTimeout(() => {
+          monster.classList.remove("monster-death");
+          currentMonsterIndex++;  // Move to next monster
+          spawnMonster(currentMonsterIndex, true);
+          isMonsterDeathAnimationInProgress = false;
+        }, 1000); // ⏱ Adjust to match .death animation duration
       }
     }, 1400);
 
@@ -1270,11 +1271,6 @@ function fireballAttack() {
     }, 700);
   }, 600);
 }
-
-
-
-
-
 
 
 
@@ -1310,11 +1306,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-
-
-
-
-
 window.addEventListener("DOMContentLoaded", () => {
   const monster = document.querySelector(".monster");
 });
@@ -1322,7 +1313,22 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 
+document.addEventListener('DOMContentLoaded', function () {
+  const player = document.querySelector(".player");
 
+  // Get equipped skin ID from localStorage
+  const equippedSkinId = localStorage.getItem('equippedCharacterId');
+  if (equippedSkinId) {
+      // Find the skin by its ID in the skins array
+      const skin = skins.find(s => s.id === equippedSkinId);
+      if (skin) {
+          player.src = skin.src; // Update the player's image
+      }
+  } else {
+      // Fallback to default idle skin if no equipped skin found
+      player.src = "/static/images/anim/sprite/idle.png";
+  }
+});
 
 
 
