@@ -1,5 +1,3 @@
-/* static/chatbot.css */
-
 body {
     background-color: #f2f2f2;
     display: flex;
@@ -42,6 +40,7 @@ body {
     display: flex;
     align-items: flex-start;
     margin-bottom: 10px;
+    position: relative; /* Keeps positioning for the speaker icon */
 }
 
 .message-row.user {
@@ -62,10 +61,31 @@ body {
     border-radius: 20px;
     background-color: #e1e1e1;
     word-wrap: break-word;
+    position: relative; /* Allows positioning of the speaker icon inside the bubble */
 }
 
 .message-row.user .message-bubble {
     background-color: #d1e7dd;
+}
+
+.speaker-icon {
+    position: absolute;
+    bottom: -15px; /* Slightly closer to the bubble */
+    right: 5px; /* Adjust to the right end of the bubble (for user) */
+    left: unset; /* Clear any left positioning */
+    font-size: 18px; /* Slightly smaller icon size */
+    color: #007bff;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.message-row.bot .speaker-icon {
+    left: 5px; /* Align to the left end of the bubble (for bot) */
+    right: unset; /* Clear any right positioning */
+}
+
+.speaker-icon:hover {
+    color: #0056b3;
 }
 
 .counticus-image {

@@ -9,8 +9,9 @@
         rel="stylesheet" 
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
         crossorigin="anonymous">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}" />
-    </head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}" />
+</head>
 <body>
     <!-- Chat Container -->
     <div class="chat-container shadow">
@@ -38,21 +39,30 @@
         const form = document.getElementById('chat-form');
         const input = document.getElementById('user-input');
         const chatBox = document.getElementById('chat-box');
-    
+
         function createMessageRow(message, sender) {
             const row = document.createElement('div');
             row.classList.add('message-row', sender);
-    
+
             const profile = document.createElement('img');
             profile.classList.add('profile-pic');
             profile.src = sender === 'user'
                 ? 'https://via.placeholder.com/50/008000/FFFFFF?text=U'
                 : 'https://via.placeholder.com/50/0000FF/FFFFFF?text=W';
-    
+
             const bubble = document.createElement('div');
             bubble.classList.add('message-bubble');
             bubble.textContent = message;
-    
+
+            const speakerIcon = document.createElement('i');
+            speakerIcon.classList.add('fas', 'fa-volume-up', 'speaker-icon');
+            speakerIcon.style.cursor = 'pointer';
+
+            speakerIcon.addEventListener('click', () => {
+                const utterance = new SpeechSynthesisUtterance(message);
+                speechSynthesis.speak(utterance);
+            });
+
             if (sender === 'user') {
                 row.appendChild(bubble);
                 row.appendChild(profile);
@@ -60,38 +70,39 @@
                 row.appendChild(profile);
                 row.appendChild(bubble);
             }
-    
+            row.appendChild(speakerIcon); // Add speaker icon below the bubble
+
             return row;
         }
-    
+
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
             const userText = input.value.trim();
             if (!userText) return;
-    
+
             // Create and show the user's message immediately
             const userMsg = createMessageRow(userText, 'user');
             chatBox.prepend(userMsg);
-    
+
             // Show thinking message
             const thinkingMsg = createMessageRow("Hmm... let me think about that!", 'bot');
             chatBox.prepend(thinkingMsg);
-    
+
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
-    
+
             try {
                 const response = await fetch('/chatbot-api', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: userText })
                 });
-    
+
                 const data = await response.json();
-    
+
                 // Remove the "thinking" message
                 thinkingMsg.remove();
-    
+
                 // Show the real reply from Counticus
                 const botReply = createMessageRow(data.reply, 'bot');
                 chatBox.prepend(botReply);
