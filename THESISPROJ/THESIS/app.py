@@ -181,15 +181,113 @@ def forgot_password():
 def game():
     user_id = 1  # Hardcoded user ID
 
+    # Get current difficulty
+    cursor.execute("SELECT current_difficulty FROM user_progress WHERE user_id = %s", (user_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        cursor.execute("INSERT INTO user_progress (user_id, current_difficulty) VALUES (%s, 'easy')", (user_id,))
+        db.commit()
+        difficulty = 'easy'
+    else:
+        difficulty = row['current_difficulty']
+
+    # Get questions for current difficulty
+    cursor.execute("SELECT * FROM questions WHERE difficulty = %s", (difficulty,))
+    questions = cursor.fetchall()
+    question = random.choice(questions) if questions else None
+
     # Get user's first name
     cursor.execute("SELECT first_name FROM users WHERE id = %s", (user_id,))
     user_row = cursor.fetchone()
     first_name = user_row['first_name'] if user_row and 'first_name' in user_row else "PLAYER"
 
-    # Render the game template with the user's first name
-    return render_template('game.html', first_name=first_name)
+    # Render template with question and first name
+    return render_template('game.html', question=question, first_name=first_name)
 
 
+@app.route('/submit-answer', methods=['POST'])
+def submit_answer():
+    try:
+        data = request.get_json()
+        user_answer = data.get('answer')
+        question_id = data.get('question_id')
+
+        if not user_answer or not question_id:
+            return jsonify({'error': 'Missing required fields'}), 400
+
+        user_id = 1  # Hardcoded user ID
+
+        cursor.execute("SELECT * FROM questions WHERE id = %s", (question_id,))
+        question = cursor.fetchone()
+
+        if not question:
+            return jsonify({'error': 'Question not found'}), 404
+
+        is_correct = user_answer.strip() == question['correct_answer'].strip()
+
+        if is_correct:
+            cursor.execute("UPDATE user_progress SET correct_answers = correct_answers + 1 WHERE user_id = %s", (user_id,))
+        else:
+            cursor.execute("UPDATE user_progress SET wrong_answers = wrong_answers + 1 WHERE user_id = %s", (user_id,))
+
+        cursor.execute("SELECT correct_answers, wrong_answers FROM user_progress WHERE user_id = %s", (user_id,))
+        stats = cursor.fetchone()
+        total = stats['correct_answers'] + stats['wrong_answers']
+        accuracy = stats['correct_answers'] / total if total > 0 else 0
+
+        if accuracy >= 0.8:
+            new_diff = 'hard'
+        elif accuracy >= 0.5:
+            new_diff = 'medium'
+        else:
+            new_diff = 'easy'
+
+        cursor.execute("UPDATE user_progress SET current_difficulty = %s WHERE user_id = %s", (new_diff, user_id))
+        db.commit()
+
+        return jsonify({'success': True, 'new_question': get_new_question_data(user_id)})
+
+    except Exception as e:
+        return jsonify({'error': 'There was a problem submitting your answer.'}), 500
+
+def get_new_question_data(user_id):
+    cursor.execute("SELECT current_difficulty FROM user_progress WHERE user_id = %s", (user_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        cursor.execute("INSERT INTO user_progress (user_id, current_difficulty) VALUES (%s, 'easy')", (user_id,))
+        db.commit()
+        difficulty = 'easy'
+    else:
+        difficulty = row['current_difficulty']
+
+    cursor.execute("SELECT * FROM questions WHERE difficulty = %s", (difficulty,))
+    questions = cursor.fetchall()
+    question = random.choice(questions) if questions else None
+
+    if question:
+        return {
+            'question_text': question['question_text'],
+            'correct_answer': question['correct_answer'],
+            'id': question['id']
+        }
+    else:
+        return {'error': 'No questions available for this level.'}
+
+@app.route('/get-new-question', methods=['GET'])
+def get_new_question():
+    try:
+        user_id = 1  # Hardcoded user ID
+        question_data = get_new_question_data(user_id)
+
+        if 'error' in question_data:
+            return jsonify({'error': question_data['error']}), 404
+
+        return jsonify(question_data)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

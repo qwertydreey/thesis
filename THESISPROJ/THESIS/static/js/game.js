@@ -1,15 +1,10 @@
 let animationInterval = null;
 
 // ─── MAP & STAGE SETUP ───
-const urlParams         = new URLSearchParams(window.location.search);
-const selectedMap       = urlParams.get('map') || 'multiplication';
-const selectedStage     = parseInt(urlParams.get('stage'), 10) || 1;
-const selectedStageKey  = 'stage' + selectedStage;
-
-let selectedDifficulty  = 'easy'; // ✅ Make it mutable (not const)
-let currentQuestionIndex = 0;
-let correctCount = 0;
-let totalQuestions = 0;
+// Read ?map and ?stage from URL
+const urlParams     = new URLSearchParams(window.location.search);
+const selectedMap   = urlParams.get('map')   || 'multiplication';
+const selectedStage = parseInt(urlParams.get('stage'), 10) || 1;
 
 
 
@@ -392,7 +387,7 @@ function initMapAndStage() {
 
 
 
-function spawnMonster(idx, shouldFetchQuestion = true) {
+function spawnMonster(idx) {
   const m = monstersInStage[idx];
   if (!m) return showVictoryScreen();
 
@@ -406,57 +401,48 @@ function spawnMonster(idx, shouldFetchQuestion = true) {
     return;
   }
 
+  // Update monster image
   const monsterSrc = `/static/images/gameimg/mnstr/${folder}/${m.image}?t=${Date.now()}`;
-  console.log("Monster image source:", monsterSrc);
+  console.log("Monster image source:", monsterSrc); // Debugging line
 
-  monsterImg.src = monsterSrc;
+  monsterImg.src = monsterSrc; // Dynamically set the image source
+
+  // Update monster class
   monsterImg.className = 'monster';
-  const specific = `monster-${m.name.toLowerCase().replace(/\s+/g, '-')}`;
+  const specific = `monster-${m.name.toLowerCase().replace(/\s+/g, '-')}`;  // Replace spaces with hyphens
   monsterImg.classList.add(specific);
 
-  monsterImg.style.height = m.height || 'auto';
-  monsterImg.style.bottom = m.bottom || '0';
-  monsterImg.style.left = m.left || '0';
+  // Apply specific size and position adjustments based on the monster class
+  monsterImg.style.height = m.height || 'auto';  // Custom height if available
+  monsterImg.style.bottom = m.bottom || '0';    // Custom bottom if available
+  monsterImg.style.left = m.left || '0';        // Custom left if available
 
+  // Update monster name
   if (monsterNameEl) {
     monsterNameEl.textContent = m.displayName || m.name.replace(/-/g, ' ');
   }
 
+  // Set the spawn animation flag to true
   isMonsterSpawnAnimationInProgress = true;
 
-  // Start spawn animation (fade-in and shake effect)
-  monsterImg.classList.remove('monster-spawn');
-  void monsterImg.offsetWidth; // Force reflow
+  // Trigger spawn animation
+  monsterImg.classList.remove('monster-spawn');  // Reset animation
+  void monsterImg.offsetWidth;  // Force reflow
   monsterImg.classList.add('monster-spawn');
 
+  // Remove animation after it's done
   monsterImg.addEventListener('animationend', function clearSpawn() {
     monsterImg.classList.remove('monster-spawn');
+    
+    // Set spawn animation flag to false after animation ends
     isMonsterSpawnAnimationInProgress = false;
+    
     monsterImg.removeEventListener('animationend', clearSpawn);
 
-    // Update health bars after monster spawns
     updateHealthBars();
-
-    // Add fade-in effect for new question
-    const qText = document.getElementById('question-text');
-    qText.classList.remove('fade-in');
-    qText.classList.add('fade-out'); // Fade out current question
-
-    setTimeout(() => {
-      // ✅ Only fetch a question if instructed
-      if (shouldFetchQuestion) {
-        fetchNewQuestion();
-      }
-
-      // Apply fade-in effect for the new question
-      qText.classList.remove('fade-out');
-      qText.classList.add('fade-in');
-    }, 500); // Wait for fade-out to complete before transitioning
+    fetchNewQuestion();
   });
 }
-
-
-
 
 
 function triggerMonsterDeathAnimation() {
@@ -656,162 +642,68 @@ function handleAttack() {
 
   const isCorrect = parseFloat(input) === parseFloat(answer);
 
-  showSpeechBubble(isCorrect); // Show speech bubble for visual feedback
+  // Use the correct function name here
+  showSpeechBubble(isCorrect); // Show speech bubble after each answer
 
   if (isCorrect) {
-    const damage = 1; // 🛠️ Set your actual damage value here if dynamic
-
     fireballAttack();
-
-    const projectedHealth = currentMonsterHealth - damage;
-    
-    if (projectedHealth <= 0) {
-      // Monster dies, call spawnMonster for the next monster
-      spawnMonster(1); // Use index of the next monster to spawn
-    } else {
-      fetchNewQuestion(); // Only fetch if monster survives
-    }
+    fetchNewQuestion();
   } else {
+    // Only call monsterAttack if freeze turns are over
     if (freezeTurns <= 0) {
-      monsterAttack();
+      monsterAttack(); // ← This calls playerTakeDamage() inside
     } else {
       console.log("❄️ Monster is frozen — no damage to player.");
     }
     displayFeedback('❌ Incorrect! Try again.');
   }
 
-  // Handle Freeze Turns
+  // 🧊 Deduct freeze turn AFTER attack logic
   if (freezeTurns > 0) {
     freezeTurns--;
+
     if (freezeTurns === 0) {
+      // Do NOT remove freeze now — wait until next attack
       setTimeout(() => {
         removeFreezeEffect();
         freezeTurnsDisplay.style.display = 'none';
         console.log("⏹ Freeze effect has ended.");
-      }, 100);
+      }, 100); // small delay para di agad mawala
     }
+
     updateFreezeTurnsDisplay();
   }
 
-  // Clear input after attack
   document.getElementById('number-input').value = '';
 }
 
 
-
   
   
+  
+  
+  
 
-function fetchNewQuestion() {
-  const qText = document.getElementById('question-text');
-  const cAns  = document.getElementById('correct-answer');
-  const fb    = document.getElementById('feedback');
-
-  const questionSet = questions[selectedMap]?.[selectedStageKey]?.[selectedDifficulty];
-
-  console.log('Fetching new question...');
-  console.log('Selected Map:', selectedMap);
-  console.log('Selected Stage:', selectedStageKey);
-  console.log('Selected Difficulty:', selectedDifficulty);
-  console.log('Current Question Index:', currentQuestionIndex);
-
-  if (questionSet) {
-    if (currentQuestionIndex < questionSet.length) {
-      const data = questionSet[currentQuestionIndex];
-      qText.innerText = data.question_text;
-      cAns.value = data.correct_answer;
-      fb.innerText = '';
-      currentQuestionIndex++; // Increment for next question
-
-      // For the first question, show it immediately without transition
-      if (currentQuestionIndex === 1) {
-        qText.style.opacity = '1';  // Make the first question visible immediately
-      } else {
-        // For subsequent questions, fade-out the current question, then fade-in the new question
-        qText.classList.remove('fade-in');  // Remove fade-in class if present
-        qText.classList.add('fade-out');    // Apply fade-out effect
-
-        setTimeout(() => {
-          qText.classList.remove('fade-out');  // Remove fade-out class
-          qText.classList.add('fade-in');     // Apply fade-in effect
-        }, 500);  // Wait until the fade-out completes before fading in
-      }
-
-      // Update the question text with a small delay to trigger animation
-      setTimeout(() => {
-        setQuestion(data.question_text);
-      }, 500); // Delay the question change to make sure animation happens first
-
-    } else {
-      fb.innerText = 'End of questions for this difficulty, resetting.';
-      console.log("End of questions, resetting.");
-      currentQuestionIndex = 0; // Reset to first question
-      fetchNewQuestion(); // Re-fetch first question
-    }
-  } else {
-    fb.innerText = 'No new question.';
-    console.log("No question found for this difficulty.");
+  function fetchNewQuestion() {
+    fetch('/get-new-question')
+      .then(r => r.json())
+      .then(data => {
+        const qText = document.getElementById('question-text');
+        const cAns  = document.getElementById('correct-answer');
+        const fb    = document.getElementById('feedback');
+        if (data.question_text) {
+          qText.innerText       = data.question_text;
+          cAns.value            = data.correct_answer;
+          fb.innerText          = '';
+        } else {
+          fb.innerText = 'No new question.';
+        }
+      })
+      .catch(e => {
+        console.error(e);
+        document.getElementById('feedback').innerText = 'Error fetching question.';
+      });
   }
-}
-
-
-
-
-
-
-
-
-function checkAnswer(userAnswer) {
-  const correctAnswer = document.getElementById('correct-answer').value;
-  const fb = document.getElementById('feedback');
-
-  totalQuestions++;
-
-  if (userAnswer === correctAnswer) {
-    correctCount++;
-    fb.innerText = '✅ Correct!';
-  } else {
-    fb.innerText = '❌ Incorrect!';
-  }
-
-  // Delay next question slightly
-  setTimeout(() => {
-    if (totalQuestions === 10) {
-      // Difficulty logic
-      if (correctCount >= 8) {
-        if (selectedDifficulty === 'easy') selectedDifficulty = 'normal';
-        else if (selectedDifficulty === 'normal') selectedDifficulty = 'hard';
-        else if (selectedDifficulty === 'hard') selectedDifficulty = 'extreme';
-      } else if (correctCount <= 4) {
-        if (selectedDifficulty === 'extreme') selectedDifficulty = 'hard';
-        else if (selectedDifficulty === 'hard') selectedDifficulty = 'normal';
-        else if (selectedDifficulty === 'normal') selectedDifficulty = 'easy';
-      }
-
-      // Reset counters and question index
-      correctCount = 0;
-      totalQuestions = 0;
-      currentQuestionIndex = 0;
-    }
-
-    // Apply fade-out effect before fetching new question
-    const qText = document.getElementById('question-text');
-    qText.classList.remove('fade-in');
-    qText.classList.add('fade-out'); // Fade out current question
-
-    // After fade-out, fetch new question and apply fade-in effect
-    setTimeout(() => {
-      fetchNewQuestion(); // Fetch new question after fade-out
-
-      // Apply fade-in effect for the new question
-      qText.classList.remove('fade-out');
-      qText.classList.add('fade-in');
-    }, 500); // Wait until the fade-out is complete before transitioning
-
-  }, 800); // Time for the feedback message to stay visible
-}
-
-
 
   function displayFeedback(msg) {
     const fb = document.getElementById('feedback');
@@ -1093,9 +985,8 @@ window.addEventListener('DOMContentLoaded', () => {
   updateRoadmapStars(); 
   initMapAndStage();
   updateHealthBars();
-  spawnMonster(0, true);  // ✅ Now tells spawnMonster to also fetch question
+  fetchNewQuestion();
 });
-
 
 // ================================================================================================ //
 // ================================================================================================ //
@@ -1188,6 +1079,23 @@ function updatePotionUI() {
 
 
 // In the fireballAttack function, replace the static idle image with the equipped skin
+document.addEventListener('DOMContentLoaded', function () {
+  const player = document.querySelector(".player");
+
+  // Get equipped skin ID from localStorage
+  const equippedSkinId = localStorage.getItem('equippedCharacterId');
+  if (equippedSkinId) {
+      // Find the skin by its ID in the skins array
+      const skin = skins.find(s => s.id === equippedSkinId);
+      if (skin) {
+          player.src = skin.src; // Update the player's image
+      }
+  } else {
+      // Fallback to default idle skin if no equipped skin found
+      player.src = "/static/images/anim/sprite/idle.png";
+  }
+});
+
 function fireballAttack() {
   if (sessionStorage.getItem('fireballTriggered')) return;
 
@@ -1213,13 +1121,14 @@ function fireballAttack() {
   fireball.style.left = `${player.offsetLeft + player.offsetWidth}px`;
   fireball.style.bottom = "120px";
 
-  // 🧪 1. Charging effect
+  // 🧪 1. Add CHARGING visual (optional class effect)
   player.classList.add("charging");
 
   setTimeout(() => {
+    // 🔥 2. Start ATTACK (change the image)
     const equippedSkinId = localStorage.getItem('equippedCharacterId');
-    const skin = skins.find(s => s.id === equippedSkinId) || skins[0];
-    player.src = skin.attackSrc;
+    const skin = skins.find(s => s.id === equippedSkinId) || skins[0]; // Default to the first skin if none is found
+    player.src = skin.attackSrc;  // Change to attack animation based on equipped skin
     player.style.height = "35vh";
     player.style.width = "auto";
 
@@ -1243,34 +1152,29 @@ function fireballAttack() {
       }, 600);
     }, 1100);
 
-    // 💀 7. Apply actual HP reduction + check for death
+    // 💀 7. Apply actual HP reduction
     setTimeout(() => {
-      const damage = 1;
-      currentMonsterHealth -= damage;
-      updateHealthBars();
-
-      if (currentMonsterHealth <= 0) {
-        currentMonsterIndex++;  // Move to next monster
-        spawnMonster(currentMonsterIndex, true);  // ✅ Also fetch next question
+      if (currentMonsterHealth > 0) {
+        monsterTakeDamage();
       }
     }, 1400);
 
-    // 🧼 8. Remove fireball
+    // 🧼 8. Remove fireball and unlock attack
     setTimeout(() => {
       fireball.remove();
       sessionStorage.removeItem('fireballTriggered');
     }, 1000);
 
-    // 🟢 3. Reset to idle
+    // 🟢 3. Reset to IDLE sprite after the attack animation
     setTimeout(() => {
+      // Reset back to idle animation based on equipped skin
       player.src = skin.src;
       player.style.height = "35vh";
       player.style.width = "auto";
-      player.classList.remove("charging");
-    }, 700);
-  }, 600);
+      player.classList.remove("charging"); // Remove the charging effect to resume idle state
+    }, 700); // Duration of attack pose
+  }, 600); // charging time
 }
-
 
 
 

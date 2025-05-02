@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Chewy&family=Fredoka:wght@300..700&family=Varela+Round&display=swap" rel="stylesheet">
 </head>
 
-<body onload="fetchNewQuestion()">
+<body>
   <div class="game-wrapper">
 
     <!-- Game Background -->
@@ -144,21 +144,20 @@
 
 
 
-<!-- Question Section -->
-<div class="question-container">
-  <div class="question-text-wrapper">
-    <p id="question-text" class="question-text"></p>
-  </div>
-  <input type="hidden" id="correct-answer">
-  <div id="freeze-turn" class="freeze-turn"></div>
-  <div class="menu-btn-wrapper">
-    <button id="menuButton" class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
-  </div>
-  <p id="feedback" class="text-red-400 text-lg mt-2"></p>
-</div>
-
-
-
+    <!-- Question Section -->
+    <div class="question-container">
+      {% if question %}
+        <p id="question-text" class="question-text" data-question-id="{{ question.id }}">{{ question.question_text }}</p>
+        <input type="hidden" id="question-id" value="{{ question.id }}">
+        <input type="hidden" id="correct-answer" value="{{ question.correct_answer }}">
+      {% else %}
+        <p class="text-2xl text-red-400">No questions available for this level.</p>
+      {% endif %}
+      <div id="freeze-turn" class="freeze-turn"></div>
+      <div class="menu-btn-wrapper">
+        <button id="menuButton" class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+      </div>
+    </div>
 
     <!-- Feedback -->
     <p id="feedback"></p>
@@ -287,56 +286,11 @@
 
 
 
-<script>
-  function autoResizeText() {
-    const wrapper = document.querySelector('.question-text-wrapper');
-    const text = document.querySelector('#question-text');
-
-    let fontSize = 7;  // Initial font size in vh
-    text.style.fontSize = fontSize + 'vh';
-
-    // Force layout reflow to ensure the browser updates the size first
-    text.offsetHeight; 
-
-    let tries = 0;
-    while ((text.scrollHeight > wrapper.clientHeight || text.scrollWidth > wrapper.clientWidth) && fontSize > 1) {
-      fontSize -= 0.5;  // Gradually decrease font size
-      text.style.fontSize = fontSize + 'vh';  // Apply new font size
-      tries++;
-    }
-
-    // Logging values to help debug
-    console.log('Final font size:', fontSize, 'after', tries, 'tries');
-    console.log('Text size:', text.scrollWidth, text.scrollHeight);
-    console.log('Wrapper size:', wrapper.clientWidth, wrapper.clientHeight);
-  }
-
-  function setQuestion(newText) {
-    const textElement = document.getElementById('question-text');
-    textElement.textContent = newText;
-
-    // Force a reflow before resizing
-    textElement.offsetHeight;
-
-    // Run auto-resizing after content update
-    setTimeout(() => {
-      autoResizeText();
-    }, 100);  // Added slight delay to ensure DOM is ready
-  }
-
-  // Example usage:
-  // setQuestion("This is a new dynamic question!");
-</script>
 
 
-  
-  
-  
 
 
-<script src="{{ url_for('static', filename='js/questions.js') }}"></script>
-<script src="{{ url_for('static', filename='js/game.js') }}"></script>
-
+  <script src="{{ url_for('static', filename='js/game.js') }}"></script>
 
 </body>
 </html>
