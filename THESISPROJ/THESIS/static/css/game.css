@@ -41,8 +41,8 @@ body {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  width: 38vh;
-  height: 11vh;
+  width: 42vh;
+  height: 10vh;
   position: relative;
   z-index: 999;
 
@@ -133,8 +133,8 @@ body {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  width: 38vh;
-  height: 11vh;
+  width: 42vh;
+  height: 10vh;
   position: relative;
   z-index: 999;
   top:11vh;

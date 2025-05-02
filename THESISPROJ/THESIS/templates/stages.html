@@ -257,54 +257,6 @@
   }
 </script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const skins = [
-      { id: 'multiplication-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b1.png' },
-      { id: 'addition-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b2.png' },
-      { id: 'subtraction-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b3.png' },
-      { id: 'division-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b4.png' },
-      { id: 'counting-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b5.png' },
-      { id: 'comparison-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b6.png' },
-      { id: 'numerals-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b7.png' },
-      { id: 'placevalue-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/b8.png' }
-    ];
-
-    function injectSkin(imageSrc, isClaimed, id) {
-      const skinsGrid = document.getElementById('skins-grid');
-      if (!skinsGrid) return;
-
-      const skinDiv = document.createElement('div');
-      skinDiv.className = 'square';
-
-      const img = document.createElement('img');
-      img.src = imageSrc;
-      img.alt = 'Skin';
-      img.className = 'skin-image';
-
-      if (!isClaimed) {
-        img.style.filter = 'grayscale(100%)';
-        img.style.opacity = '0.3';
-      }
-
-      skinDiv.appendChild(img);
-
-      if (isClaimed) {
-        const equipBtn = document.createElement('button');
-        equipBtn.innerText = 'Equip';
-        equipBtn.className = 'equip-btn';
-        skinDiv.appendChild(equipBtn);
-      }
-
-      skinsGrid.appendChild(skinDiv);
-    }
-
-    skins.forEach(skin => {
-      const claimed = localStorage.getItem(skin.id) === 'claimed';
-      injectSkin(skin.src, claimed, skin.id);
-    });
-  });
-</script>
 
 
 <script>
