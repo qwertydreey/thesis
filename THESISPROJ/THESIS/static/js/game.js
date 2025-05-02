@@ -295,7 +295,49 @@ const skins = [
     src: '/static/images/anim/sprite/idle1.png',
     attackSrc: '/static/images/anim/sprite/attack1.png',
   },
-  // Add more skins as needed
+  {
+    id: 'addition-stage3-skin',
+    name: 'Addition Skin',
+    src: '/static/images/anim/sprite/idle2.png',
+    attackSrc: '/static/images/anim/sprite/attack2.png',
+  },
+  {
+    id: 'subtraction-stage3-skin',
+    name: 'Subtraction Skin',
+    src: '/static/images/anim/sprite/idle3.png',
+    attackSrc: '/static/images/anim/sprite/attack3.png',
+  },
+  {
+    id: 'division-stage3-skin',
+    name: 'Division Skin',
+    src: '/static/images/anim/sprite/idle4.png',
+    attackSrc: '/static/images/anim/sprite/attack4.png',
+  },
+  {
+    id: 'counting-stage3-skin',
+    name: 'Counting Skin',
+    src: '/static/images/anim/sprite/idle5.png',
+    attackSrc: '/static/images/anim/sprite/attack5.png',
+  },
+
+  {
+    id: 'comparison-stage3-skin',
+    name: 'Comparison Skin',
+    src: '/static/images/anim/sprite/idle6.png',
+    attackSrc: '/static/images/anim/sprite/attack6.png',
+  },
+  {
+    id: 'numerals-stage3-skin',
+    name: 'Numerals Skin',
+    src: '/static/images/anim/sprite/idle7.png',
+    attackSrc: '/static/images/anim/sprite/attack7.png',
+  },
+  {
+    id: 'placevalue-stage3-skin',
+    name: 'Place Value Skin',
+    src: '/static/images/anim/sprite/idle8.png',
+    attackSrc: '/static/images/anim/sprite/attack8.png',
+  },
 ];
 
 // Global state for current stage

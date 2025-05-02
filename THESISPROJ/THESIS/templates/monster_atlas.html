@@ -288,7 +288,7 @@ function updateMonsterDisplay() {
         // After updating the content, apply the fade-in effect
         monsterInfo.classList.remove('monster-info-fade-out');
         monsterInfo.classList.add('monster-info-fade-in');
-    }, 500); // Delay for the duration of the fade-out transition (500ms)
+    }, 50); // Delay for the duration of the fade-out transition (500ms)
 }
 
 
@@ -302,7 +302,7 @@ document.getElementById('next-btn').addEventListener('click', function() {
         // Reset lock after the transition is done
         setTimeout(() => {
             isChanging = false; // Unlock the transition after the fade-in is done
-        }, 500); // Match this with the duration of the CSS transition
+        }, 50); // Match this with the duration of the CSS transition
     }
 });
 
@@ -315,7 +315,7 @@ document.getElementById('prev-btn').addEventListener('click', function() {
         // Reset lock after the transition is done
         setTimeout(() => {
             isChanging = false; // Unlock the transition after the fade-in is done
-        }, 500); // Match this with the duration of the CSS transition
+        }, 50); // Match this with the duration of the CSS transition
     }
 });
 
