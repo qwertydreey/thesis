@@ -13,47 +13,74 @@
 
   
 
-<div id="container">
+
   <div class="back-btn-wrapper">
     <a href="{{ url_for('dashboard') }}">
       <button class="back-btn"></button>
     </a>
   </div>
 
-  <span id="monster-atlas-title">MONSTER ATLAS</span>
 
-  <div id="map-container">
-    <button class="map-btn" data-operation="addition" onclick="displayMonsters('addition')">Addition</button>
-    <button class="map-btn" data-operation="multiplication" onclick="displayMonsters('multiplication')">Multiplication</button>
-    <button class="map-btn" data-operation="subtraction" onclick="displayMonsters('subtraction')">Subtraction</button>
-    <button class="map-btn" data-operation="division" onclick="displayMonsters('division')">Division</button>
-    <button class="map-btn" data-operation="counting" onclick="displayMonsters('counting')">Counting</button>
-    <button class="map-btn" data-operation="comparison" onclick="displayMonsters('comparison')">Comparison</button>
-    <button class="map-btn" data-operation="numerals" onclick="displayMonsters('numerals')">Numerals</button>
-    <button class="map-btn" data-operation="placevalue" onclick="displayMonsters('placevalue')">Place Value</button>
-</div>
-
-  
     
-    <!-- Right side for monster display -->
-    <div id="monster-container">
-        <div id="monster-display">
-          <div id="monster-track"></div>
 
-            <div id="monster-info">
-                <!-- This section will be dynamically updated with monster images and descriptions -->
-            </div>
-            <div id="monster-navigation">
-                <button id="prev-btn"></button>
-                <button id="next-btn"></button>
-            </div>
+
+    <div id="monster-track"></div>
+
+    <div id="monster-info">
+        <!-- Split image and text into separate containers -->
+         <div class="monster-container">
+        <div id="monster-image"></div>
+      </div>
+        <div id="monster-details">
+          <div class="monster-name"></div>
+          <div class="monster-type"></div>
+          <div class="monster-desc"></div>
         </div>
     </div>
+
+    <div id="monster-navigation">
+        <button id="prev-btn"></button>
+        <button id="next-btn"></button>
+    </div>
+
+
+<img src="{{ url_for('static', filename='images/atlasimg/tome.png') }}" class="tome" alt="tome"/>
+<img src="{{ url_for('static', filename='images/atlasimg/scroll.png') }}" class="scroll" alt="scroll"/>
+
+
+
+<div id="map-container">
+  <button class="map-btn btn-addition" data-operation="addition" onclick="displayMonsters('addition')">
+    <img src="{{ url_for('static', filename='images/atlasimg/tomes/addition.png') }}" alt="Addition" />
+  </button>
+  <button class="map-btn btn-subtraction" data-operation="subtraction" onclick="displayMonsters('subtraction')">
+    <img src="{{ url_for('static', filename='images/atlasimg/tomes/subtraction.png') }}" alt="Subtraction" />
+  </button>
+  <button class="map-btn btn-multiplication" data-operation="multiplication" onclick="displayMonsters('multiplication')">
+    <img src="{{ url_for('static', filename='images/atlasimg/tomes/multiplication.png') }}" alt="Multiplication" />
+  </button>
+  <button class="map-btn btn-division" data-operation="division" onclick="displayMonsters('division')">
+    <img src="{{ url_for('static', filename='images/atlasimg/tomes/division.png') }}" alt="Division" />
+  </button>
+  <button class="map-btn btn-counting" data-operation="counting" onclick="displayMonsters('counting')">
+    <img src="{{ url_for('static', filename='images/atlasimg/tomes/counting.png') }}" alt="Counting" />
+  </button>
+  <button class="map-btn btn-comparison" data-operation="comparison" onclick="displayMonsters('comparison')">
+    <img src="{{ url_for('static', filename='images/atlasimg/tomes/comparison.png') }}" alt="Comparison" />
+  </button>
+  <button class="map-btn btn-numerals" data-operation="numerals" onclick="displayMonsters('numerals')">
+    <img src="{{ url_for('static', filename='images/atlasimg/tomes/numerals.png') }}" alt="Numerals" />
+  </button>
+  <button class="map-btn btn-placevalue" data-operation="placevalue" onclick="displayMonsters('placevalue')">
+    <img src="{{ url_for('static', filename='images/atlasimg/tomes/placevalue.png') }}" alt="Place Value" />
+  </button>
 </div>
 
 
-
-    
+  <!-- Two additional standalone images -->
+  <img class="left-tome" src="{{ url_for('static', filename='images/atlasimg/tomes/left-tome.png') }}" alt="Left Tome" />
+  <img class="right-tome" src="{{ url_for('static', filename='images/atlasimg/tomes/right-tome.png') }}" alt="Right Tome" />
+</div>
 
     
     
@@ -237,59 +264,71 @@ function displayMonsters(operation) {
     updateMonsterDisplay();
 
     // Highlight the clicked button and remove highlight from others
-    const mapButtons = document.querySelectorAll('.map-btn'); // Select all map buttons
-    mapButtons.forEach(btn => {
-        // Remove active class from all buttons
-        btn.classList.remove('active');
-    });
-    
-    // Add the active class to the clicked button
-    const activeButton = document.querySelector(`#map-container button[data-operation="${operation}"]`);
-    if (activeButton) {
-        activeButton.classList.add('active');
-    }
+    const mapButtons = document.querySelectorAll('.map-btn');
+mapButtons.forEach(btn => btn.classList.remove('active'));
+
+const activeButton = document.querySelector(`#map-container button[data-operation="${operation}"]`);
+if (activeButton) {
+    activeButton.classList.add('active');
+}
 }
 
 function updateMonsterDisplay() {
     const monster = currentMonsters[currentMonsterIndex];
-    const monsterInfo = document.getElementById('monster-info');
-    const monsterTrack = document.getElementById('monster-track'); // Assuming there's an element to display the track
-    
-    // Apply fade-out to the entire monster info (image and text)
-    monsterInfo.classList.add('monster-info-fade-out');
+    const monsterImageContainer = document.getElementById('monster-image');
+    const monsterDetails = document.getElementById('monster-details');
+    const monsterTrack = document.getElementById('monster-track');
 
-    // Wait for the fade-out transition to finish before changing the content
+    // Add fade-out to details
+    monsterDetails.classList.add('monster-info-fade-out');
+
+    // Optional: remove old image immediately
+    monsterImageContainer.innerHTML = '';
+
     setTimeout(() => {
-        // Assuming 'folderName' is a dynamic variable based on the operation type (e.g., 'addition')
-        const folderName = monster.name.split('-')[0].toLowerCase();  // This will give 'addition' from 'Addition-Mob-1'
-
-        // Access the specific folder of monsters (e.g., 'addition') from the main object
-        const monstersInFolder = monsters[folderName]; 
-
-        // Get the specific monster info
-        const monsterData = monstersInFolder.find(m => m.name === monster.name); // Find the monster by name
-
-        // Construct the image path dynamically
+        const folderName = monster.name.split('-')[0].toLowerCase();
+        const monstersInFolder = monsters[folderName];
+        const monsterData = monstersInFolder.find(m => m.name === monster.name);
         const imagePath = `/static/images/gameimg/mnstr/${folderName}/${monsterData.img}`;
 
-        // Update the monster info content
-        monsterInfo.innerHTML = `
-            <div class="monster-image-container">
-                <img src="${imagePath}" alt="${monsterData.name}" />
-            </div>
-            <h2>${monsterData.displayName}</h2>
-            <p><strong>Type:</strong> ${monsterData.type}</p>
-            <p>${monsterData.description}</p>
-        `;
+        // Add new image with spawn animation
+        const img = document.createElement('img');
+        img.src = imagePath;
+        img.alt = monsterData.name;
+        img.classList.add('monster-spawn-animation');
+        monsterImageContainer.appendChild(img);
 
-        // Update the monster track display (e.g., "1 of 12")
+        // Clear and fade-in new details
+        monsterDetails.innerHTML = '';
+
+        const nameDiv = document.createElement('div');
+        nameDiv.classList.add('monster-name');
+        nameDiv.innerHTML = monsterData.displayName;
+
+        const typeDiv = document.createElement('div');
+        typeDiv.classList.add('monster-type');
+        typeDiv.innerHTML = `<strong>Type:</strong> ${monsterData.type}`;
+
+        const descDiv = document.createElement('div');
+        descDiv.classList.add('monster-desc');
+        descDiv.innerHTML = monsterData.description;
+
+        monsterDetails.appendChild(nameDiv);
+        monsterDetails.appendChild(typeDiv);
+        monsterDetails.appendChild(descDiv);
+
+        // Track info
         monsterTrack.textContent = `${currentMonsterIndex + 1} of ${currentMonsters.length}`;
 
-        // After updating the content, apply the fade-in effect
-        monsterInfo.classList.remove('monster-info-fade-out');
-        monsterInfo.classList.add('monster-info-fade-in');
-    }, 50); // Delay for the duration of the fade-out transition (500ms)
+        // Fade-in for details
+        monsterDetails.classList.remove('monster-info-fade-out');
+        monsterDetails.classList.add('monster-info-fade-in');
+
+    }, 100);
 }
+
+
+
 
 
 // Prevent rapid clicking by adding debounce logic
