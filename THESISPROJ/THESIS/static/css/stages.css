@@ -168,60 +168,179 @@ body {
 }
 
 /* Reward Bubble Styles */
+/* Full screen background animation */
 .reward-bubble {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 88vh;
-  height: 90vh;
-  transform: translate(-50%, -50%);
-  background-image: url('../images/gameimg/rewardimg/bubble.png');
-  background-size: contain; /* Scale image to fit container */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('../images/gameimg/rewardimg/bg.png');
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  text-align: center;
   z-index: 10000;
-  display: none; /* Initially hidden */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   opacity: 0;
-  transition: opacity 0.5s ease-in-out; /* Fade-in effect */
+  transform: scale(0); /* Start at scale 0 */
+  animation: rewardPop 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; /* Add animation for background */
 }
 
-.reward-bubble.visible {
-  opacity: 1; /* Make visible */
-  display: block; /* Ensure it's shown */
+/* Pop-in animation for the background */
+@keyframes rewardPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.reward-bubble.hidden {
-  display: none;
-}
-
+/* Reward image animation */
+/* Reward image animation */
 .reward-img {
   position: absolute;
   width: auto;
-  height: 26vh;
-  margin-top: 3vh;
-  display: block;
-  transform: translate(-50%, -50%);
+  height: 45vh;
   top: 50%;
-  left: 51%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0); /* Start small */
+  opacity: 0;
+  display: block;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+  animation: rewardImagePop 1.5s ease-out forwards, rewardImageBounce 2s ease-in-out infinite 1.5s; /* Image pop and bounce with delay */
 }
 
+/* Pop-in animation for the reward image */
+@keyframes rewardImagePop {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.2); /* Slightly enlarged during mid-animation */
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Bounce animation with delay between bounces */
+@keyframes rewardImageBounce {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+
+/* OK button fade-in and pop animation */
 .reward-btn {
-  background-color: #4CAF50;
+  background: linear-gradient(45deg, #4CAF50, #45a049); /* Gradient background */
   color: white;
-  padding: 10px 20px;
+  padding: 4px 10px;
   border: none;
-  border-radius: 20px;
+  border-radius: 2vh; /* Rounded corners for a softer look */
   cursor: pointer;
-  font-size: 16px;
+  width: 18vh;
+  height: 6vh;
+  font-size: 2.5vh;
+  font-family: 'Poppins', sans-serif;
   margin-top: 63vh;
-  margin-left: 2vh;
+  margin-left: 20vh;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease, background 0.3s ease;
+  animation: buttonFadePop 1.3s ease-out forwards;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Soft shadow effect */
 }
 
 .reward-btn:hover {
-  background-color: #45a049;
+  background: linear-gradient(45deg, #45a049, #4CAF50); /* Slightly change gradient on hover */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); /* Larger shadow on hover */
+  transform: scale(1.05); /* Slightly enlarge the button on hover */
 }
 
+.reward-btn:active {
+  transform: scale(1); /* Button will snap back to normal when clicked */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Return shadow to normal */
+}
 
+.reward-btn:focus {
+  outline: none; /* Remove default focus outline */
+}
 
+/* Pop-in animation for the OK button */
+@keyframes buttonFadePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
+/* Add a shake effect to the button when it appears */
+.reward-btn.shake {
+  animation: buttonShake 0.5s ease-in-out forwards;
+}
+
+@keyframes buttonShake {
+  0% {
+    transform: scale(1) translateX(0);
+  }
+  25% {
+    transform: scale(1) translateX(-5px);
+  }
+  50% {
+    transform: scale(1) translateX(5px);
+  }
+  75% {
+    transform: scale(1) translateX(-5px);
+  }
+  100% {
+    transform: scale(1) translateX(0);
+  }
+}
+
+/* Add the new reward text */
+.reward-text {
+  font-size: 6vh;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 15px; /* Space between text and image */
+  animation: fadeIn 1.5s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

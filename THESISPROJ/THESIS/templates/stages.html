@@ -43,14 +43,21 @@
       </div>
     
       <!-- Reward Bubble inside map-img -->
-      <div id="rewardBubble" class="reward-bubble hidden">
-        <div class="bubble-content">
-          <img id="rewardImage" src="" alt="reward" class="reward-img" />
-          <button id="rewardOkButton" class="reward-btn">OK</button>
-        </div>
-      </div>
+<!-- Make sure this is directly inside <body> -->
+
+  
     </div>
     
+  </div>
+  <div id="rewardBubble" class="reward-bubble hidden">
+    <div class="bubble-content">
+      
+      <p id="rewardText" class="reward-text">New Skin Reward!</p> <!-- Added text here -->
+      
+      <img id="rewardImage" src="" alt="reward" class="reward-img" />
+      <button id="rewardOkButton" class="reward-btn">Claim</button>
+      
+    </div>
   </div>
   
 
@@ -198,17 +205,32 @@
 
   // Function to show the reward bubble and mark as claimed
   function showRewardBubble(selectedMap) {
-    const rewardBubble = document.getElementById('rewardBubble');
-    const rewardImage = document.getElementById('rewardImage');
-    const rewardOkButton = document.getElementById('rewardOkButton');
+  const rewardBubble = document.getElementById('rewardBubble');
+  const rewardImage = document.getElementById('rewardImage');
+  const rewardOkButton = document.getElementById('rewardOkButton');
+  const rewardText = document.getElementById('rewardText'); // Select the text element
 
-    // Set the reward image based on selected map
-    const rewardImageUrl = getRewardImage(selectedMap);
-    rewardImage.src = rewardImageUrl || " "; // fallback
+  // Set the reward image based on selected map
+  const rewardImageUrl = getRewardImage(selectedMap);
+  rewardImage.src = rewardImageUrl || " "; // fallback
 
-    // Show the reward bubble
-    rewardBubble.classList.remove('hidden');
+  // Set the reward text
+  rewardText.textContent = "NEW SKIN REWARD!"; // Update the text dynamically
+
+  // Show the reward bubble
+  rewardBubble.classList.remove('hidden');
+
+  requestAnimationFrame(() => {
     rewardBubble.classList.add('visible');
+
+    // Delay the pop-in of the content (e.g., 300ms after background appears)
+    setTimeout(() => {
+      const bubbleContent = rewardBubble.querySelector('.bubble-content');
+      bubbleContent.classList.add('show');
+    }, 300);
+  });
+
+
 
     // Mark as claimed in localStorage
     const rewardKey = `${selectedMap}-stage3-skin`;
@@ -227,30 +249,37 @@
 
   // Function to close the reward bubble
   function closeRewardBubble() {
-    const rewardBubble = document.getElementById('rewardBubble');
-    rewardBubble.classList.remove('visible');
+  const rewardBubble = document.getElementById('rewardBubble');
+  const bubbleContent = rewardBubble.querySelector('.bubble-content');
+
+  bubbleContent.classList.remove('show'); // Reset pop state
+  rewardBubble.classList.remove('visible');
+
+  setTimeout(() => {
     rewardBubble.classList.add('hidden');
-  }
+  }, 400); // Wait for fade-out
+}
+
 
   // Function to get the reward image based on the selected map
   function getRewardImage(selectedMap) {
     switch (selectedMap) {
       case 'multiplication':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/idle1.png') }}";
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r1.png') }}";
       case 'addition':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/idle2.png') }}";
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r2.png') }}";
       case 'subtraction':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/idle3.png') }}";
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r3.png') }}";
       case 'division':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/idle4.png') }}";
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r4.png') }}";
       case 'counting':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/idle5.png') }}";
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r5.png') }}";
       case 'comparison':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/idle6.png') }}";
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r6.png') }}";
       case 'numerals':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/idle7.png') }}";
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r7.png') }}";
       case 'placevalue':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/idle8.png') }}";
+        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r8.png') }}";
       default:
         return "";
     }
