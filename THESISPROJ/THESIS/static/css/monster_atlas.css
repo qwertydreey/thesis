@@ -148,9 +148,9 @@ html, body {
 /* Monster info section */
 #monster-details {
     position: absolute;
-    width: 35vh;
-    height: 20vh;
-    left: 89.2vh;
+    width: 45vh;
+    height: 21vh;
+    left: 85.8vh;
     top: 54vh;
     display: flex;
     flex-direction: column;
@@ -164,7 +164,7 @@ html, body {
 .monster-name {
     margin-bottom: 3vh;
     color: #ffffff;
-    font-size: 2.4vh;
+    font-size: 3vh;
     font-family: 'Poppins', sans-serif;
     font-weight: 900;
 
@@ -174,7 +174,7 @@ html, body {
 .monster-type {
     margin-bottom: 0.2vh;
     color: #ffffff;
-    font-size: 1.7vh;
+    font-size: 1.8vh;
     font-family: 'Poppins', sans-serif;
 
 }
@@ -182,16 +182,16 @@ html, body {
 .monster-desc {
     margin-top: 2vh;
     color: #ffffff;
-    font-size: 1.7vh;
+    font-size: 2vh;
     font-family: 'Poppins', sans-serif;
 
 }
 #monster-track {
     position: absolute;
-    left: 105vh;
+    left: 106vh;
     top: 73vh;
     color: #ffffff;
-    font-size: 1.4vh;
+    font-size: 1.5vh;
     font-family: 'Poppins', sans-serif;
 
 }
@@ -300,10 +300,10 @@ filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.8)) /* Stronger shadow with higher o
 #monster-navigation {
     position: absolute; /* Absolute positioning within the #monster-container */
     top: 61vh;
-    left: 67.4vh;
+    left: 59.4vh;
     display: flex;
     justify-content: center;
-    gap: 27vw;/* Adjust gap between buttons */
+    gap: 36vw;/* Adjust gap between buttons */
     width: auto; /* Automatically adjust based on the content */
     padding: 0 10px;
     box-sizing: border-box; /* Prevents overflow */
