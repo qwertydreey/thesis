@@ -1,15 +1,13 @@
 let animationInterval = null;
 
-// === Step 1: Get URL Params First ===
+// === Step 1: Get URL Params ===
 const urlParams = new URLSearchParams(window.location.search);
 let selectedMap = urlParams.get('map') || 'multiplication';
 let selectedStage = parseInt(urlParams.get('stage'), 10) || 1;
 let selectedStageKey = 'stage' + selectedStage;
-// Load difficulty from localStorage or set default
 
-
-// === Step 2: Define default difficulty ===
-const defaultMapDifficulty = {
+// === Default Difficulty per Map ===
+let mapDifficulty = {
   multiplication: 'easy',
   addition: 'easy',
   subtraction: 'easy',
@@ -19,177 +17,249 @@ const defaultMapDifficulty = {
   numerals: 'easy',
   placevalue: 'easy',
 };
-let mapDifficulty = loadProgress();
 
+// === Load Difficulty ===
+let currentDifficulty = loadDifficultyForMap(selectedMap);
 
-// ======= INITIAL LOAD =======
-let hasLoadedProgress = false;  // Add this line
-
+// === INITIAL LOAD ===
 window.addEventListener('DOMContentLoaded', () => {
-  // Initialize mapDifficulty from loadProgress
-  mapDifficulty = loadProgress();  // Ensure mapDifficulty is initialized here
-  console.log('Loaded mapDifficulty:', mapDifficulty);
+  loadProgress();
+  initMapAndStage();
+  updateHealthBars();
   
-  // Proceed with other initializations
-  updateRoadmapStars();  // Update roadmap stars
-  initMapAndStage();     // Initialize map and stage
-  updateHealthBars();    // Update health bars if necessary
-
-  // Proceed with the question flow after mapDifficulty is loaded
-  if (mapDifficulty && selectedMap) {
-    fetchNewQuestion();  // Start the question flow after map difficulty is loaded
-  } else {
-    console.error("Map difficulty or selected map is not set correctly.");
-  }
+  console.log(`Selected Map: ${selectedMap}`);
+  console.log(`Selected Stage: ${selectedStageKey}`);
+  console.log(`Current Difficulty: ${currentDifficulty}`);
+  
+  fetchNewQuestion();  // Now call this after ensuring progress is loaded
 });
 
-
-
-
-// Load progress function
+// === Progress Functions ===
 function loadProgress() {
-  const savedProgress = localStorage.getItem('mapDifficulty');
-  const savedMap = localStorage.getItem('selectedMap');
-  const savedStage = localStorage.getItem('selectedStage');
+  const savedProgress = JSON.parse(localStorage.getItem('gameProgress'));
+  if (savedProgress) {
+    selectedMap = savedProgress.selectedMap;
+    selectedStageKey = savedProgress.selectedStageKey;
+    mapDifficulty = savedProgress.mapDifficulty;
 
-  let loadedMapDifficulty = savedProgress ? JSON.parse(savedProgress) : { ...defaultMapDifficulty };
-
-  for (const map in defaultMapDifficulty) {
-    if (!loadedMapDifficulty[map]) {
-      loadedMapDifficulty[map] = 'easy'; // Set to default if missing
-    }
+    correctAnswersCount = savedProgress.correctAnswersCount || 0;
+    totalQuestionsAnswered = savedProgress.totalQuestionsAnswered || 0;
+    wrongAnswersCount = savedProgress.wrongAnswersCount || 0;
   }
 
-  if (savedMap) selectedMap = savedMap;
-  else selectedMap = 'multiplication';
-
-  if (savedStage) selectedStageKey = savedStage;
-
-  console.log('📥 Loaded difficulty progress:', loadedMapDifficulty);
-
-  return loadedMapDifficulty;
+  currentDifficulty = loadDifficultyForMap(selectedMap);
+  console.log(`✅ Loaded progress: ${correctAnswersCount} correct / ${totalQuestionsAnswered} total`);
 }
 
 
 
-// === Function to Fetch New Question ===
+
+
+
+// === Saving Progress ===
+function saveProgress() {
+  localStorage.setItem('gameProgress', JSON.stringify({
+    selectedMap,
+    selectedStageKey,
+    mapDifficulty,
+    correctAnswersCount,
+    totalQuestionsAnswered,
+    wrongAnswersCount
+  }));
+  console.log(`💾 Progress saved: Correct Answers: ${correctAnswersCount}, Total Questions Answered: ${totalQuestionsAnswered}`);
+}
+
+
+
+
+
+function loadDifficultyForMap(mapName) {
+  let savedDifficulty = localStorage.getItem(`${mapName}-difficulty`);
+  if (!savedDifficulty) {
+    savedDifficulty = mapDifficulty[mapName];  // Default difficulty per map
+    localStorage.setItem(`${mapName}-difficulty`, savedDifficulty);
+  }
+  console.log(`✅ Loaded difficulty for ${mapName}: ${savedDifficulty}`);
+  return savedDifficulty;
+}
+
+// === Difficulty Evaluation ===
+function evaluateDifficulty(correctAnswers, totalQuestionsAnswered) {
+  if (totalQuestionsAnswered >= 10) {
+    console.log(`Evaluating difficulty... Correct: ${correctAnswers}, Total: ${totalQuestionsAnswered}`);
+    
+    if (correctAnswers >= 8) {
+      console.log("✅ Increasing difficulty");
+      return getNextDifficulty(currentDifficulty);  // Increase difficulty
+    }
+    if (correctAnswers >= 5) {
+      console.log("✅ Staying at current difficulty");
+      return currentDifficulty; // Stay the same
+    }
+    console.log("✅ Decreasing difficulty");
+    return getPreviousDifficulty(currentDifficulty); // Decrease difficulty
+  }
+  return currentDifficulty;  // If we haven't reached 10 questions, return current difficulty
+}
+
+function getNextDifficulty(currentDifficulty) {
+  const levels = ['easy', 'normal', 'hard', 'extreme'];
+  const index = levels.indexOf(currentDifficulty);
+  return levels[Math.min(index + 1, levels.length - 1)];
+}
+
+function getPreviousDifficulty(currentDifficulty) {
+  const levels = ['easy', 'normal', 'hard', 'extreme'];
+  const index = levels.indexOf(currentDifficulty);
+  return levels[Math.max(index - 1, 0)];
+}
+
+// === Question Fetching ===
 function fetchNewQuestion() {
-  console.log('Fetching question for map:', selectedMap, 'difficulty:', mapDifficulty[selectedMap]);
-
   const qText = document.getElementById('question-text');
-  const cAns  = document.getElementById('correct-answer');
-  const fb    = document.getElementById('feedback');
+  const cAns = document.getElementById('correct-answer');
+  const fb = document.getElementById('feedback');
 
-  const currentMap = selectedMap;
-  const currentDifficulty = mapDifficulty[currentMap] || 'easy';
-  const questionSet = questions[currentMap]?.[selectedStageKey]?.[currentDifficulty];
+  currentDifficulty = loadDifficultyForMap(selectedMap);
 
-  if (questionSet) {
-    const data = questionSet[currentQuestionIndex];
-    qText.innerText = data.question_text;
-    cAns.value = data.correct_answer;
-    fb.innerText = '';
-    currentQuestionIndex++;
+  if (!questions[selectedMap] || !questions[selectedMap][selectedStageKey]) {
+    console.error("❌ No questions available for the selected map or stage.");
+    return;
+  }
 
-    autoResizeFont(qText);  // 👈 Auto resize after setting question
+  const stageQuestions = questions[selectedMap][selectedStageKey][currentDifficulty];
+  if (stageQuestions && stageQuestions.length > 0) {
+    const randomIndex = Math.floor(Math.random() * stageQuestions.length);
+    const selectedQuestion = stageQuestions[randomIndex];
+
+    qText.innerText = selectedQuestion.question_text;
+    cAns.value = selectedQuestion.correct_answer;
+    fb.innerText = ''; // Clear feedback
+
+    // Call autoResizeFont AFTER setting the question text
+    setTimeout(() => {
+      autoResizeFont(qText);
+    }, 0);
 
   } else {
-    fb.innerText = 'No new question or map difficulty not found.';
+    console.error("❌ No questions available for this difficulty.");
+    qText.innerText = 'No question available.';
+    cAns.value = '';
+    fb.innerText = '';
   }
 }
 
-
 function autoResizeFont(element) {
-  let fontSize = 7; // in vh
-  element.style.fontSize = fontSize + 'vh';
+  let fontSize = 7; // Start with a base font size (in vh)
+  element.style.fontSize = fontSize + 'vh'; // Set the initial font size
 
   // Shrink font until it fits or until minimum size (e.g., 2vh)
   while (element.scrollHeight > element.offsetHeight && fontSize > 2) {
-    fontSize -= 0.5;
-    element.style.fontSize = fontSize + 'vh';
+    fontSize -= 0.5;  // Decrease font size by 0.5vh
+    element.style.fontSize = fontSize + 'vh';  // Apply the new font size
   }
 }
 
+// === Answer Handling ===
+let correctAnswersCount = 0;
+let wrongAnswersCount = 0;
+let totalQuestionsAnswered = 0;
 
 
+function handleAttack() {
+  const input = document.getElementById('number-input').value.trim();
+  const answer = document.getElementById('correct-answer').value.trim();
 
-// === Function to Save Progress to localStorage ===
-function saveProgress() {
-  try {
-    localStorage.setItem('mapDifficulty', JSON.stringify(mapDifficulty));
-    localStorage.setItem('selectedMap', selectedMap);
-    localStorage.setItem('selectedStage', selectedStageKey);
-
-    // Console log for confirmation
-    console.log("💾 Progress saved to localStorage:");
-    console.log("📍 Map:", selectedMap);
-    console.log("🎯 Stage:", selectedStageKey);
-    console.log("📊 Difficulties:", mapDifficulty);
-  } catch (error) {
-    console.error("❌ Error saving progress to localStorage:", error);
+  if (input === '') {
+    displayFeedback('Please enter a number!');
+    return;
   }
-}
 
+  const isCorrect = parseFloat(input) === parseFloat(answer);
 
+  // Update progress whether the answer is correct or not
+  totalQuestionsAnswered++;
 
-// === Function to Check the Answer ===
-function checkAnswer(userAnswer) {
-  const correctAnswer = document.getElementById('correct-answer').value;
-  const fb = document.getElementById('feedback');
-
-  totalQuestions++;
-
-  // Check if the user's answer is correct
-  if (userAnswer === correctAnswer) {
-    correctCount++;
-    fb.innerText = '✅ Correct!';
+  if (isCorrect) {
+    fireballAttack();
+    correctAnswersCount++;
+    console.log(`✅ Answered ${totalQuestionsAnswered} questions. Correct: ${correctAnswersCount}, Wrong: ${wrongAnswersCount}`);
   } else {
-    fb.innerText = '❌ Incorrect!';
+    wrongAnswersCount++;
+    displayFeedback('❌ Incorrect! Try again.');
+
+    if (freezeTurns <= 0) {
+      monsterAttack();
+    } else {
+      console.log("❄️ Monster is frozen — no damage to player.");
+    }
+
+    if (freezeTurns > 0) {
+      freezeTurns--;
+      if (freezeTurns === 0) {
+        setTimeout(() => {
+          removeFreezeEffect();
+          freezeTurnsDisplay.style.display = 'none';
+          console.log("⏹ Freeze effect has ended.");
+        }, 100);
+      }
+      updateFreezeTurnsDisplay();
+    }
+
+    if (wrongAnswersCount >= 3) {
+      wrongAnswersCount = 0;
+    }
   }
 
-  // Wait for the feedback to be displayed, then proceed to difficulty check
-  setTimeout(() => {
-    if (totalQuestions === 10) {
-      console.log(`🧠 Evaluating difficulty for "${selectedMap}"`);
-      console.log(`📈 Correct: ${correctCount} / 10`);
-      console.log(`🔍 Current Difficulty: ${mapDifficulty[selectedMap]}`);
+  // Update difficulty if 10 questions answered
+  if (totalQuestionsAnswered >= 10) {
+    currentDifficulty = evaluateDifficulty(correctAnswersCount, totalQuestionsAnswered);
+    updateDifficulty(); // This should update the difficulty
+    console.log(`✅ Difficulty updated to: ${currentDifficulty}`);
+    resetCounters(); // Reset the counters for the next round
+  }
 
-      // Increase difficulty if 8+ correct
-      if (correctCount >= 8) {
-        if (mapDifficulty[selectedMap] === 'easy') mapDifficulty[selectedMap] = 'normal';
-        else if (mapDifficulty[selectedMap] === 'normal') mapDifficulty[selectedMap] = 'hard';
-        else if (mapDifficulty[selectedMap] === 'hard') mapDifficulty[selectedMap] = 'extreme';
-        console.log('🚀 Difficulty increased!');
-      }
+  // Save progress after each question
+  saveProgress();
 
-      // Stay on same difficulty if 5–7 correct
-      else if (correctCount >= 5) {
-        console.log('⏸️ Staying at current difficulty.');
-      }
-
-      // Lower difficulty if 0–4 correct
-      else {
-        if (mapDifficulty[selectedMap] === 'extreme') mapDifficulty[selectedMap] = 'hard';
-        else if (mapDifficulty[selectedMap] === 'hard') mapDifficulty[selectedMap] = 'normal';
-        else if (mapDifficulty[selectedMap] === 'normal') mapDifficulty[selectedMap] = 'easy';
-        console.log('📉 Difficulty lowered.');
-      }
-
-      // Save updated difficulty
-      saveProgress();
-
-      console.log(`✅ New Difficulty: ${mapDifficulty[selectedMap]}`);
-
-      // Reset counters for next round
-      correctCount = 0;
-      totalQuestions = 0;
-      currentQuestionIndex = 0;
-
-      // Fetch next question
-      fetchNewQuestion();
-    }
-  }, 800);
+  fetchNewQuestion(); // Always fetch a new question after answering
+  document.getElementById('number-input').value = '';  // Clear input
 }
+
+
+
+
+// === Difficulty Update Function ===
+function updateDifficulty() {
+  localStorage.setItem(`${selectedMap}-difficulty`, currentDifficulty);  
+  console.log(`Difficulty for ${selectedMap} updated to: ${currentDifficulty}`);
+}
+
+function resetCounters() {
+  correctAnswersCount = 0;
+  totalQuestionsAnswered = 0;
+  saveProgress(); // Update saved values to 0 as well
+}
+
+
+
+
+// === Difficulty Update ===
+function getMapDifficulty(mapName) {
+  return localStorage.getItem(`${mapName}-difficulty`) || 'easy';
+}
+
+function updateMapDifficulty(mapName, difficulty) {
+  localStorage.setItem(`${mapName}-difficulty`, difficulty);
+  console.log(`✅ Difficulty for ${mapName} updated to: ${difficulty}`);
+}
+
+
+
+
+
+
+
 
 
 
@@ -592,7 +662,7 @@ function initMapAndStage() {
 
 
 
-function spawnMonster(idx, shouldFetchQuestion = false) {  // Default shouldFetchQuestion to false
+function spawnMonster(idx, shouldFetchQuestion = false) {
   const m = monstersInStage[idx];
   if (!m) return showVictoryScreen();
 
@@ -621,6 +691,9 @@ function spawnMonster(idx, shouldFetchQuestion = false) {  // Default shouldFetc
   if (monsterNameEl) {
     monsterNameEl.textContent = m.displayName || m.name.replace(/-/g, ' ');
   }
+
+  // Log the current difficulty before fetching a new question
+  console.log('Current difficulty before question fetch:', currentDifficulty);
 
   // Start spawn animation (fade-in and shake effect)
   if (!isMonsterSpawnAnimationInProgress) {
@@ -658,6 +731,7 @@ function spawnMonster(idx, shouldFetchQuestion = false) {  // Default shouldFetc
     console.log("Spawn in progress, skipping spawn for now.");
   }
 }
+
 
 
 
@@ -855,58 +929,9 @@ function checkGameOver() {
 }
 
 
-function handleAttack() {
-  const input = document.getElementById('number-input').value.trim();
-  const answer = document.getElementById('correct-answer').value.trim();
 
-  if (!answer) return;
 
-  if (input === '') {
-    displayFeedback('Please enter a number!');
-    return;
-  }
 
-  const isCorrect = parseFloat(input) === parseFloat(answer);
-
-  showSpeechBubble(isCorrect);
-
-  if (isCorrect) {
-    fireballAttack();
-
-    // ✅ Only fetch new question if monster will still be alive after this attack
-    if (currentMonsterHealth > 1) {
-      setTimeout(() => {
-        fetchNewQuestion();
-      }, 500); // small delay to match animation if needed
-    }
-    // ❌ No fetch if monster will die — spawnMonster will fetch it instead
-  } else {
-    if (freezeTurns <= 0) {
-      monsterAttack();
-    } else {
-      console.log("❄️ Monster is frozen — no damage to player.");
-    }
-
-    displayFeedback('❌ Incorrect! Try again.');
-  }
-
-  // 🧊 Handle freeze effect duration
-  if (freezeTurns > 0) {
-    freezeTurns--;
-
-    if (freezeTurns === 0) {
-      setTimeout(() => {
-        removeFreezeEffect();
-        freezeTurnsDisplay.style.display = 'none';
-        console.log("⏹ Freeze effect has ended.");
-      }, 100);
-    }
-
-    updateFreezeTurnsDisplay();
-  }
-
-  document.getElementById('number-input').value = '';
-}
 
 
 

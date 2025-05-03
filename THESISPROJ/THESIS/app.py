@@ -181,13 +181,23 @@ def forgot_password():
 def game():
     user_id = 1  # Hardcoded user ID
 
+    # Get selected map and stage from query parameters
+    selected_map = request.args.get('map', '')
+    selected_stage = request.args.get('stage', '')
+
     # Get user's first name
     cursor.execute("SELECT first_name FROM users WHERE id = %s", (user_id,))
     user_row = cursor.fetchone()
     first_name = user_row['first_name'] if user_row and 'first_name' in user_row else "PLAYER"
 
-    # Render the game template with the user's first name
-    return render_template('game.html', first_name=first_name)
+    # Render the game template with the necessary context
+    return render_template(
+        'game.html',
+        first_name=first_name,
+        selected_map=selected_map,
+        selected_stage=selected_stage
+    )
+
 
 
 
