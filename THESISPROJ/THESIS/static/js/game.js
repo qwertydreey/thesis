@@ -1,17 +1,206 @@
 let animationInterval = null;
 
-// ─── MAP & STAGE SETUP ───
-const urlParams         = new URLSearchParams(window.location.search);
-const selectedMap       = urlParams.get('map') || 'multiplication';
-const selectedStage     = parseInt(urlParams.get('stage'), 10) || 1;
-const selectedStageKey  = 'stage' + selectedStage;
+// === Step 1: Get URL Params First ===
+const urlParams = new URLSearchParams(window.location.search);
+let selectedMap = urlParams.get('map') || 'multiplication';
+let selectedStage = parseInt(urlParams.get('stage'), 10) || 1;
+let selectedStageKey = 'stage' + selectedStage;
+// Load difficulty from localStorage or set default
 
-let selectedDifficulty  = 'easy'; // ✅ Make it mutable (not const)
+
+// === Step 2: Define default difficulty ===
+const defaultMapDifficulty = {
+  multiplication: 'easy',
+  addition: 'easy',
+  subtraction: 'easy',
+  division: 'easy',
+  counting: 'easy',
+  comparison: 'easy',
+  numerals: 'easy',
+  placevalue: 'easy',
+};
+let mapDifficulty = loadProgress();
+
+
+// ======= INITIAL LOAD =======
+let hasLoadedProgress = false;  // Add this line
+
+window.addEventListener('DOMContentLoaded', () => {
+  // Initialize mapDifficulty from loadProgress
+  mapDifficulty = loadProgress();  // Ensure mapDifficulty is initialized here
+  console.log('Loaded mapDifficulty:', mapDifficulty);
+  
+  // Proceed with other initializations
+  updateRoadmapStars();  // Update roadmap stars
+  initMapAndStage();     // Initialize map and stage
+  updateHealthBars();    // Update health bars if necessary
+
+  // Proceed with the question flow after mapDifficulty is loaded
+  if (mapDifficulty && selectedMap) {
+    fetchNewQuestion();  // Start the question flow after map difficulty is loaded
+  } else {
+    console.error("Map difficulty or selected map is not set correctly.");
+  }
+});
+
+
+
+
+// Load progress function
+function loadProgress() {
+  const savedProgress = localStorage.getItem('mapDifficulty');
+  const savedMap = localStorage.getItem('selectedMap');
+  const savedStage = localStorage.getItem('selectedStage');
+
+  let loadedMapDifficulty = savedProgress ? JSON.parse(savedProgress) : { ...defaultMapDifficulty };
+
+  for (const map in defaultMapDifficulty) {
+    if (!loadedMapDifficulty[map]) {
+      loadedMapDifficulty[map] = 'easy'; // Set to default if missing
+    }
+  }
+
+  if (savedMap) selectedMap = savedMap;
+  else selectedMap = 'multiplication';
+
+  if (savedStage) selectedStageKey = savedStage;
+
+  console.log('📥 Loaded difficulty progress:', loadedMapDifficulty);
+
+  return loadedMapDifficulty;
+}
+
+
+
+// === Function to Fetch New Question ===
+function fetchNewQuestion() {
+  console.log('Fetching question for map:', selectedMap, 'difficulty:', mapDifficulty[selectedMap]);
+
+  const qText = document.getElementById('question-text');
+  const cAns  = document.getElementById('correct-answer');
+  const fb    = document.getElementById('feedback');
+
+  const currentMap = selectedMap;
+  const currentDifficulty = mapDifficulty[currentMap] || 'easy';
+  const questionSet = questions[currentMap]?.[selectedStageKey]?.[currentDifficulty];
+
+  if (questionSet) {
+    const data = questionSet[currentQuestionIndex];
+    qText.innerText = data.question_text;
+    cAns.value = data.correct_answer;
+    fb.innerText = '';
+    currentQuestionIndex++;
+
+    autoResizeFont(qText);  // 👈 Auto resize after setting question
+
+  } else {
+    fb.innerText = 'No new question or map difficulty not found.';
+  }
+}
+
+
+function autoResizeFont(element) {
+  let fontSize = 7; // in vh
+  element.style.fontSize = fontSize + 'vh';
+
+  // Shrink font until it fits or until minimum size (e.g., 2vh)
+  while (element.scrollHeight > element.offsetHeight && fontSize > 2) {
+    fontSize -= 0.5;
+    element.style.fontSize = fontSize + 'vh';
+  }
+}
+
+
+
+
+// === Function to Save Progress to localStorage ===
+function saveProgress() {
+  try {
+    localStorage.setItem('mapDifficulty', JSON.stringify(mapDifficulty));
+    localStorage.setItem('selectedMap', selectedMap);
+    localStorage.setItem('selectedStage', selectedStageKey);
+
+    // Console log for confirmation
+    console.log("💾 Progress saved to localStorage:");
+    console.log("📍 Map:", selectedMap);
+    console.log("🎯 Stage:", selectedStageKey);
+    console.log("📊 Difficulties:", mapDifficulty);
+  } catch (error) {
+    console.error("❌ Error saving progress to localStorage:", error);
+  }
+}
+
+
+
+// === Function to Check the Answer ===
+function checkAnswer(userAnswer) {
+  const correctAnswer = document.getElementById('correct-answer').value;
+  const fb = document.getElementById('feedback');
+
+  totalQuestions++;
+
+  // Check if the user's answer is correct
+  if (userAnswer === correctAnswer) {
+    correctCount++;
+    fb.innerText = '✅ Correct!';
+  } else {
+    fb.innerText = '❌ Incorrect!';
+  }
+
+  // Wait for the feedback to be displayed, then proceed to difficulty check
+  setTimeout(() => {
+    if (totalQuestions === 10) {
+      console.log(`🧠 Evaluating difficulty for "${selectedMap}"`);
+      console.log(`📈 Correct: ${correctCount} / 10`);
+      console.log(`🔍 Current Difficulty: ${mapDifficulty[selectedMap]}`);
+
+      // Increase difficulty if 8+ correct
+      if (correctCount >= 8) {
+        if (mapDifficulty[selectedMap] === 'easy') mapDifficulty[selectedMap] = 'normal';
+        else if (mapDifficulty[selectedMap] === 'normal') mapDifficulty[selectedMap] = 'hard';
+        else if (mapDifficulty[selectedMap] === 'hard') mapDifficulty[selectedMap] = 'extreme';
+        console.log('🚀 Difficulty increased!');
+      }
+
+      // Stay on same difficulty if 5–7 correct
+      else if (correctCount >= 5) {
+        console.log('⏸️ Staying at current difficulty.');
+      }
+
+      // Lower difficulty if 0–4 correct
+      else {
+        if (mapDifficulty[selectedMap] === 'extreme') mapDifficulty[selectedMap] = 'hard';
+        else if (mapDifficulty[selectedMap] === 'hard') mapDifficulty[selectedMap] = 'normal';
+        else if (mapDifficulty[selectedMap] === 'normal') mapDifficulty[selectedMap] = 'easy';
+        console.log('📉 Difficulty lowered.');
+      }
+
+      // Save updated difficulty
+      saveProgress();
+
+      console.log(`✅ New Difficulty: ${mapDifficulty[selectedMap]}`);
+
+      // Reset counters for next round
+      correctCount = 0;
+      totalQuestions = 0;
+      currentQuestionIndex = 0;
+
+      // Fetch next question
+      fetchNewQuestion();
+    }
+  }, 800);
+}
+
+
+
+
+
+
+// === Step 4: Initialize mapDifficulty AFTER loadProgress is defined ===
+
 let currentQuestionIndex = 0;
 let correctCount = 0;
 let totalQuestions = 0;
-
-
 
 // Backgrounds per map
 const mapBackgrounds = {
@@ -35,6 +224,10 @@ const mapPlatforms = {
   numerals:       'Numeral Ruins.png',
   placevalue:     'Place Value Town.png',
 };
+
+
+
+
 
 // Monsters per map & stage
 const mapStages = {
@@ -345,6 +538,9 @@ const skins = [
   },
 ];
 
+
+
+
 // Global state for current stage
 let currentMonsterIndex = 0;
 let monstersInStage     = [];
@@ -386,13 +582,17 @@ function initMapAndStage() {
 
   // 5) Spawn the first monster in the list
   spawnMonster(0);
+
+  // Log initialization
+  console.log('Map and stage initialized for map:', selectedMap, 'stage:', selectedStage);
 }
 
 
 
 
 
-function spawnMonster(idx, shouldFetchQuestion = true) {
+
+function spawnMonster(idx, shouldFetchQuestion = false) {  // Default shouldFetchQuestion to false
   const m = monstersInStage[idx];
   if (!m) return showVictoryScreen();
 
@@ -458,6 +658,11 @@ function spawnMonster(idx, shouldFetchQuestion = true) {
     console.log("Spawn in progress, skipping spawn for now.");
   }
 }
+
+
+
+
+
 
 
 
@@ -617,6 +822,7 @@ function startMonsterSpawnAnimation() {
 
         // 3) Keep the monster there for 2s, but fade it out smoothly
         setTimeout(() => {
+          
           // Add fade out effect
           monsterImg.style.transition = 'opacity 0.5s ease';
           monsterImg.style.opacity = '0';
@@ -662,16 +868,21 @@ function handleAttack() {
 
   const isCorrect = parseFloat(input) === parseFloat(answer);
 
-  // 👉 Show speech bubble whether correct or not
   showSpeechBubble(isCorrect);
 
   if (isCorrect) {
     fireballAttack();
-    fetchNewQuestion();
+
+    // ✅ Only fetch new question if monster will still be alive after this attack
+    if (currentMonsterHealth > 1) {
+      setTimeout(() => {
+        fetchNewQuestion();
+      }, 500); // small delay to match animation if needed
+    }
+    // ❌ No fetch if monster will die — spawnMonster will fetch it instead
   } else {
-    // ⚠️ If freeze is active, no damage taken
     if (freezeTurns <= 0) {
-      monsterAttack(); // This should call playerTakeDamage()
+      monsterAttack();
     } else {
       console.log("❄️ Monster is frozen — no damage to player.");
     }
@@ -679,7 +890,7 @@ function handleAttack() {
     displayFeedback('❌ Incorrect! Try again.');
   }
 
-  // 🧊 Deduct freeze turn AFTER attack logic
+  // 🧊 Handle freeze effect duration
   if (freezeTurns > 0) {
     freezeTurns--;
 
@@ -704,60 +915,16 @@ function handleAttack() {
 
 
 
-  
-  
 
-function fetchNewQuestion() {
-  const qText = document.getElementById('question-text');
-  const cAns  = document.getElementById('correct-answer');
-  const fb    = document.getElementById('feedback');
 
-  const questionSet = questions[selectedMap]?.[selectedStageKey]?.[selectedDifficulty];
 
-  // console.log('Fetching new question...');
-  // console.log('Selected Map:', selectedMap);
-  // console.log('Selected Stage:', selectedStageKey);
-  // console.log('Selected Difficulty:', selectedDifficulty);
-  // console.log('Current Question Index:', currentQuestionIndex);
 
-  if (questionSet) {
-    if (currentQuestionIndex < questionSet.length) {
-      const data = questionSet[currentQuestionIndex];
-      qText.innerText = data.question_text;
-      cAns.value = data.correct_answer;
-      fb.innerText = '';
-      currentQuestionIndex++; // Increment for next question
 
-      // For the first question, show it immediately without transition
-      if (currentQuestionIndex === 1) {
-        qText.style.opacity = '1';  // Make the first question visible immediately
-      } else {
-        // For subsequent questions, fade-out the current question, then fade-in the new question
-        qText.classList.remove('fade-in');  // Remove fade-in class if present
-        qText.classList.add('fade-out');    // Apply fade-out effect
 
-        setTimeout(() => {
-          qText.classList.remove('fade-out');  // Remove fade-out class
-          qText.classList.add('fade-in');     // Apply fade-in effect
-        }, 500);  // Wait until the fade-out completes before fading in
-      }
+// Function to fetch new question based on current map and difficulty
 
-      // Update the question text with a small delay to trigger animation
-      setTimeout(() => {
-        setQuestion(data.question_text);
-      }, 500); // Delay the question change to make sure animation happens first
 
-    } else {
-      fb.innerText = 'End of questions for this difficulty, resetting.';
-      console.log("End of questions, resetting.");
-      currentQuestionIndex = 0; // Reset to first question
-      fetchNewQuestion(); // Re-fetch first question
-    }
-  } else {
-    fb.innerText = 'No new question.';
-    console.log("No question found for this difficulty.");
-  }
-}
+// Initial load to fetch first question after progress load
 
 
 
@@ -766,55 +933,10 @@ function fetchNewQuestion() {
 
 
 
-function checkAnswer(userAnswer) {
-  const correctAnswer = document.getElementById('correct-answer').value;
-  const fb = document.getElementById('feedback');
 
-  totalQuestions++;
 
-  if (userAnswer === correctAnswer) {
-    correctCount++;
-    fb.innerText = '✅ Correct!';
-  } else {
-    fb.innerText = '❌ Incorrect!';
-  }
 
-  // Delay next question slightly
-  setTimeout(() => {
-    if (totalQuestions === 10) {
-      // Difficulty logic
-      if (correctCount >= 8) {
-        if (selectedDifficulty === 'easy') selectedDifficulty = 'normal';
-        else if (selectedDifficulty === 'normal') selectedDifficulty = 'hard';
-        else if (selectedDifficulty === 'hard') selectedDifficulty = 'extreme';
-      } else if (correctCount <= 4) {
-        if (selectedDifficulty === 'extreme') selectedDifficulty = 'hard';
-        else if (selectedDifficulty === 'hard') selectedDifficulty = 'normal';
-        else if (selectedDifficulty === 'normal') selectedDifficulty = 'easy';
-      }
 
-      // Reset counters and question index
-      correctCount = 0;
-      totalQuestions = 0;
-      currentQuestionIndex = 0;
-    }
-
-    // Apply fade-out effect before fetching new question
-    const qText = document.getElementById('question-text');
-    qText.classList.remove('fade-in');
-    qText.classList.add('fade-out'); // Fade out current question
-
-    // After fade-out, fetch new question and apply fade-in effect
-    setTimeout(() => {
-      fetchNewQuestion(); // Fetch new question after fade-out
-
-      // Apply fade-in effect for the new question
-      qText.classList.remove('fade-out');
-      qText.classList.add('fade-in');
-    }, 500); // Wait until the fade-out is complete before transitioning
-
-  }, 800); // Time for the feedback message to stay visible
-}
 
 
 
@@ -1093,12 +1215,10 @@ function calculateStars() {
 
 
 
-// ======= INITIAL LOAD =======
-window.addEventListener('DOMContentLoaded', () => {
-  updateRoadmapStars(); 
-  initMapAndStage();
-  updateHealthBars();
-});
+
+
+
+
 
 
 // ================================================================================================ //
