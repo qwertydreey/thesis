@@ -2812,20 +2812,45 @@ body {
   top: -54vh;
 }
 
-/* CSS para sa cooldown effect at grayscale */
-.potion {
-  transition: all 1s ease;  /* Smooth transition for effects */
+/* Style for feedback message */
+.feedback-message {
+  position: absolute;  /* Absolute positioning */
+  top: 50%;  /* Position vertically in the center */
+  left: 50%;  /* Position horizontally in the center */
+  transform: translate(-50%, -50%);  /* Adjust positioning to truly center */
+  margin-top: 10px;
+  text-align: center;
+  font-family: "Fredoka", sans-serif;
+  font-size: 3vh;  /* Increased font size */
+  font-weight: bold;
+  padding: 2.5vh 3vh;  /* Increased padding for a larger background */
+  border-radius: 2vh;
+  width: auto;
+  display: none;  /* Start hidden to prevent small background */
+  z-index: 9999;  /* Ensure it appears on top */
+  background-color: rgba(0, 0, 0, 0.7); /* Darker semi-dimmed black background */
+  color: white; /* White text */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* More prominent shadow */
+  opacity: 0; /* Initially hidden */
+  animation: fadeIn 0.5s ease-in-out forwards;
+  width: auto;  /* Set max width to prevent excessive width on large screens */
+  height: auto; /* Use vh for max height */
+  word-wrap: break-word;  /* Ensure long text doesn't overflow */
 }
 
-.potion.cooldown {
-  filter: grayscale(100%);
-  transform: translateY(-10px); /* Mag-aangat ng kaunti */
+
+/* Optional: Animation for the feedback message */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* Optional: Pagbalik ng potion image sa normal */
-.potion.cooldown-reset {
-  filter: grayscale(0%);
-  transform: translateY(0);
-}
+
+
+
 
 

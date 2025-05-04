@@ -212,6 +212,7 @@ let totalQuestionsAnswered = 0;
 function handleAttack() {
   const input = document.getElementById('number-input').value.trim();
   const answer = document.getElementById('correct-answer').value.trim();
+  const feedbackMessage = document.getElementById('feedback-message');
 
   if (input === '') {
     displayFeedback('Please enter a number!');
@@ -220,58 +221,98 @@ function handleAttack() {
 
   const isCorrect = parseFloat(input) === parseFloat(answer);
 
+  // Call handleAnswer to show the speech bubble based on whether the answer is correct or not
+  handleAnswer(input, answer);
+
   // Update progress whether the answer is correct or not
   totalQuestionsAnswered++;
 
+  // Handle correct answer
   if (isCorrect) {
-    fireballAttack();
+    fireballAttack(() => {
+      // Fireball has completed; decrease freeze turns only after fireball animation
+      decreaseFreezeTurns();
+    });
     correctAnswersCount++;
     console.log(`✅ Answered ${totalQuestionsAnswered} questions. Correct: ${correctAnswersCount}, Wrong: ${wrongAnswersCount}`);
+
+    // Apply correct class and display feedback
+    feedbackMessage.textContent = "✅ Correct!";
+    feedbackMessage.classList.remove('wrong');
+    feedbackMessage.classList.add('correct');
+    feedbackMessage.style.display = 'inline-block'; // Make feedback message visible
+    feedbackMessage.classList.add('fade-in'); // Add fade-in class to animate
+
   } else {
     wrongAnswersCount++;
-    displayFeedback('❌ Incorrect! Try again.');
 
     if (freezeTurns <= 0) {
-      monsterAttack();
+      monsterAttack(); // Monster attack happens if no freeze
     } else {
       console.log("❄️ Monster is frozen — no damage to player.");
     }
 
-    if (freezeTurns > 0) {
-      freezeTurns--;
-      if (freezeTurns === 0) {
-        setTimeout(() => {
-          removeFreezeEffect();
-          freezeTurnsDisplay.style.display = 'none';
-          console.log("⏹ Freeze effect has ended.");
-        }, 100);
-      }
-      updateFreezeTurnsDisplay();
-    }
+    // ** Immediately decrease freeze turns when the answer is incorrect **
+    decreaseFreezeTurns();
 
-    if (wrongAnswersCount >= 3) {
-      wrongAnswersCount = 0;
-    }
+    // Apply wrong class and display feedback
+    feedbackMessage.textContent = "❌ Incorrect answer!";
+    feedbackMessage.classList.remove('correct');
+    feedbackMessage.classList.add('wrong');
+    feedbackMessage.style.display = 'inline-block'; // Make feedback message visible
+    feedbackMessage.classList.add('fade-in'); // Add fade-in class to animate
+  }
+
+  // Hide feedback message after 4 seconds
+  setTimeout(() => {
+    feedbackMessage.classList.remove('fade-in'); // Remove fade-in class
+    feedbackMessage.classList.add('fade-out'); // Add fade-out class for animation
+
+    // Wait for fade-out to finish, then hide the element
+    setTimeout(() => {
+      feedbackMessage.style.display = 'none'; // Hide feedback message
+    }, 500); // Adjust this time to match the fade-out duration
+  }, 3000); // 4000ms = 4 seconds
+
+  if (wrongAnswersCount >= 1) {
+    wrongAnswersCount = 0;
   }
 
   // Update difficulty after 10 questions answered, based on correct answers
   if (totalQuestionsAnswered >= 10) {
-    // Update difficulty based on the number of correct answers
     currentDifficulty = evaluateDifficulty(correctAnswersCount, totalQuestionsAnswered);
-
-    // Save the updated difficulty to localStorage
-    updateDifficulty();
-
-    // Reset counters for the next round
-    resetCounters();
+    updateDifficulty(); // Save updated difficulty to localStorage
+    resetCounters(); // Reset counters for the next round
   }
 
   // Save progress after each question
   saveProgress();
-
   fetchNewQuestion(); // Always fetch a new question after answering
   document.getElementById('number-input').value = '';  // Clear input
 }
+
+
+
+
+// Helper function to handle freeze turn decrement
+function decreaseFreezeTurns() {
+  if (freezeTurns > 0) {
+    freezeTurns--;
+    updateFreezeTurnsDisplay(); // Update the display to show remaining freeze turns
+
+    // If freeze turns reach 0, remove the effect
+    if (freezeTurns === 0) {
+      setTimeout(() => {
+        removeFreezeEffect();
+        freezeTurnsDisplay.style.display = 'none';
+        console.log("⏹ Freeze effect has ended.");
+      }, 1100);
+    }
+  }
+}
+
+
+
 
 
 
@@ -956,7 +997,7 @@ function startMonsterSpawnAnimation() {
       // Cancel freeze effect if active
       if (freezePotionUsed) {
         freezePotionUsed = false;
-        freezeTurns = 0;
+        freezeTurns = 1;
         removeFreezeEffect();
         freezeTurnsDisplay.style.display = 'none';
       }
@@ -1385,7 +1426,7 @@ function monsterAttack() {
     // ✅ Apply damage and animation in one function
     setTimeout(() => {
       playerTakeDamage();
-    }, 600);
+    }, 0);
   }, 800);
 
   checkGameOver();
@@ -1414,7 +1455,6 @@ function updatePotionUI() {
 }
 
 
-// In the fireballAttack function, replace the static idle image with the equipped skin
 function fireballAttack() {
   if (sessionStorage.getItem('fireballTriggered')) return;
 
@@ -1500,11 +1540,23 @@ function fireballAttack() {
       player.style.height = "35vh";
       player.style.width = "auto";
       player.classList.remove("charging");
+
+      // Remove freeze effect after fireball hits the monster
+      if (freezeTurns > 0) {
+        freezeTurns--;
+        if (freezeTurns === 0) {
+          setTimeout(() => {
+            removeFreezeEffect();
+            freezeTurnsDisplay.style.display = 'none';
+            console.log("⏹ Freeze effect has ended.");
+          }, 100);
+        }
+        updateFreezeTurnsDisplay();
+      }
     }, 700);
   }, 600);
-
-  
 }
+
 
 
 
@@ -1578,7 +1630,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // Potion counts
 let healthPotions = 1;
 let thunderPotions = Infinity;
-let freezePotions = 1;
+let freezePotions = 3;
 
 let isMonsterSpawnAnimationInProgress = false;
 let isMonsterDeathAnimationInProgress = false;
@@ -1652,7 +1704,7 @@ function useFreezePotion() {
   isFreezePotionInUse = true;
   freezePotions--;
   freezePotionUsed = true;
-  freezeTurns = 3;
+  freezeTurns = 1;
   updatePotionUI();
   updateFreezeTurnsDisplay();
   freezeTurnsDisplay.style.display = 'block';
@@ -2160,14 +2212,13 @@ function showSpeechBubble(isCorrect) {
 
 
 // Example of how you would use it when the user answers a question
-function handleAnswer(input, correctAnswer) {
-  const isCorrect = input === correctAnswer;
+  function handleAnswer(input, correctAnswer) {
+    const isCorrect = input === correctAnswer;
+    // Show the speech bubble with the appropriate suggestion
+    showSpeechBubble(isCorrect);
 
-  // Show the speech bubble with the appropriate suggestion
-  showSpeechBubble(isCorrect);
-
-  // Your other game logic, such as updating score, etc.
-}
+    // Your other game logic, such as updating score, etc.
+  }
 
 // Ensure that the bubble is initially hidden when the game starts
 window.onload = function() {
