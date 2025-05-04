@@ -37,42 +37,71 @@ window.addEventListener('DOMContentLoaded', () => {
 // === Progress Functions ===
 function loadProgress() {
   const savedProgress = JSON.parse(localStorage.getItem('gameProgress'));
+
   if (savedProgress) {
-    // Only overwrite selectedMap if not provided in URL
     if (!urlParams.get('map')) {
       selectedMap = savedProgress.selectedMap;
     }
-  
-    // Only overwrite selectedStageKey if not provided in URL
+
     if (!urlParams.get('stage')) {
       selectedStageKey = savedProgress.selectedStageKey;
     }
-  
+
     mapDifficulty = savedProgress.mapDifficulty;
-  
-    correctAnswersCount = savedProgress.correctAnswersCount || 0;
-    totalQuestionsAnswered = savedProgress.totalQuestionsAnswered || 0;
-    wrongAnswersCount = savedProgress.wrongAnswersCount || 0;
+
+    // Log the previous map's answer counts before switching to a new one
+    if (savedProgress[selectedMap]) {
+      console.log(`📝 Loaded previous progress for ${selectedMap}: Correct Answers: ${savedProgress[selectedMap].correctAnswersCount}, Wrong Answers: ${savedProgress[selectedMap].wrongAnswersCount}, Total Questions Answered: ${savedProgress[selectedMap].totalQuestionsAnswered}`);
+
+      // Load counts for the current map
+      correctAnswersCount = savedProgress[selectedMap].correctAnswersCount || 0;
+      wrongAnswersCount = savedProgress[selectedMap].wrongAnswersCount || 0;
+      totalQuestionsAnswered = savedProgress[selectedMap].totalQuestionsAnswered || 0;
+    }
   }
-}  
-
-
-
-
+}
 
 
 // === Saving Progress ===
 function saveProgress() {
-  localStorage.setItem('gameProgress', JSON.stringify({
-    selectedMap,
-    selectedStageKey,
-    mapDifficulty,
-    correctAnswersCount,
-    totalQuestionsAnswered,
-    wrongAnswersCount
-  }));
-  console.log(`💾 Progress saved: Correct Answers: ${correctAnswersCount}, Total Questions Answered: ${totalQuestionsAnswered}`);
+  const savedProgress = JSON.parse(localStorage.getItem('gameProgress')) || {};
+
+  // Save counts per map
+  if (!savedProgress[selectedMap]) {
+    savedProgress[selectedMap] = {
+      correctAnswersCount: 0,
+      wrongAnswersCount: 0,
+      totalQuestionsAnswered: 0
+    };
+  }
+
+  // Update the progress for the current map
+  savedProgress[selectedMap].correctAnswersCount = correctAnswersCount;
+  savedProgress[selectedMap].wrongAnswersCount = wrongAnswersCount;
+  savedProgress[selectedMap].totalQuestionsAnswered = totalQuestionsAnswered;
+
+  // Log the progress for the current map
+  console.log(`💾 Progress saved for ${selectedMap}: Correct Answers: ${correctAnswersCount}, Wrong Answers: ${wrongAnswersCount}, Total Questions Answered: ${totalQuestionsAnswered}`);
+
+  // Save map-specific progress
+  localStorage.setItem('gameProgress', JSON.stringify(savedProgress));
 }
+
+
+function switchMap(newMap) {
+  // Before switching, save the current map progress
+  saveProgress();
+
+  // Log the switch
+  console.log(`🔄 Switching from ${selectedMap} to ${newMap}`);
+
+  // Now switch to the new map and load the new progress
+  selectedMap = newMap;
+  loadProgress();  // Load progress for the new map
+  fetchNewQuestion();  // Get a new question for the new map
+}
+
+
 
 
 
@@ -241,10 +270,24 @@ function updateDifficulty() {
 }
 
 function resetCounters() {
-  correctAnswersCount = 0;
-  totalQuestionsAnswered = 0;
-  saveProgress(); // Update saved values to 0 as well
+  const savedProgress = JSON.parse(localStorage.getItem('gameProgress')) || {};
+  if (!savedProgress[selectedMap]) {
+    savedProgress[selectedMap] = {
+      correctAnswersCount: 0,
+      wrongAnswersCount: 0,
+      totalQuestionsAnswered: 0
+    };
+  }
+
+  // Reset the counters for the selected map
+  savedProgress[selectedMap].correctAnswersCount = 0;
+  savedProgress[selectedMap].wrongAnswersCount = 0;
+  savedProgress[selectedMap].totalQuestionsAnswered = 0;
+
+  localStorage.setItem('gameProgress', JSON.stringify(savedProgress));  // Save the reset values
+  console.log(`✅ Counters reset for ${selectedMap}`);
 }
+
 
 
 
@@ -271,7 +314,7 @@ function updateMapDifficulty(mapName, difficulty) {
 
 
 
-// === Step 4: Initialize mapDifficulty AFTER loadProgress is defined ===
+// === Step 4: Initialize mapDifficulty  is defined ===
 
 let currentQuestionIndex = 0;
 let correctCount = 0;
