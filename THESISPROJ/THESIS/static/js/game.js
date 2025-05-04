@@ -38,18 +38,23 @@ window.addEventListener('DOMContentLoaded', () => {
 function loadProgress() {
   const savedProgress = JSON.parse(localStorage.getItem('gameProgress'));
   if (savedProgress) {
-    selectedMap = savedProgress.selectedMap;
-    selectedStageKey = savedProgress.selectedStageKey;
+    // Only overwrite selectedMap if not provided in URL
+    if (!urlParams.get('map')) {
+      selectedMap = savedProgress.selectedMap;
+    }
+  
+    // Only overwrite selectedStageKey if not provided in URL
+    if (!urlParams.get('stage')) {
+      selectedStageKey = savedProgress.selectedStageKey;
+    }
+  
     mapDifficulty = savedProgress.mapDifficulty;
-
+  
     correctAnswersCount = savedProgress.correctAnswersCount || 0;
     totalQuestionsAnswered = savedProgress.totalQuestionsAnswered || 0;
     wrongAnswersCount = savedProgress.wrongAnswersCount || 0;
   }
-
-  currentDifficulty = loadDifficultyForMap(selectedMap);
-  console.log(`✅ Loaded progress: ${correctAnswersCount} correct / ${totalQuestionsAnswered} total`);
-}
+}  
 
 
 
