@@ -285,8 +285,6 @@ function updateDifficulty() {
 }
 
 // === Reset Counters ===
-// === Reset Counters ===
-// === Reset Counters ===
 function resetCounters() {
   const savedProgress = JSON.parse(localStorage.getItem('gameProgress')) || {};
 
