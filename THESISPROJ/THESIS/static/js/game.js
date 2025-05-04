@@ -121,7 +121,7 @@ function loadDifficultyForMap(mapName) {
 function evaluateDifficulty(correctAnswers, totalQuestionsAnswered) {
   if (totalQuestionsAnswered >= 10) {
     console.log(`Evaluating difficulty... Correct: ${correctAnswers}, Total: ${totalQuestionsAnswered}`);
-    
+
     if (correctAnswers >= 8) {
       console.log("✅ Increasing difficulty");
       return getNextDifficulty(currentDifficulty);  // Increase difficulty
@@ -136,13 +136,22 @@ function evaluateDifficulty(correctAnswers, totalQuestionsAnswered) {
   return currentDifficulty;  // If we haven't reached 10 questions, return current difficulty
 }
 
+
 function getNextDifficulty(currentDifficulty) {
+  if (!['easy', 'normal', 'hard', 'extreme'].includes(currentDifficulty)) {
+    console.error("Invalid currentDifficulty:", currentDifficulty);
+    return 'easy';  // Default to 'easy' if the difficulty is invalid
+  }
   const levels = ['easy', 'normal', 'hard', 'extreme'];
   const index = levels.indexOf(currentDifficulty);
   return levels[Math.min(index + 1, levels.length - 1)];
 }
 
 function getPreviousDifficulty(currentDifficulty) {
+  if (!['easy', 'normal', 'hard', 'extreme'].includes(currentDifficulty)) {
+    console.error("Invalid currentDifficulty:", currentDifficulty);
+    return 'easy';  // Default to 'easy' if the difficulty is invalid
+  }
   const levels = ['easy', 'normal', 'hard', 'extreme'];
   const index = levels.indexOf(currentDifficulty);
   return levels[Math.max(index - 1, 0)];
@@ -245,12 +254,16 @@ function handleAttack() {
     }
   }
 
-  // Update difficulty if 10 questions answered
+  // Update difficulty after 10 questions answered, based on correct answers
   if (totalQuestionsAnswered >= 10) {
+    // Update difficulty based on the number of correct answers
     currentDifficulty = evaluateDifficulty(correctAnswersCount, totalQuestionsAnswered);
-    updateDifficulty(); // This should update the difficulty
-    console.log(`✅ Difficulty updated to: ${currentDifficulty}`);
-    resetCounters(); // Reset the counters for the next round
+
+    // Save the updated difficulty to localStorage
+    updateDifficulty();
+
+    // Reset counters for the next round
+    resetCounters();
   }
 
   // Save progress after each question
@@ -263,14 +276,21 @@ function handleAttack() {
 
 
 
+
+
 // === Difficulty Update Function ===
 function updateDifficulty() {
   localStorage.setItem(`${selectedMap}-difficulty`, currentDifficulty);  
   console.log(`Difficulty for ${selectedMap} updated to: ${currentDifficulty}`);
 }
 
+// === Reset Counters ===
+// === Reset Counters ===
+// === Reset Counters ===
 function resetCounters() {
   const savedProgress = JSON.parse(localStorage.getItem('gameProgress')) || {};
+
+  // Initialize selected map if it doesn't exist in saved progress
   if (!savedProgress[selectedMap]) {
     savedProgress[selectedMap] = {
       correctAnswersCount: 0,
@@ -284,9 +304,21 @@ function resetCounters() {
   savedProgress[selectedMap].wrongAnswersCount = 0;
   savedProgress[selectedMap].totalQuestionsAnswered = 0;
 
-  localStorage.setItem('gameProgress', JSON.stringify(savedProgress));  // Save the reset values
+  // Save the reset progress back to localStorage
+  localStorage.setItem('gameProgress', JSON.stringify(savedProgress));
+
+  // Also reset the in-game variables
+  correctAnswersCount = 0; // Reset correct answers count
+  wrongAnswersCount = 0; // Reset wrong answers count
+  totalQuestionsAnswered = 0; // Reset total questions answered
   console.log(`✅ Counters reset for ${selectedMap}`);
 }
+
+
+
+
+
+
 
 
 
