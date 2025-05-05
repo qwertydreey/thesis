@@ -300,12 +300,11 @@ filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.8)) /* Stronger shadow with higher o
 #monster-navigation {
     position: absolute; /* Absolute positioning within the #monster-container */
     top: 61vh;
-    left: 59.4vh;
+    left: 60.2vh;
     display: flex;
     justify-content: center;
-    gap: 36vw;/* Adjust gap between buttons */
+    gap: 76vh;/* Adjust gap between buttons */
     width: auto; /* Automatically adjust based on the content */
-    padding: 0 10px;
     box-sizing: border-box; /* Prevents overflow */
 }
 
