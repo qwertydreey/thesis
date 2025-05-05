@@ -243,45 +243,44 @@ def game():
         stars=stars
     )
 
-@app.route('/api/save-stars', methods=['POST'])
-def save_stars():
+@app.route('/update-star', methods=['POST'])
+def update_star():
     user_id = session.get('user_id')
     if not user_id:
         return jsonify({'success': False, 'error': 'User not logged in'}), 401
 
     data = request.json
-    stage_key = data.get('stage_key')  # format: 'addition-1'
-    stars_earned = data.get('stars')
+    stage = data.get('stage')  # e.g., 'addition-1'
+    stars = data.get('stars')
 
-    if not stage_key or stars_earned is None:
+    if not stage or stars is None:
         return jsonify({'success': False, 'error': 'Invalid input'}), 400
 
     try:
-        # Check if the stage already exists for the user
+        cursor = db.cursor(dictionary=True)
+
         cursor.execute("""
             SELECT stars_earned FROM user_stars
             WHERE user_id = %s AND stage_name = %s
-        """, (user_id, stage_key))
+        """, (user_id, stage))
         result = cursor.fetchone()
 
         if result:
-            # Update only if new stars are greater
-            if stars_earned > result['stars_earned']:
+            if stars > result['stars_earned']:
                 cursor.execute("""
                     UPDATE user_stars
                     SET stars_earned = %s
                     WHERE user_id = %s AND stage_name = %s
-                """, (stars_earned, user_id, stage_key))
+                """, (stars, user_id, stage))
         else:
-            # Insert new record
             cursor.execute("""
                 INSERT INTO user_stars (user_id, stage_name, stars_earned)
                 VALUES (%s, %s, %s)
-            """, (user_id, stage_key, stars_earned))
+            """, (user_id, stage, stars))
 
         db.commit()
         return jsonify({'success': True})
-
+    
     except Exception as e:
         print("❌ Error saving stars:", e)
         return jsonify({'success': False, 'error': str(e)}), 500
