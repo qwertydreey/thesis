@@ -1,10 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_bcrypt import Bcrypt
-from flask import session
 import mysql.connector
 import random
 import openai
-import json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'  # Change this later
@@ -157,27 +155,7 @@ def dashboard():
 
 @app.route('/roadmap')
 def roadmap():
-    user_id = session.get('user_id')
-    if not user_id:
-        flash("Please log in to view the roadmap.", "warning")
-        return redirect(url_for('login'))
-
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT stage_name, stars_earned 
-        FROM user_stars 
-        WHERE user_id = %s
-    """, (user_id,))
-    progress_data = cursor.fetchall()
-    cursor.close()
-
-    # Convert to a dictionary like: {'addition-1': 3, 'subtraction-2': 2}
-    progress_dict = {}
-    for row in progress_data:
-        key = f"{row['stage_name']}"  # Use stage_name here
-        progress_dict[key] = row['stars_earned']
-
-    return render_template('roadmap.html', progress_json=json.dumps(progress_dict))
+    return render_template('roadmap.html')
 
 @app.route('/shop')
 def shop():
@@ -201,10 +179,7 @@ def forgot_password():
 
 @app.route('/game', methods=['GET'])
 def game():
-    user_id = session.get('user_id')  # ✅ Get the actual logged-in user's ID
-    if not user_id:
-        flash("Please log in to play the game.", "warning")
-        return redirect(url_for('login'))
+    user_id = 1  # Hardcoded user ID
 
     # Get selected map and stage from query parameters
     selected_map = request.args.get('map', '')
@@ -215,76 +190,14 @@ def game():
     user_row = cursor.fetchone()
     first_name = user_row['first_name'] if user_row and 'first_name' in user_row else "PLAYER"
 
-    # Check if the user has a record for the selected map
-    cursor.execute("SELECT stars_earned FROM user_stars WHERE user_id = %s AND stage_name = %s", (user_id, selected_map))
-    star_row = cursor.fetchone()
-
-    print(f"User ID: {user_id}, Selected Map: {selected_map}, Star Row: {star_row}")  # Debug print
-
-    if not star_row:  # No record for this map/stage, so insert one with 0 stars
-        cursor.execute("""
-            INSERT INTO user_stars (user_id, stage_name, stars_earned)
-            VALUES (%s, %s, %s)
-        """, (user_id, selected_map, 0))  # Default stars_earned to 0
-        db.commit()  # Commit the transaction
-        print(f"Inserted new record for user {user_id} with 0 stars.")  # Debug print
-
-        stars = 0  # Set the default star value to 0
-    else:
-        stars = star_row['stars_earned']  # Retrieve the current star count
-        print(f"Stars fetched from database: {stars}")  # Debug print
-
     # Render the game template with the necessary context
     return render_template(
         'game.html',
         first_name=first_name,
         selected_map=selected_map,
-        selected_stage=selected_stage,
-        stars=stars
+        selected_stage=selected_stage
     )
 
-@app.route('/api/save-stars', methods=['POST'])
-def save_stars():
-    user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({'success': False, 'error': 'User not logged in'}), 401
-
-    data = request.json
-    stage_key = data.get('stage_key')  # format: 'addition-1'
-    stars_earned = data.get('stars')
-
-    if not stage_key or stars_earned is None:
-        return jsonify({'success': False, 'error': 'Invalid input'}), 400
-
-    try:
-        # Check if the stage already exists for the user
-        cursor.execute("""
-            SELECT stars_earned FROM user_stars
-            WHERE user_id = %s AND stage_name = %s
-        """, (user_id, stage_key))
-        result = cursor.fetchone()
-
-        if result:
-            # Update only if new stars are greater
-            if stars_earned > result['stars_earned']:
-                cursor.execute("""
-                    UPDATE user_stars
-                    SET stars_earned = %s
-                    WHERE user_id = %s AND stage_name = %s
-                """, (stars_earned, user_id, stage_key))
-        else:
-            # Insert new record
-            cursor.execute("""
-                INSERT INTO user_stars (user_id, stage_name, stars_earned)
-                VALUES (%s, %s, %s)
-            """, (user_id, stage_key, stars_earned))
-
-        db.commit()
-        return jsonify({'success': True})
-
-    except Exception as e:
-        print("❌ Error saving stars:", e)
-        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 
