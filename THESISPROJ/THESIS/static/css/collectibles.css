@@ -1,320 +1,428 @@
-/* General Styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #2C003E; /* Deep Purple Background */
+    background-color: #2C003E;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%; /* Ensures the body takes up the full width of the screen */
-}
-
-/* Container Styles */
-.container {
-    width: 100%; /* Full width */
-    height: 100vh; /* Full height of the viewport */
-    display: flex;
-    flex-direction: column;
-    background-color: #1A1A2E; /* Dark Background */
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    width: 100%;
     overflow: hidden;
 }
 
-/* Header Styles */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #4A148C; /* Deep Purple */
-    color: #FFEB3B; /* Gold */
+
+
+.tab-slide {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  transform: translateX(100%);
+  transition: transform 0.5s ease-in-out;
+  z-index: 1;
+
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%; /* ✅ Force stretch to fill screen exactly */
+  background-color: #000;
+  overflow: hidden;
 }
 
-.back-button {
-    text-decoration: none;
-    background-color: #FFEB3B; /* Gold */
-    color: #2C003E; /* Deep Purple */
-    padding: 8px 18px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.tab-slide.active {
+  transform: translateX(0);
+  z-index: 2;
 }
 
-.back-button:hover {
-    background-color: #FFD600; /* Slightly brighter gold on hover */
-    transform: scale(1.05);
+.tab-slide.out-left {
+  transform: translateX(-100%);
 }
 
-.title {
-    font-size: 1.6rem;
-    font-weight: bold;
-    text-align: center;
-    flex-grow: 1;
+.tab-slide.out-right {
+  transform: translateX(100%);
 }
 
-/* Tabs Section */
-.tabs {
-    display: flex;
-    justify-content: space-evenly;
-    background-color: #3E1C41; /* Dark Purple Accent */
-    border-bottom: 2px solid #FFEB3B; /* Gold Border */
-    padding: 10px;
-    width: 100%;
+#medals-section {
+  background-image: url('../images/collectiblesimg/Badges Background_.png');
 }
 
-.tab-button {
-    flex-grow: 1;
-    padding: 15px 0;
-    font-size: 1.2rem;
-    background: none;
-    border: none;
-    color: #FFEB3B; /* Gold */
-    cursor: pointer;
-    text-align: center;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+#skins-section {
+  background-image: url('../images/collectiblesimg/Costume Background.png');
 }
 
-.tab-button.active {
-    background-color: #FFEB3B; /* Gold */
-    color: #2C003E; /* Deep Purple */
-    font-weight: bold;
-}
 
-/* Content Section */
-.tab-content {
-    display: none;
-    flex-grow: 1;
-    padding: 20px;
-    height: 100%;
-    overflow-y: auto;
-}
 
-.tab-content.active {
-    display: block;
-}
 
-/* Grid Layout for items */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
-    padding: 15px;
-}
-
-.squarebadge  {
-    background-color: #5C6BC0; /* Muted Purple */
-    border-radius: 10px;
-    aspect-ratio: 1;
-    height: 150px;
-    display: flex;
-    flex-direction: column; /* Ensure content is stacked vertically */
-    justify-content: space-between; /* Space between image and button */
-    color: #FFEB3B; /* Gold */
-    font-weight: bold;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-    position: relative; /* Needed for absolute positioning of Equip button */
-}
-
-.squarebadge:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-.badge-image {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-  }
-
-/* Main container for skins and equip display */
-.skins-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 2vh;
-    flex-wrap: wrap;
-}
-
-/* Skins Grid (4 per row) */
-#skins-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 2vh;
-    justify-items: start;
-    flex: 1;
-}
-
-/* Skin Squares */
-.squareskin {
-    background-color: #5C6BC0;
-    border-radius: 10px;
-    aspect-ratio: 1;
-    height: 49vh;
-    width: 32vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    color: #FFEB3B;
-    font-weight: bold;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
-    cursor: pointer;
-    position: relative;
-    padding: 10px;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-.squareskin img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    border-radius: 8px;
-    display: block;
-    /* No animation applied globally */
-}
-
-/* Equip Display Area */
-.equip-display {
-    position: sticky;
-    top: 2vh;
-    height: 78vh;
-    width: 56vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Center the content vertically */
-    align-items: center;
-    background-color: #5C6BC0;
-    border-radius: 10px;
-    padding: 20px;
-    box-sizing: border-box;
-    color: #FFEB3B;
-}
-
-/* Equip Skin Image Container with Arrows */
-.equip-image-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 100%;
-    height: 50vh; /* Fixed height for consistency */
-    overflow: hidden; /* Prevents the image from spilling out of container */
-}
-
-/* Image inside Equip Display */
-.equip-image-container img {
-    max-height: 100%;
-    max-width: 70%; /* Ensure it doesn't take up too much space */
-    object-fit: contain;
-    border-radius: 8px;
-    display: block;
-}
-
-/* Left and Right Arrow Buttons */
-.arrow-btn {
+.nav-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: none;
+    font-size: 2rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
     border: none;
-    color: #FFEB3B;
-    font-size: 36px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
     cursor: pointer;
-    padding: 1vh;
-    user-select: none;
+    z-index: 3;
 }
 
-.arrow-btn.left {
-    left: 2vh; /* Position the left arrow on the left side with slight padding */
+/* Positioning based on context */
+.nav-btn.right {
+    right: 10vh;
 }
 
-.arrow-btn.right {
-    right: 6vh; /* Position the right arrow on the right side with slight padding */
+.nav-btn.left {
+    left: 5vh;
+}
+.badge-image {
+  position: absolute;
+  width: auto; /* Keeps badge image aspect ratio */
+  height: 15vh;
+  transition: opacity 0.3s, filter 0.3s; /* Smooth transition for grayscale/opacity */
 }
 
-/* Equip skin image inside the equip display box */
-#equip-skin-image {
-    max-width: 100%;
-    max-height: 30vh; /* Set max-height to avoid it growing too large */
-    object-fit: contain; /* Preserve aspect ratio and avoid stretching */
-    border-radius: 8px;
-    display: block;
+/* Adjust positions of specific badges by using custom classes */
+#multiplication-stage1-claimed {
+  position: absolute;
+  top: 10%;
+  left: 16%;
 }
 
-/* Add a class to trigger the animation for a specific image */
-.squareskin.selected img {
-    animation: subtleStretchIdle 1s ease-in-out infinite; /* Animation applied only when selected */
+#multiplication-stage2-claimed {
+  position: absolute;
+  top: 10%;
+  left: 39.5%;
 }
 
-@keyframes subtleStretchIdle {
-    0%, 100% {
-      transform: scaleY(1); /* Original size */
-    }
-    25% {
-      transform: scaleY(1.05); /* Slight stretch down */
-    }
-    50% {
-      transform: scaleY(1.03); /* Slight contraction after stretch */
-    }
-    75% {
-      transform: scaleY(1.05); /* Stretch down again, but still subtle */
-    }
+#multiplication-stage3-claimed {
+  position: absolute;
+  top: 10%;
+  left: 29%;
+}
+
+#addition-stage1-claimed {
+  position: absolute;
+  top: 10%;
+  left: 51.8%;
+}
+
+#addition-stage2-claimed {
+  position: absolute;
+  top: 10%;
+  left: 76.5%;
+}
+
+#addition-stage3-claimed {
+  position: absolute;
+  top: 10%;
+  left: 63%;
+}
+
+#subtraction-stage1-claimed {
+  position: absolute;
+  top: 27.5%;
+  left: 16%;
+}
+
+#subtraction-stage2-claimed {
+  position: absolute;
+  top: 27.5%;
+  left: 39.5%;
+}
+
+#subtraction-stage3-claimed {
+  position: absolute;
+  top: 27.5%;
+  left: 29%;
+}
+
+#division-stage1-claimed {
+  position: absolute;
+  top: 27.5%;
+  left: 51.8%;
+}
+
+#division-stage2-claimed {
+  position: absolute;
+  top: 27.5%;
+  left: 76.5%;
+}
+
+#division-stage3-claimed {
+  position: absolute;
+  top: 27.5%;
+  left: 63%;
+}
+
+#counting-stage1-claimed {
+  position: absolute;
+  top: 45%;
+  left: 16%;
+}
+
+#counting-stage2-claimed {
+  position: absolute;
+  top: 45%;
+  left: 39.5%;
+}
+
+#counting-stage3-claimed {
+  position: absolute;
+  top: 45%;
+  left: 29%;
+}
+
+#comparison-stage1-claimed {
+  position: absolute;
+  top: 45%;
+  left: 51.8%;
+}
+
+#comparison-stage2-claimed {
+  position: absolute;
+  top: 45%;
+  left: 76.5%;
+}
+
+#comparison-stage3-claimed {
+  position: absolute;
+  top: 45%;
+  left: 63%;
+}
+
+#numerals-stage1-claimed {
+  position: absolute;
+  top: 62.3%;
+  left: 16%;
+}
+
+#numerals-stage2-claimed {
+  position: absolute;
+  top: 62.3%;
+  left: 39.5%;
+}
+
+#numerals-stage3-claimed {
+  position: absolute;
+  top: 62.3%;
+  left: 29%;
+}
+
+#placevalue-stage1-claimed {
+  position: absolute;
+  top: 62.3%;
+  left: 51.8%;
+}
+
+#placevalue-stage2-claimed {
+  position: absolute;
+  top: 62.3%;
+  left: 76.5%;
+}
+
+#placevalue-stage3-claimed {
+  position: absolute;
+  top: 62.3%;
+  left: 63%;
+}
+
+  
+
+
+
+
+
+
+
+
+
+/* Skins Container */
+#skin-image {
+  position: absolute;
+  /* Optional: Adjust this container if needed */
+}
+
+/* Skin 1 positioning */
+.skin-1 {
+  top: 43%;
+  left: 48%;
+  height: 26%;
+  width: auto;
+  
+}
+
+/* Skin 2 positioning */
+.skin-2 {
+  top: 44%;
+  left: 47.4%;
+  height: 25%;
+  width: auto;
+}
+
+/* Skin 3 positioning */
+.skin-3 {
+  top: 46%;
+  left: 47.5%;
+  height: 23%;
+  width: auto;
+}
+
+/* Skin 4 positioning */
+.skin-4 {
+  top: 44%;
+  left: 48%;
+  height: 25%;
+  width: auto;
+}
+
+/* Skin 5 positioning */
+.skin-5 {
+  top: 43%;
+  left: 48%;
+  height: 27%;
+  width: auto;
+}
+
+/* Skin 6 positioning */
+.skin-6 {
+  top: 43%;
+  left: 48%;
+  height: 26%;
+  width: auto;
+}
+
+/* Skin 7 positioning */
+.skin-7 {
+  top: 43%;
+  left: 47.3%;
+  height: 26%;
+  width: auto;
+}
+
+/* Skin 8 positioning */
+.skin-8 {
+  top: 46%;
+  left: 47%;
+  height: 23%;
+  width: auto;
+}
+
+/* Skin 9 positioning */
+.skin-9 {
+  top: 43%;
+  left: 48.3%;
+  height: 26%;
+  width: auto;
+}
+
+/* Magic Mirror positioning */
+.mirror {
+  background-image: url('../images/collectiblesimg/Magic Mirror.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 41%;
+  height: 72%;
+  top: 16%;
+  left: 31%;
+  position: absolute;
+  z-index: -1;
 }
 
 /* Equip Button */
 .equip-btn {
-    margin-top: 2vh;
-    padding: 1vh 2vh;
-    background-color: #FFEB3B;
-    color: #5C6BC0;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  width: 12%;
+  height: 8%;
+  position: absolute;
+  top: 80%;
+  left: 45.6%;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-/* Equip Button - Equipped State */
+.equip-btn:hover:not(:disabled) {
+  transform: scale(1.02);
+}
+
+/* Equip State */
+.equip-btn.equip {
+  background-image: url('../images/collectiblesimg/equip.png');
+}
+
+/* Equipped State */
 .equip-btn.equipped {
-    background-color: #4CAF50; /* Green */
-    color: white;
-    cursor: not-allowed;
+  background-image: url('../images/collectiblesimg/equipped.png');
+  cursor: default;
 }
 
-/* Lock Status Label */
-.lock-label {
-    margin-top: 10px;
-    font-weight: bold;
-    color: #FFEB3B;
+/* Locked State */
+.equip-btn.locked {
+  background-image: url('../images/collectiblesimg/locked.png');
+  cursor: not-allowed;
 }
 
-/* Highlight for Equipped Skin */
-.squareskin.equipped {
-    outline: 4px solid #FFEB3B;
-    box-shadow: 0 0 15px #FFEB3B;
+
+
+
+
+
+
+/* General Carousel Button Styles */
+.carousel-btn {
+    position:absolute;
+    width: 8vh;
+    height: 8vh;
+    align-items: center;
+    cursor: pointer;
+    border: none; /* Remove any default borders */
+    background-color: transparent; /* Ensure the background is transparent */
+    transition: all 0.3s ease;
+
+  }
+  
+  /* Previous Button */
+  .prev-btn {
+    left: 41%; /* Change from vh to % for better responsiveness */
+    top: 80%; /* Adjusted percentage for better placement */
+    background-image: url('../images/atlasimg/left.png'); 
+    background-size: contain; /* Ensure the image fits inside the button */
+    background-repeat: no-repeat; /* Avoid repeating the background image */
+    background-position: center; /* Center the background image inside the button */
+    background-color: transparent; /* Transparent background to allow image to be visible */
 }
 
-/* Click animation */
-.squareskin {
-    transition: transform 0.3s ease;
-}
-.squareskin.click-animation {
-    transform: scale(1.05);
+/* Next Button */
+.next-btn {
+    left: 58.5%;    
+    top: 80%; /* Adjusted percentage for better placement */
+    background-image: url('../images/atlasimg/right.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
 }
 
-/* Styling for Not Yet Acquired label */
-.not-acquired-label {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: rgba(255, 0, 0, 0.7);
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: bold;
+/* Click Animation */
+.carousel-btn:active {
+    transform: scale(0.95); /* Shrinks slightly on click */
+    transition: transform 0.1s ease;
 }
+
+
+
+
+
+  

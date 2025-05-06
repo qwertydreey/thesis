@@ -49,9 +49,10 @@ html, body {
   }
   
   .map-btn.active img {
-    filter: brightness(0.6); /* Dim all images */
+    filter: drop-shadow(0 0 40px yellow) brightness(1.3);
     transition: all 0.2s ease;
   }
+  
   
   
   /* === Individual Buttons === */
@@ -336,15 +337,16 @@ filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.8)) /* Stronger shadow with higher o
     border: none; /* Remove any default borders */
     border-radius: 50%; /* Make the buttons round */
     background-color: transparent; /* Ensure the background is transparent */
-    transition: all 0.3s ease;
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.6))
     drop-shadow(3px 3px 4px rgba(0, 0, 0, 0.4))
     drop-shadow(-3px -3px 4px rgba(0, 0, 0, 0.4));
+    transition: transform 0.1s ease; /* Smooth transition for scale */
+
 }
 
-/* Hover effect to scale the buttons */
-#prev-btn:hover, #next-btn:hover {
-    transform: scale(1.1); /* Slightly enlarge the button on hover */
+#prev-btn:active, #next-btn:active {
+  transform: scale(0.9); /* Shrinks the button when clicked */
+  transition: transform 0.1s ease;
 }
 
   

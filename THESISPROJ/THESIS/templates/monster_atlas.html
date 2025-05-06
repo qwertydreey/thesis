@@ -358,6 +358,22 @@ document.getElementById('prev-btn').addEventListener('click', function() {
     }
 });
 
+// Get the previous and next buttons
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+
+// Apply bounce effect when the buttons are clicked
+prevBtn.addEventListener('click', function () {
+    // Add 'clicked' class for bounce effect
+    prevBtn.classList.add('clicked');
+    setTimeout(() => prevBtn.classList.remove('clicked'), 200);  // Remove it after animation finishes
+});
+
+nextBtn.addEventListener('click', function () {
+    // Add 'clicked' class for bounce effect
+    nextBtn.classList.add('clicked');
+    setTimeout(() => nextBtn.classList.remove('clicked'), 200);  // Remove it after animation finishes
+});
 
   </script>
 

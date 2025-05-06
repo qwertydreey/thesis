@@ -1,142 +1,151 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Collections</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/collectibles.css') }}">
-</head>
-<body>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Collections</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/collectibles.css') }}">
+  </head>
+  <body>
 
-  <div class="container">
-    <!-- Header Section -->
-    <div class="header">
-      <a href="{{ url_for('dashboard') }}" class="back-button">Back</a>
-      <div class="title">COLLECTIONS</div>
-      <div></div>
-    </div>
-  
-    <!-- Tabs Section -->
-    <div class="tabs">
-      <button class="tab-button active" onclick="showTab('medals')">Medals</button>
-      <button class="tab-button" onclick="showTab('skins')">Skins</button>
-    </div>
-  
-    <!-- Content Section -->
-    <div class="tab-content active" id="medals">
-      <div class="grid" id="medals-grid">
-        <!-- Badges will be injected here -->
+    <body>
+      <div class="tab-sections">
+        <!-- Medals Section -->
+        <div class="tab-slide active" id="medals-section">
+                <div class="grid" id="medals-grid">
+                    <!-- Medals content will be dynamically inserted here -->
+            </div>
+            <button class="nav-btn right" onclick="showSection('skins-section')">&#9654;</button>
+        </div>
+    
+        <!-- Skins Section (Moved inside tab-sections) -->
+        <div class="tab-slide" id="skins-section">
+          <div class="overlay-content">
+            <div class="skins-container">
+              <div class="skin-display">
+                <!-- Main Skin Image -->
+                <img id="skin-image" src="" alt="Equip Skin" class="skin-image" />
+                <!-- Secondary Image -->
+                <div class="mirror" alt="mirror"></div> 
+              </div>
+                <button class="carousel-btn prev-btn" id="prev-skin-btn"></button>
+                <button class="carousel-btn next-btn" id="next-skin-btn"></button>
+              <!-- Equip Button -->
+              <button class="equip-btn" id="equip-btn"></button>
+            </div>
+          </div>
+          <button class="nav-btn left" onclick="showSection('medals-section')">&#9664;</button>
+        </div>
+
+        
       </div>
-    </div>
+    </body>
+    
+
+
+
+    
+    
   
-<!-- Skins Tab -->
-<div class="tab-content" id="skins">
-  <div class="skins-container">
-    <div class="grid" id="skins-grid">
-      <!-- Skins will be injected here -->
-    </div>
+    
+    
+    
 
-    <!-- Equip Skin Display Area (Sticky right-side) -->
-    <div class="equip-display">
-      <div id="equip-skin-display">
-        <img id="equip-skin-image" src="" alt="Equip Skin" />
-        <!-- Equip button or other content here -->
-      </div>
-    </div>
-  </div>
-</div>
 
-  
+    <script>
+      let currentIndex = 0;
+      const sections = ['medals-section', 'skins-section'];
+    
+      function showSection(targetId) {
+        const current = document.getElementById(sections[currentIndex]);
+        const nextIndex = sections.indexOf(targetId);
+        const next = document.getElementById(targetId);
+    
+        // Remove active from current and add slide out class
+        current.classList.remove('active');
+        current.classList.add(nextIndex > currentIndex ? 'out-left' : 'out-right');
+    
+        // Reset next slide classes
+        next.classList.remove('out-left', 'out-right');
+        next.classList.add('active');
+    
+        currentIndex = nextIndex;
+      }
+    </script>
+    
+      
+    
+    
+    
+      
+    <script>
+      const badges = [
+        // Multiplication
+        { id: 'multiplication-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-1.png") }}' },
+        { id: 'multiplication-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-1.png") }}' },
+        { id: 'multiplication-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-1.png") }}' },
+    
+        // Addition
+        { id: 'addition-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-2.png") }}' },
+        { id: 'addition-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-2.png") }}' },
+        { id: 'addition-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-2.png") }}' },
+    
+        // Subtraction
+        { id: 'subtraction-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-3.png") }}' },
+        { id: 'subtraction-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-3.png") }}' },
+        { id: 'subtraction-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-3.png") }}' },
+    
+        // Division
+        { id: 'division-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-4.png") }}' },
+        { id: 'division-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-4.png") }}' },
+        { id: 'division-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-4.png") }}' },
+    
+        // Counting
+        { id: 'counting-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-5.png") }}' },
+        { id: 'counting-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-5.png") }}' },
+        { id: 'counting-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-5.png") }}' },
+    
+        // Comparison
+        { id: 'comparison-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-6.png") }}' },
+        { id: 'comparison-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-6.png") }}' },
+        { id: 'comparison-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-6.png") }}' },
+    
+        // Numerals
+        { id: 'numerals-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-7.png") }}' },
+        { id: 'numerals-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-7.png") }}' },
+        { id: 'numerals-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-7.png") }}' },
+    
+        // Place Value
+        { id: 'placevalue-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-8.png") }}' },
+        { id: 'placevalue-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-8.png") }}' },
+        { id: 'placevalue-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-8.png") }}' }
+      ];
+    
+      const medalsGrid = document.getElementById('medals-grid');
 
+badges.forEach(badge => {
+  const badgeDiv = document.createElement('div');
+  badgeDiv.className = 'squarebadge';
+  badgeDiv.id = badge.id;  // Make sure each div has a unique id
+
+  const img = document.createElement('img');
+  img.src = badge.src;
+  img.alt = 'Badge';
+  img.className = 'badge-image';
+
+  const claimed = localStorage.getItem(badge.id);
+  if (!claimed) {
+    img.style.filter = 'grayscale(100%)'; // optional: make unclaimed badge grayscale
+    img.style.opacity = '0.3'; // optional: make it look locked
+  }
+
+  badgeDiv.appendChild(img);
+  medalsGrid.appendChild(badgeDiv);
+});
+    </script>
+    
 
   <script>
-    function showTab(tabId) {
-      // Hide all tab contents
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-      });
-
-      // Remove active state from all tab buttons
-      document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active');
-      });
-
-      // Show the clicked tab
-      document.getElementById(tabId).classList.add('active');
-
-      // Set the clicked tab button as active
-      const activeButton = Array.from(document.querySelectorAll('.tab-button')).find(button => button.innerText.toLowerCase() === tabId);
-      if (activeButton) activeButton.classList.add('active');
-    }
-  </script>
-<script>
-const badges = [
-// Multiplication
-{ id: 'multiplication-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-1.png") }}' },
-{ id: 'multiplication-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-1.png") }}' },
-{ id: 'multiplication-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-1.png") }}' },
-
-// Addition
-{ id: 'addition-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-2.png") }}' },
-{ id: 'addition-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-2.png") }}' },
-{ id: 'addition-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-2.png") }}' },
-
-// Subtraction
-{ id: 'subtraction-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-3.png") }}' },
-{ id: 'subtraction-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-3.png") }}' },
-{ id: 'subtraction-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-3.png") }}' },
-
-// Division
-{ id: 'division-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-4.png") }}' },
-{ id: 'division-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-4.png") }}' },
-{ id: 'division-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-4.png") }}' },
-
-// Counting
-{ id: 'counting-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-5.png") }}' },
-{ id: 'counting-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-5.png") }}' },
-{ id: 'counting-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-5.png") }}' },
-
-// Comparison
-{ id: 'comparison-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-6.png") }}' },
-{ id: 'comparison-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-6.png") }}' },
-{ id: 'comparison-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-6.png") }}' },
-
-// Numerals
-{ id: 'numerals-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-7.png") }}' },
-{ id: 'numerals-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-7.png") }}' },
-{ id: 'numerals-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-7.png") }}' },
-
-// Place Value
-{ id: 'placevalue-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-8.png") }}' },
-{ id: 'placevalue-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-8.png") }}' },
-{ id: 'placevalue-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-8.png") }}' }
-
-];
-
-
-  const medalsGrid = document.getElementById('medals-grid');
-
-  badges.forEach(badge => {
-    const badgeDiv = document.createElement('div');
-    badgeDiv.className = 'squarebadge';
-
-    const img = document.createElement('img');
-    img.src = badge.src;
-    img.alt = 'Badge';
-    img.className = 'badge-image';
-
-    const claimed = localStorage.getItem(badge.id);
-    if (!claimed) {
-      img.style.filter = 'grayscale(100%)'; // optional: make unclaimed badge grayscale
-      img.style.opacity = '0.3'; // optional: make it look locked
-    }
-
-    badgeDiv.appendChild(img);
-    medalsGrid.appendChild(badgeDiv);
-  });
-</script>
-
-<script>
 document.addEventListener('DOMContentLoaded', function () {
     const skins = [
         { id: 'default-skin', src: '/static/images/gameimg/rewardimg/skins/idle.png' },
@@ -150,191 +159,128 @@ document.addEventListener('DOMContentLoaded', function () {
         { id: 'placevalue-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle8.png' }
     ];
 
-    const skinsGrid = document.getElementById('skins-grid');
-    const equipDisplay = document.querySelector('.equip-display');
-    const equipImage = document.getElementById('equip-skin-image');
-    const equipBtn = document.createElement('button');
-    equipBtn.className = 'equip-btn';
-    equipBtn.innerText = 'Equip';
+    const skinImage = document.getElementById('skin-image');
+    const prevSkinBtn = document.getElementById('prev-skin-btn');
+    const nextSkinBtn = document.getElementById('next-skin-btn');
+    const equipBtn = document.getElementById('equip-btn');
 
-    const playerIdle = document.getElementById('player-idle');
-    const playerSpawn = document.getElementById('player-spawn');
+    let currentSkinIndex = 0;
 
-    // Ensure default skin is always claimed
+    // Initialize default skin
     if (!localStorage.getItem('default-skin')) {
         localStorage.setItem('default-skin', 'claimed');
     }
 
-    let currentEquippedSkin = localStorage.getItem('equippedCharacterId');
-    if (!currentEquippedSkin) {
-        currentEquippedSkin = 'default-skin';
-        localStorage.setItem('equippedCharacterId', 'default-skin');
-    }
+    // Set equipped skin from localStorage or default to first skin
+    let currentEquippedSkin = localStorage.getItem('equippedCharacterId') || 'default-skin';
+    localStorage.setItem('equippedCharacterId', currentEquippedSkin);
 
-    let currentSkinIndex = skins.findIndex(skin => skin.id === currentEquippedSkin);
-    if (currentSkinIndex === -1) currentSkinIndex = 0;
-
-    // Function to update the equipped skin display
-    function updateEquipDisplay() {
+    // Function to update the display of the equipped skin
+    function updateSkinDisplay() {
         const skin = skins[currentSkinIndex];
         const isClaimed = skin.id === 'default-skin' || localStorage.getItem(skin.id) === 'claimed';
 
-        equipImage.src = skin.src;
+        skinImage.src = skin.src;
 
+        // Remove all previous skin-specific classes
+        skinImage.classList.remove(...skinImage.classList);
+
+        // Add the new skin-specific class based on the index
+        skinImage.classList.add(`skin-${currentSkinIndex + 1}`);  // Add skin-1, skin-2, etc.
+
+        // Make skin grayscale and low opacity if not acquired
         if (isClaimed) {
-            equipImage.style.filter = 'none';
-            equipImage.style.opacity = '1';
-            equipBtn.style.display = 'block';
-            equipBtn.disabled = false;
-            equipBtn.innerText = 'Equip';
-            equipBtn.onclick = function () {
-                equipSkin(skin.id);
-            };
+            skinImage.style.filter = 'none';
+            skinImage.style.opacity = '1';
         } else {
-            equipImage.style.filter = 'grayscale(100%)';
-            equipImage.style.opacity = '0.3';
-            equipBtn.style.display = 'none';
+            skinImage.style.filter = 'grayscale(100%)';
+            skinImage.style.opacity = '0.3';
         }
 
-        if (currentEquippedSkin === skin.id) {
-            equipBtn.innerText = 'Equipped';
+        // Show "Equip" button only if skin is claimed
+        equipBtn.classList.remove('equip', 'equipped', 'locked');
+
+        if (!isClaimed) {
+            equipBtn.classList.add('locked');
             equipBtn.disabled = true;
+        } else if (currentEquippedSkin === skin.id) {
+            equipBtn.classList.add('equipped');
+            equipBtn.disabled = true;
+        } else {
+            equipBtn.classList.add('equip');
+            equipBtn.disabled = false;
         }
-
-        highlightEquippedSkin();
     }
 
-    // Equip the selected skin and update localStorage
+    // Equip the selected skin
     function equipSkin(skinId) {
-        console.log("Equipping skin with ID:", skinId);
         const selectedSkin = skins.find(skin => skin.id === skinId);
         if (!selectedSkin) {
             console.error("Selected skin not found:", skinId);
             return;
         }
 
-        console.log("Selected skin:", selectedSkin);
-
         // Save the skin ID to localStorage
         localStorage.setItem('equippedCharacterId', selectedSkin.id);
 
-        // Update equipped skin immediately after equipping
+        // Update display immediately
         currentEquippedSkin = selectedSkin.id;
+        updateSkinDisplay();
 
-        // Update the display for the equipped skin and button
-        updateEquipDisplay();
-
-        // Use window.onload or a higher delay for better timing
-        window.onload = function() {
-            const player = document.getElementById("player-idle");
-            console.log("Player element found:", player);  // Debugging line
-
-            if (!player) {
-                console.error("Player element not found");
-                return;
-            }
-
-            // Ensure the player element is visible by removing the 'hidden' class
-            player.classList.remove('hidden');
-
-            // Update player image source to the selected skin
+        // Apply the selected skin to the player's character
+        const player = document.getElementById("player-idle");
+        if (player) {
             player.src = selectedSkin.src;
-
-            console.log("Skin equipped:", selectedSkin.src);
-        };
-    }
-
-    // Reset visuals for all skins
-    function updateAllSkinsDisplay() {
-        document.querySelectorAll('.equip-btn').forEach(button => {
-            button.innerText = 'Equip';
-            button.disabled = false;
-        });
-        highlightEquippedSkin();
-    }
-
-    // Inject skin image to grid
-    function injectSkin(imageSrc, isClaimed, id) {
-        const skinDiv = document.createElement('div');
-        skinDiv.className = 'squareskin';
-        skinDiv.setAttribute('data-skin-id', id);
-
-        const img = document.createElement('img');
-        img.src = imageSrc;
-        img.alt = 'Skin';
-        img.className = 'skin-image';
-        img.style.width = '100%';
-        img.style.objectFit = 'cover';
-        img.style.borderRadius = '8px';
-
-        const notAcquiredLabel = document.createElement('div');
-        notAcquiredLabel.className = 'not-acquired-label';
-        notAcquiredLabel.innerText = 'Not Yet Acquired';
-
-        if (!isClaimed) {
-            img.style.filter = 'grayscale(100%)';
-            img.style.opacity = '0.3';
-            skinDiv.appendChild(notAcquiredLabel);
         }
 
-        skinDiv.appendChild(img);
-
-        skinDiv.addEventListener('click', () => {
-            currentSkinIndex = skins.findIndex(skin => skin.id === id);
-            updateEquipDisplay();
-            skinDiv.classList.add('click-animation');
-            setTimeout(() => skinDiv.classList.remove('click-animation'), 300);
-        });
-
-        skinsGrid.appendChild(skinDiv);
+        console.log("Skin equipped:", selectedSkin.src);
     }
 
-    // Highlight the equipped skin
-    function highlightEquippedSkin() {
-        document.querySelectorAll('.squareskin').forEach(card => {
-            card.style.border = 'none';
-        });
-
-        if (currentEquippedSkin) {
-            const equippedSkin = skins.find(skin => skin.id === currentEquippedSkin);
-            if (equippedSkin) {
-                const skinCard = document.querySelector(`.squareskin[data-skin-id="${equippedSkin.id}"]`);
-                if (skinCard) {
-                    skinCard.style.border = '3px solid #FFD700';
-                }
-            }
-        }
+    // Update to show next skin in carousel
+    function showNextSkin() {
+        currentSkinIndex = (currentSkinIndex + 1) % skins.length;
+        updateSkinDisplay();
     }
 
-    // Initialize skins
-    skins.forEach((skin) => {
-        const isClaimed = skin.id === 'default-skin' || localStorage.getItem(skin.id) === 'claimed';
-        injectSkin(skin.src, isClaimed, skin.id);
+    // Update to show previous skin in carousel
+    function showPrevSkin() {
+        currentSkinIndex = (currentSkinIndex - 1 + skins.length) % skins.length;
+        updateSkinDisplay();
+    }
+
+    // Add event listeners for buttons
+    nextSkinBtn.addEventListener('click', showNextSkin);
+    prevSkinBtn.addEventListener('click', showPrevSkin);
+
+    // Add event listener for the Equip button
+    equipBtn.addEventListener('click', function () {
+        const selectedSkin = skins[currentSkinIndex];
+        equipSkin(selectedSkin.id);
     });
 
-    equipDisplay.appendChild(equipBtn);
-    highlightEquippedSkin();
-    updateEquipDisplay();
+    // Initialize display
+    updateSkinDisplay();
 });
-</script>
 
-  
+  </script>
 
-  
-  
+    
 
-
-  
-  
+    
+    
 
 
-
+    
+    
 
 
 
 
 
 
-  
-</body>
-</html>
+
+
+
+    
+  </body>
+  </html>
