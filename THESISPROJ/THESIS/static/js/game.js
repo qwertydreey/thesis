@@ -1283,100 +1283,65 @@ function checkGameOver() {
 function getNextMap(currentMap, currentStage) {
   const mapOrder = ['multiplication', 'addition', 'subtraction', 'division', 'counting', 'comparison', 'numerals', 'placevalue'];
 
-  // Find the current map's index
   const currentMapIndex = mapOrder.indexOf(currentMap);
-
   if (currentMapIndex === -1) {
     console.error('Current map not found!');
     return;
   }
 
-  // After stage 3, stay on the same map and stage (do not automatically switch map)
   return `map=${currentMap}&stage=${currentStage}`;
 }
 
-  
-  
-  
-  
-  
-  
-  function incrementStageProgress(stageKey) {
-        //================CONNECTION > DATABASE==========================//
-    let stageData = JSON.parse(localStorage.getItem(stageKey)) || { stars: 0, completed: false };
-  
-    if (stageData.stars < 3) {
-        stageData.stars++;
+// Increment stars in the database instead of localStorage
+function incrementStageProgress(stageKey) {
+  const starsToAdd = 1;
+
+  fetch('/update-star', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      stage: stageKey,
+      stars: starsToAdd  // Add 1 star at a time
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      // Update roadmap display based on new data
+      SERVER_PROGRESS[stageKey] = Math.min((SERVER_PROGRESS[stageKey] || 0) + 1, 3);
+      updateRoadmapStars(stageKey);
+    } else {
+      console.error("❌ Failed to update stars:", data.error);
     }
-  
-    if (stageData.stars === 3) {
-        stageData.completed = true;
-    }
-      //================CONNECTION > DATABASE==========================//
-    localStorage.setItem(stageKey, JSON.stringify(stageData));
-    setStars(`.${stageKey}-stars`, stageKey);
-  }
-  
-
-
-  
-
-
-// STARS UPDATE SA ROADMAP  //
-
-function updateStageProgress(selectedMap, selectedStage, starsEarned) {
-  const stageKey = `${selectedMap}-${selectedStage}`;
-
-  // Get existing progress from localStorage (if any)
-  const currentProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
-
-  // Check if the stage is completed and whether we earned more stars
-  const existingStars = currentProgress[stageKey]?.stars || 0;
-
-  if (starsEarned > existingStars) {
-    currentProgress[stageKey] = {
-      stars: starsEarned,
-      completed: true
-    };
-        //================CONNECTION > DATABASE==========================//
-    localStorage.setItem('stageProgress', JSON.stringify(currentProgress));
-  }
+  })
+  .catch(err => {
+    console.error("❌ Error updating stars:", err);
+  });
 }
 
-
-
-
+// No longer needed, but kept if you still use SERVER_PROGRESS elsewhere
 function updateRoadmapStars(stageKeyJustCompleted) {
-      //================CONNECTION > DATABASE==========================//
-  const progress = JSON.parse(localStorage.getItem('stageProgress')) || {};
-  const stageProgress = progress[stageKeyJustCompleted];
-
-  if (!stageProgress) return;
+  const stageStars = SERVER_PROGRESS[stageKeyJustCompleted];
+  if (!stageStars) return;
 
   const roadmapItem = document.querySelector(`.stage-item[data-stage-key="${stageKeyJustCompleted}"]`);
-
   if (roadmapItem) {
     const starWrapper = roadmapItem.querySelector('.star-wrapper');
     const starImgs = starWrapper.querySelectorAll('.progress-star');
-    
+
     starImgs.forEach((img, index) => {
-      if (index < stageProgress.stars) {
-        img.src = window.STAR_IMAGES.filled;  // 🔁 use global variable from HTML
-      } else {
-        img.src = window.STAR_IMAGES.empty;
-      }
+      img.src = index < stageStars ? window.STAR_IMAGES.filled : window.STAR_IMAGES.empty;
     });
   }
 }
 
-
-
-
 function calculateStars() {
   if (currentPlayerHealth === 0) {
-    return 0;  // Game over, no stars awarded
+    return 0;
   } else {
-    return 1;  // Always 1 star when the stage is completed
+    return 1; // Always 1 star when the stage is completed
   }
 }
 

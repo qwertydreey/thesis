@@ -21,78 +21,28 @@
           </a>
         </div>
 
-        <!-- Map Buttons -->
-        <div class="roadmap-btn-wrapper">
-          <a href="{{ url_for('stages', map='addition') }}" class="roadmap-btn addition-village" data-map="addition"></a>
-        </div>
-        <div class="star-wrapper addition-village-stars">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-        </div>
+        <!-- Map Buttons and Stars -->
+        {% set maps = [
+          ('addition', 'addition-village'),
+          ('subtraction', 'subtraction-sands'),
+          ('comparison', 'comparison-cliffs'),
+          ('placevalue', 'place-value-town'),
+          ('multiplication', 'multiplication-mirage'),
+          ('division', 'division-river'),
+          ('numerals', 'numeral-ruins'),
+          ('counting', 'counting-springs')
+        ] %}
 
+        {% for map, class_name in maps %}
         <div class="roadmap-btn-wrapper">
-          <a href="{{ url_for('stages', map='subtraction') }}" class="roadmap-btn subtraction-sands" data-map="subtraction"></a>
+          <a href="{{ url_for('stages', map=map) }}" class="roadmap-btn {{ class_name }}" data-map="{{ map }}"></a>
         </div>
-        <div class="star-wrapper subtraction-sands-stars">
+        <div class="star-wrapper {{ class_name }}-stars">
           <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
           <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
           <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
         </div>
-
-        <div class="roadmap-btn-wrapper">
-          <a href="{{ url_for('stages', map='comparison') }}" class="roadmap-btn comparison-cliffs" data-map="comparison"></a>
-        </div>
-        <div class="star-wrapper comparison-cliffs-stars">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-        </div>
-
-        <div class="roadmap-btn-wrapper">
-          <a href="{{ url_for('stages', map='placevalue') }}" class="roadmap-btn place-value-town" data-map="placevalue"></a>
-        </div>
-        <div class="star-wrapper place-value-town-stars">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-        </div>
-
-        <div class="roadmap-btn-wrapper">
-          <a href="{{ url_for('stages', map='multiplication') }}" class="roadmap-btn multiplication-mirage" data-map="multiplication"></a>
-        </div>
-        <div class="star-wrapper multiplication-mirage-stars">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-        </div>
-
-        <div class="roadmap-btn-wrapper">
-          <a href="{{ url_for('stages', map='division') }}" class="roadmap-btn division-river" data-map="division"></a>
-        </div>
-        <div class="star-wrapper division-river-stars">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-        </div>
-
-        <div class="roadmap-btn-wrapper">
-          <a href="{{ url_for('stages', map='numerals') }}" class="roadmap-btn numeral-ruins" data-map="numerals"></a>
-        </div>
-        <div class="star-wrapper numeral-ruins-stars">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-        </div>
-
-        <div class="roadmap-btn-wrapper">
-          <a href="{{ url_for('stages', map='counting') }}" class="roadmap-btn counting-springs" data-map="counting"></a>
-        </div>
-        <div class="star-wrapper counting-springs-stars">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-1" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-2" alt="star">
-          <img src="{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}" class="progress-star star-3" alt="star">
-        </div>
+        {% endfor %}
       </div> <!-- .roadmap-buttons -->
     </div> <!-- .roadmap-content -->
   </div> <!-- .roadmap-wrapper -->
@@ -102,35 +52,46 @@
   const starFilled = "{{ url_for('static', filename='images/gameimg/roadmap/star-filled.png') }}";
   const starEmpty = "{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}";
 
-  function setStars(wrapperSelector, mapPrefix) {
-  const wrapper = document.querySelector(wrapperSelector);
-  const stars = wrapper.querySelectorAll('.progress-star');
-    //================CONNECTION > DATABASE==========================//
-  const progress = JSON.parse(localStorage.getItem('stageProgress')) || {};
-
-  for (let i = 0; i < stars.length; i++) {
-    const stageKey = `${mapPrefix}-${i + 1}`;
-    const stageData = progress[stageKey];
-    stars[i].src = stageData && stageData.stars > 0 ? starFilled : starEmpty;
+  async function fetchUserProgress() {
+    try {
+      const response = await fetch("/api/user_progress");
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.error("Failed to load user progress:", err);
+      return {};
+    }
   }
-}
 
+  function setStars(wrapperSelector, starsCount) {
+    const wrapper = document.querySelector(wrapperSelector);
+    const stars = wrapper.querySelectorAll('.progress-star');
+    for (let i = 0; i < stars.length; i++) {
+      stars[i].src = i < starsCount ? starFilled : starEmpty;
+    }
+  }
 
+  async function updateAllStars() {
+    const progress = await fetchUserProgress();
 
-  // Call this for each map
-  setStars('.addition-village-stars', 'addition');
-  setStars('.subtraction-sands-stars', 'subtraction');
-  setStars('.comparison-cliffs-stars', 'comparison');
-  setStars('.place-value-town-stars', 'placevalue');
-  setStars('.multiplication-mirage-stars', 'multiplication');
-  setStars('.division-river-stars', 'division');
-  setStars('.numeral-ruins-stars', 'numerals');
-  setStars('.counting-springs-stars', 'counting');
+    const maps = [
+      ['addition', 'addition-village-stars'],
+      ['subtraction', 'subtraction-sands-stars'],
+      ['comparison', 'comparison-cliffs-stars'],
+      ['placevalue', 'place-value-town-stars'],
+      ['multiplication', 'multiplication-mirage-stars'],
+      ['division', 'division-river-stars'],
+      ['numerals', 'numeral-ruins-stars'],
+      ['counting', 'counting-springs-stars']
+    ];
+
+    maps.forEach(([mapKey, wrapperClass]) => {
+      const stars = progress[mapKey] || 0;
+      setStars(`.${wrapperClass}`, stars);
+    });
+  }
+
+  updateAllStars();
 </script>
-
-
-
-
-
 </body>
 </html>
