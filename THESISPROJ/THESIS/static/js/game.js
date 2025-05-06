@@ -1190,9 +1190,11 @@ function checkGameOver() {
     if (selectedMap) {
       const starsEarned = 1;
           //================CONNECTION > DATABASE==========================//
-          if (starsEarned > currentStars) {
-            saveStarsToDatabase(selectedMap, starsEarned);
-          }          
+      const currentStars = parseInt(localStorage.getItem(selectedMap)) || 0;
+      if (starsEarned > currentStars) {
+            //================CONNECTION > DATABASE==========================//
+        localStorage.setItem(selectedMap, starsEarned);
+      }
     }
   
     if (selectedMap && selectedStage) {
@@ -1245,36 +1247,10 @@ function checkGameOver() {
   
   
   
-  function saveStarsToDatabase(stage, stars) {
-    fetch('/update-star', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            stage: stage,
-            stars: stars
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to save stars to database');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('✅ Stars saved to DB:', data);
-    })
-    .catch(error => {
-        console.error('❌ Error saving stars:', error);
-    });
-}
-
   
   
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  
   
   
   
