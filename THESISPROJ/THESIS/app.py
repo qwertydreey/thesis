@@ -243,41 +243,42 @@ def game():
         stars=stars
     )
 
-@app.route('/api/save-stars', methods=['POST'])
-def save_stars():
+@app.route('/update-star', methods=['POST'])
+def update_star():
     user_id = session.get('user_id')
     if not user_id:
         return jsonify({'success': False, 'error': 'User not logged in'}), 401
 
     data = request.json
-    stage_key = data.get('stage_key')  # format: 'addition-1'
-    stars_earned = data.get('stars')
+    stage = data.get('stage')
+    stars = data.get('stars')
 
-    if not stage_key or stars_earned is None:
+    if not stage or stars is None:
         return jsonify({'success': False, 'error': 'Invalid input'}), 400
 
     try:
-        # Check if the stage already exists for the user
+        cursor = db.cursor(dictionary=True)
+
         cursor.execute("""
             SELECT stars_earned FROM user_stars
             WHERE user_id = %s AND stage_name = %s
-        """, (user_id, stage_key))
+        """, (user_id, stage))
         result = cursor.fetchone()
 
         if result:
-            # Update only if new stars are greater
-            if stars_earned > result['stars_earned']:
+            # Only update if the new stars are higher and max is 3
+            if result['stars_earned'] < 3:
+                updated_stars = min(result['stars_earned'] + stars, 3)
                 cursor.execute("""
                     UPDATE user_stars
                     SET stars_earned = %s
                     WHERE user_id = %s AND stage_name = %s
-                """, (stars_earned, user_id, stage_key))
+                """, (updated_stars, user_id, stage))
         else:
-            # Insert new record
             cursor.execute("""
                 INSERT INTO user_stars (user_id, stage_name, stars_earned)
                 VALUES (%s, %s, %s)
-            """, (user_id, stage_key, stars_earned))
+            """, (user_id, stage, min(stars, 3)))
 
         db.commit()
         return jsonify({'success': True})
@@ -285,6 +286,44 @@ def save_stars():
     except Exception as e:
         print("❌ Error saving stars:", e)
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/user_progress')
+def get_user_progress():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({}), 401  # Return unauthorized if not logged in
+
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT stage_name, stars_earned 
+        FROM user_stars 
+        WHERE user_id = %s
+    """, (user_id,))
+    progress_data = cursor.fetchall()
+    cursor.close()
+
+    # Create map-level progress dictionary
+    map_stars = {
+        'addition': 0,
+        'subtraction': 0,
+        'comparison': 0,
+        'placevalue': 0,
+        'multiplication': 0,
+        'division': 0,
+        'numerals': 0,
+        'counting': 0
+    }
+
+    for row in progress_data:
+        stage_name = row['stage_name']  # e.g., 'addition-1'
+        stars = row['stars_earned']
+        map_key = stage_name.split('-')[0]  # Extract 'addition' part
+        if map_key in map_stars:
+            map_stars[map_key] += stars
+
+    return jsonify(map_stars)
+        
 
 
 
