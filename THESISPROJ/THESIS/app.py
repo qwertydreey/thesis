@@ -250,7 +250,7 @@ def update_star():
         return jsonify({'success': False, 'error': 'User not logged in'}), 401
 
     data = request.json
-    stage = data.get('stage')
+    stage = data.get('stage')  # e.g., 'addition-1'
     stars = data.get('stars')
 
     if not stage or stars is None:
@@ -266,64 +266,24 @@ def update_star():
         result = cursor.fetchone()
 
         if result:
-            # Only update if the new stars are higher and max is 3
-            if result['stars_earned'] < 3:
-                updated_stars = min(result['stars_earned'] + stars, 3)
+            if stars > result['stars_earned']:
                 cursor.execute("""
                     UPDATE user_stars
                     SET stars_earned = %s
                     WHERE user_id = %s AND stage_name = %s
-                """, (updated_stars, user_id, stage))
+                """, (stars, user_id, stage))
         else:
             cursor.execute("""
                 INSERT INTO user_stars (user_id, stage_name, stars_earned)
                 VALUES (%s, %s, %s)
-            """, (user_id, stage, min(stars, 3)))
+            """, (user_id, stage, stars))
 
         db.commit()
         return jsonify({'success': True})
-
+    
     except Exception as e:
         print("❌ Error saving stars:", e)
         return jsonify({'success': False, 'error': str(e)}), 500
-
-
-@app.route('/api/user_progress')
-def get_user_progress():
-    user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({}), 401  # Return unauthorized if not logged in
-
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT stage_name, stars_earned 
-        FROM user_stars 
-        WHERE user_id = %s
-    """, (user_id,))
-    progress_data = cursor.fetchall()
-    cursor.close()
-
-    # Create map-level progress dictionary
-    map_stars = {
-        'addition': 0,
-        'subtraction': 0,
-        'comparison': 0,
-        'placevalue': 0,
-        'multiplication': 0,
-        'division': 0,
-        'numerals': 0,
-        'counting': 0
-    }
-
-    for row in progress_data:
-        stage_name = row['stage_name']  # e.g., 'addition-1'
-        stars = row['stars_earned']
-        map_key = stage_name.split('-')[0]  # Extract 'addition' part
-        if map_key in map_stars:
-            map_stars[map_key] += stars
-
-    return jsonify(map_stars)
-        
 
 
 
