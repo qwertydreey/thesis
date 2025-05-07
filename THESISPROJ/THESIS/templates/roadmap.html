@@ -116,6 +116,8 @@
       const stageData = progress[stageKey];
       const starsEarned = (stageData && stageData.stars) || 0;
 
+      console.log(`Stage Key: ${stageKey}, Stars Earned: ${starsEarned}`); // Debug log
+
       totalStars += starsEarned;
 
       // Set stars for the current stage
@@ -127,7 +129,8 @@
     // Update overall stars for the map in the roadmap (max 3 stars per map)
     const mapProgress = document.querySelector(`.${mapPrefix}-progress`);
     if (mapProgress) {
-      const totalMapStars = Math.min(totalStars, 3); // max 3 stars per map
+      const totalMapStars = Math.min(totalStars, 3); // Ensure max 3 stars per map
+      console.log(`Total Stars for ${mapPrefix}: ${totalMapStars}`); // Debug log
       mapProgress.src = totalMapStars === 3 ? starFilled : (totalMapStars > 0 ? starEmpty : starFilled);
     }
   }
@@ -148,6 +151,7 @@
   fetch('/get_stage_progress')
     .then(response => response.json())
     .then(progress => {
+      console.log("Stage Progress:", progress); // Debug log
       maps.forEach(([selector, prefix]) => {
         setStars(selector, prefix, progress);
       });
@@ -155,6 +159,10 @@
     .catch(error => {
       console.error('Failed to load stage progress:', error);
     });
+
+
+
+    
 </script>
 
 

@@ -140,8 +140,10 @@ def chatbot():
 
 @app.route('/stages')
 def stages():
-    selected_map = request.args.get('map', None)
-    return render_template('stages.html', selected_map=selected_map)
+    # Retrieve the selected map from the URL query parameters
+    selected_map = request.args.get('map', None)  # Get the selected map (e.g., multiplication)
+    selected_stage = request.args.get('stage', '1')  # Default to stage 1 if no stage is specified
+    return render_template('stages.html', selected_map=selected_map, selected_stage=selected_stage)
 
 @app.route('/dashboard')
 def dashboard():
@@ -235,32 +237,35 @@ def save_progress():
 
     return jsonify({"message": "Progress saved successfully"}), 200
 
+
 @app.route('/get_stage_progress')
 def get_stage_progress():
     user_id = session.get('user_id')
     if not user_id:
-        return jsonify({})  # Return an empty dictionary if not logged in
+        return jsonify({})  # Return an empty response if the user is not logged in
 
-    # Execute the query to fetch user progress
+    # Query to get all stage progress for the logged-in user
     cursor.execute("""
         SELECT map_name, stage_number, stars 
         FROM user_progress 
         WHERE user_id = %s
     """, (user_id,))
-    
-    # Fetch all the rows returned by the query
+
     rows = cursor.fetchall()
 
-    # Prepare the dictionary to store the progress
+    # Prepare the stage progress in the required format
     progress = {}
-
-    # Populate the progress dictionary with the data from the query result
     for row in rows:
-        key = f"{row['map_name']}-{row['stage_number']}"  # Format key as 'map-name-stage-number'
-        progress[key] = {"stars": row['stars']}  # Store the stars for each stage
+        # Use a combined key for map and stage like 'subtraction-2'
+        key = f"{row['map_name']}-{row['stage_number']}"
+        progress[key] = {"stars": row['stars']}
+    
+    # Debug log to check the data structure
+    print(progress)
 
-    # Return the progress dictionary as a JSON response
+    # Return the stage progress as JSON
     return jsonify(progress)
+
 
 
 
