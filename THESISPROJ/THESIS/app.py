@@ -21,7 +21,7 @@ cursor = db.cursor(dictionary=True)
 
 # 🔥 OpenRouter Setup
 openai.api_base = "https://openrouter.ai/api/v1"
-openai.api_key = "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"  # ← Replace this with your OpenRouter API Key
+openai.api_key = "Bearer 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"  # ← Replace this with your OpenRouter API Key
 
 # --- Routes ---
 
@@ -197,6 +197,71 @@ def game():
         selected_map=selected_map,
         selected_stage=selected_stage
     )
+
+@app.route('/save_progress', methods=['POST'])
+def save_progress():
+    if not session.get('user_id'):
+        return jsonify({"error": "Not logged in"}), 403  # Unauthorized if not logged in
+
+    user_id = session['user_id']
+    data = request.get_json()
+
+    map_name = data.get('map')
+    stage_number = data.get('stage')
+    stars = data.get('stars')
+
+    if not map_name or not stage_number or stars is None:
+        return jsonify({"error": "Missing data"}), 400
+
+    cursor.execute("""
+        SELECT * FROM user_progress 
+        WHERE user_id = %s AND map_name = %s AND stage_number = %s
+    """, (user_id, map_name, stage_number))
+    existing_record = cursor.fetchone()
+
+    if existing_record:
+        cursor.execute("""
+            UPDATE user_progress 
+            SET stars = %s 
+            WHERE user_id = %s AND map_name = %s AND stage_number = %s
+        """, (stars, user_id, map_name, stage_number))
+    else:
+        cursor.execute("""
+            INSERT INTO user_progress (user_id, map_name, stage_number, stars) 
+            VALUES (%s, %s, %s, %s)
+        """, (user_id, map_name, stage_number, stars))
+
+    db.commit()
+
+    return jsonify({"message": "Progress saved successfully"}), 200
+
+@app.route('/get_stage_progress')
+def get_stage_progress():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({})  # Return an empty dictionary if not logged in
+
+    # Execute the query to fetch user progress
+    cursor.execute("""
+        SELECT map_name, stage_number, stars 
+        FROM user_progress 
+        WHERE user_id = %s
+    """, (user_id,))
+    
+    # Fetch all the rows returned by the query
+    rows = cursor.fetchall()
+
+    # Prepare the dictionary to store the progress
+    progress = {}
+
+    # Populate the progress dictionary with the data from the query result
+    for row in rows:
+        key = f"{row['map_name']}-{row['stage_number']}"  # Format key as 'map-name-stage-number'
+        progress[key] = {"stars": row['stars']}  # Store the stars for each stage
+
+    # Return the progress dictionary as a JSON response
+    return jsonify(progress)
+
 
 
 

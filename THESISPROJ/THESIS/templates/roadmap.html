@@ -102,31 +102,62 @@
   const starFilled = "{{ url_for('static', filename='images/gameimg/roadmap/star-filled.png') }}";
   const starEmpty = "{{ url_for('static', filename='images/gameimg/roadmap/star-empty.png') }}";
 
-  function setStars(wrapperSelector, mapPrefix) {
-  const wrapper = document.querySelector(wrapperSelector);
-  const stars = wrapper.querySelectorAll('.progress-star');
-    //================CONNECTION > DATABASE==========================//
-  const progress = JSON.parse(localStorage.getItem('stageProgress')) || {};
+  // Function to set stars for both roadmap and stages
+  function setStars(wrapperSelector, mapPrefix, progress, stageCount = 3) {
+    const wrapper = document.querySelector(wrapperSelector);
+    if (!wrapper) return;
 
-  for (let i = 0; i < stars.length; i++) {
-    const stageKey = `${mapPrefix}-${i + 1}`;
-    const stageData = progress[stageKey];
-    stars[i].src = stageData && stageData.stars > 0 ? starFilled : starEmpty;
+    const stars = wrapper.querySelectorAll('.progress-star');
+    let totalStars = 0;
+
+    // Loop through each stage and set star progress
+    for (let i = 0; i < stageCount; i++) {
+      const stageKey = `${mapPrefix}-${i + 1}`;
+      const stageData = progress[stageKey];
+      const starsEarned = (stageData && stageData.stars) || 0;
+
+      totalStars += starsEarned;
+
+      // Set stars for the current stage
+      if (stars[i]) {
+        stars[i].src = starsEarned > 0 ? starFilled : starEmpty;
+      }
+    }
+
+    // Update overall stars for the map in the roadmap (max 3 stars per map)
+    const mapProgress = document.querySelector(`.${mapPrefix}-progress`);
+    if (mapProgress) {
+      const totalMapStars = Math.min(totalStars, 3); // max 3 stars per map
+      mapProgress.src = totalMapStars === 3 ? starFilled : (totalMapStars > 0 ? starEmpty : starFilled);
+    }
   }
-}
 
+  // List of map wrappers and their prefixes
+  const maps = [
+    ['.addition-village-stars', 'addition'],
+    ['.subtraction-sands-stars', 'subtraction'],
+    ['.comparison-cliffs-stars', 'comparison'],
+    ['.place-value-town-stars', 'placevalue'],
+    ['.multiplication-mirage-stars', 'multiplication'],
+    ['.division-river-stars', 'division'],
+    ['.numeral-ruins-stars', 'numerals'],
+    ['.counting-springs-stars', 'counting']
+  ];
 
-
-  // Call this for each map
-  setStars('.addition-village-stars', 'addition');
-  setStars('.subtraction-sands-stars', 'subtraction');
-  setStars('.comparison-cliffs-stars', 'comparison');
-  setStars('.place-value-town-stars', 'placevalue');
-  setStars('.multiplication-mirage-stars', 'multiplication');
-  setStars('.division-river-stars', 'division');
-  setStars('.numeral-ruins-stars', 'numerals');
-  setStars('.counting-springs-stars', 'counting');
+  // Fetch progress from server and update all maps
+  fetch('/get_stage_progress')
+    .then(response => response.json())
+    .then(progress => {
+      maps.forEach(([selector, prefix]) => {
+        setStars(selector, prefix, progress);
+      });
+    })
+    .catch(error => {
+      console.error('Failed to load stage progress:', error);
+    });
 </script>
+
+
 
 
 

@@ -1136,12 +1136,13 @@ function checkGameOver() {
       if (badgeElement) badgeElement.classList.add('hidden');
       if (titleElement) titleElement.classList.add('hidden');
       if (borderElement) borderElement.classList.add('hidden');
-      //================CONNECTION > DATABASE==========================//
-      const rewardClaimed = localStorage.getItem(`${selectedMap}-stage${selectedStage}-claimed`);
+  
+      const rewardClaimedKey = `${selectedMap}-stage${selectedStage}-claimed`;
+      const alreadyClaimed = localStorage.getItem(rewardClaimedKey);
       const existingStatus = document.getElementById('reward-claimed-text');
       if (existingStatus) existingStatus.remove();
   
-      if (!rewardClaimed) {
+      if (!alreadyClaimed) {
         let rewardItem = null;
   
         if (selectedStage === 1 && badgeElement) {
@@ -1160,12 +1161,10 @@ function checkGameOver() {
           borderElement.style.display = 'block';
           rewardItem = { map: selectedMap, stage: selectedStage, type: 'border', image: reward.border };
         }
-      //================CONNECTION > DATABASE==========================//
-        localStorage.setItem(`${selectedMap}-stage${selectedStage}-claimed`, 'true');
   
-        // ✅ PUSH to collectedRewards (no duplicates)
+        localStorage.setItem(rewardClaimedKey, 'true');
+  
         if (rewardItem) {
-              //================CONNECTION > DATABASE==========================//
           const collectedRewards = JSON.parse(localStorage.getItem('collectedRewards')) || [];
           const alreadyExists = collectedRewards.some(item =>
             item.map === rewardItem.map &&
@@ -1174,7 +1173,6 @@ function checkGameOver() {
           );
           if (!alreadyExists) {
             collectedRewards.push(rewardItem);
-                //================CONNECTION > DATABASE==========================//
             localStorage.setItem('collectedRewards', JSON.stringify(collectedRewards));
           }
         }
@@ -1187,22 +1185,18 @@ function checkGameOver() {
       }
     }
   
-    if (selectedMap) {
-      const starsEarned = 1;
-          //================CONNECTION > DATABASE==========================//
-      const currentStars = parseInt(localStorage.getItem(selectedMap)) || 0;
-      if (starsEarned > currentStars) {
-            //================CONNECTION > DATABASE==========================//
-        localStorage.setItem(selectedMap, starsEarned);
-      }
-    }
-  
+    // === Progress Update ===
     if (selectedMap && selectedStage) {
-      const starsEarnedStage = 1;
-      updateStageProgress(selectedMap, selectedStage, starsEarnedStage);
+      const starsEarned = 1;
+  
+      // 1. Update stage-level star progress
+      updateStageProgress(selectedMap, selectedStage, starsEarned);
+  
+      // 2. Update roadmap UI
       updateRoadmapStars(`${selectedMap}-${selectedStage}`);
     }
   
+    // === Button Logic ===
     function closeVictoryScreen() {
       victoryScreen.style.visibility = 'hidden';
       victoryScreen.classList.remove('visible');
@@ -1243,6 +1237,7 @@ function checkGameOver() {
       console.log("Border:", reward.border);
     }
   }
+  
   
   
   
@@ -1300,50 +1295,86 @@ function getNextMap(currentMap, currentStage) {
 
 // STARS UPDATE SA ROADMAP  //
 
-function updateStageProgress(selectedMap, selectedStage, starsEarned) {
+function updateStageProgress(selectedMap, selectedStage, starsEarned = 1) {
   const stageKey = `${selectedMap}-${selectedStage}`;
 
-  // Get existing progress from localStorage (if any)
-  const currentProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
-
-  // Check if the stage is completed and whether we earned more stars
-  const existingStars = currentProgress[stageKey]?.stars || 0;
-
-  if (starsEarned > existingStars) {
-    currentProgress[stageKey] = {
+  // =============== CONNECTION > DATABASE =============== //
+  fetch('/save_progress', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      map: selectedMap,
+      stage: selectedStage,
       stars: starsEarned,
-      completed: true
-    };
-        //================CONNECTION > DATABASE==========================//
-    localStorage.setItem('stageProgress', JSON.stringify(currentProgress));
-  }
+      completed: true // Add "completed" flag if necessary
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      console.log("Progress successfully saved to the server.");
+      // Pagkatapos ma-save, i-update ang stars sa roadmap
+      // Fetch updated progress and update the stars
+      fetch(`/get_stage_progress?map=${selectedMap}`)
+        .then(response => response.json())
+        .then(stageProgress => {
+          updateRoadmapStars(selectedMap, stageProgress);
+        })
+        .catch(error => {
+          console.error('Error fetching updated stage progress:', error);
+        });
+    } else {
+      console.error("Error saving progress:", data.message || "Unknown error");
+    }
+  })
+  .catch(error => {
+    console.error("Error saving progress:", error);
+    // Optionally show a user-friendly error message
+  });
 }
 
+function updateRoadmapStars(selectedMap, stageProgress) {
+  console.log(`Updating roadmap stars for map: ${selectedMap}`);
 
+  // Loop through stages (1, 2, 3) and update their star images
+  for (let stage = 1; stage <= 3; stage++) {
+    const stageKey = `${selectedMap}-${stage}`;
+    const stageData = stageProgress[stageKey];
 
+    if (!stageData) {
+      console.warn(`No progress data found for stage: ${stageKey}`);
+      continue;
+    }
 
-function updateRoadmapStars(stageKeyJustCompleted) {
-      //================CONNECTION > DATABASE==========================//
-  const progress = JSON.parse(localStorage.getItem('stageProgress')) || {};
-  const stageProgress = progress[stageKeyJustCompleted];
+    const roadmapItem = document.querySelector(`.stage-item[data-stage-key="${stageKey}"]`);
+    if (!roadmapItem) {
+      console.error(`Roadmap item not found for stage: ${stageKey}`);
+      continue;
+    }
 
-  if (!stageProgress) return;
-
-  const roadmapItem = document.querySelector(`.stage-item[data-stage-key="${stageKeyJustCompleted}"]`);
-
-  if (roadmapItem) {
     const starWrapper = roadmapItem.querySelector('.star-wrapper');
     const starImgs = starWrapper.querySelectorAll('.progress-star');
-    
+
+    // Update star images based on progress
     starImgs.forEach((img, index) => {
-      if (index < stageProgress.stars) {
-        img.src = window.STAR_IMAGES.filled;  // 🔁 use global variable from HTML
+      if (index < stageData.stars) {
+        img.src = window.STAR_IMAGES.filled;
       } else {
         img.src = window.STAR_IMAGES.empty;
       }
     });
   }
 }
+
+
+
+
+
+
+
+
 
 
 

@@ -163,194 +163,180 @@ const selectedStageKey = getQueryParam("stage") || "stage1";  // fallback if nee
 </script>
 
 <script>
-  window.addEventListener('DOMContentLoaded', () => {
-        function getQueryParam(param) {
-          const urlParams = new URLSearchParams(window.location.search);
-          return urlParams.get(param);
+window.addEventListener('DOMContentLoaded', () => {
+  const selectedMap = getQueryParam("map") || "defaultMap"; // fallback if needed
+
+  const starFilled = "{{ url_for('static', filename='images/stageimg/star-filled.png') }}";  // Filled star
+  const starEmpty = "{{ url_for('static', filename='images/stageimg/star-empty.png') }}";   // Empty star
+
+  // Fetch stage progress directly from the server (no need for localStorage)
+  fetch(`/get_stage_progress?map=${selectedMap}`)
+    .then(response => response.json())
+    .then(stageProgress => {
+      if (stageProgress) {
+        // Loop through the stages (Stage 1, 2, 3) and update the stars
+        for (let stage = 1; stage <= 3; stage++) {
+          const stageKey = `${selectedMap}-${stage}`;
+          const stageData = stageProgress[stageKey];
+          const stars = stageData ? stageData.stars : 0; // Default to 0 stars if not set
+
+          // Update stars in stages
+          const stageElements = document.querySelectorAll(`.st${stage}`);
+          stageElements.forEach(element => {
+            element.src = stars > 0 ? starFilled : starEmpty;
+          });
+
+          // Update stars in roadmap (you can adjust class here to match your roadmap)
+          const roadmapStageElements = document.querySelectorAll(`.roadmap-${stage}`);
+          roadmapStageElements.forEach(element => {
+            element.src = stars > 0 ? starFilled : starEmpty;
+          });
         }
 
-        const selectedMap = getQueryParam("map") || "defaultMap";     // fallback if needed
-        const selectedStageKey = getQueryParam("stage") || "stage1"; 
+        // Check if Stage 3 is completed and if the reward bubble has not been shown before for this map
+        const stage3Key = `${selectedMap}-3`;
+        const stage3Data = stageProgress[stage3Key];
+        const rewardBubbleShownKey = `rewardBubbleShown-${selectedMap}`; // Unique key per map
 
-    //================CONNECTION > DATABASE==========================//
-    const stageProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
-
-    const starFilled = "{{ url_for('static', filename='images/stageimg/star-filled.png') }}";  // Filled star
-    const starEmpty = "{{ url_for('static', filename='images/stageimg/star-empty.png') }}";   // Empty star
-
-    // Check if we have progress data for the selected map
-    if (selectedMap) {
-      let allStagesCompleted = true;
-
-      // Loop through the stages (Stage 1, 2, 3) and check the stars
-      for (let stage = 1; stage <= 3; stage++) {
-        const stageKey = `${selectedMap}-${stage}`;
-        const stageData = stageProgress[stageKey];
-        const stars = stageData ? stageData.stars : 0; // Default to 0 stars if not set
-
-        const starElements = document.querySelectorAll(`.st${stage}`);
-        for (let i = 0; i < starElements.length; i++) {
-          if (i < stars) {
-            starElements[i].src = starFilled;
-          } else {
-            starElements[i].src = starEmpty;
-          }
-        }
-
-        if (stars === 0) {
-          allStagesCompleted = false;
+        // If Stage 3 is completed, show reward bubble
+        if (stage3Data && stage3Data.stars > 0 && !localStorage.getItem(rewardBubbleShownKey)) {
+          showRewardBubble(selectedMap);
         }
       }
+    })
+    .catch(error => {
+      console.error('Failed to load stage progress:', error);
+    });
+});
+  
+// Function to update the stage lock buttons (grayscale & pointer-events)
+async function updateStageLock() {
+    const selectedMap = getQueryParam("map") || "defaultMap"; 
 
-      // Check if Stage 3 is completed and if the reward bubble has not been shown before for this map
-      const stage3Key = `${selectedMap}-3`;
-      const stage3Data = stageProgress[stage3Key];
-      const rewardBubbleShownKey = `rewardBubbleShown-${selectedMap}`; // Unique key per map
+    try {
+        // Fetch stage progress mula sa server
+        const response = await fetch(`/get_stage_progress?map=${selectedMap}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch stage progress');
+        }
+        
+        const stageProgress = await response.json();
 
-      //================CONNECTION > DATABASE==========================//
-      const rewardBubbleShown = localStorage.getItem(rewardBubbleShownKey) === 'true'; // Check if it's already shown for this map
+        // Kumuha ng completion status ng stage 1 at stage 2
+        const stage1Completed = stageProgress[`${selectedMap}-1`] && stageProgress[`${selectedMap}-1`].stars > 0;
+        const stage2Completed = stageProgress[`${selectedMap}-2`] && stageProgress[`${selectedMap}-2`].stars > 0;
 
-      if (stage3Data && stage3Data.stars > 0 && !rewardBubbleShown) {
-        console.log("Stage 3 completed! Showing reward bubble.");
-        showRewardBubble(selectedMap); // Pass selectedMap to show specific reward
-      }
+        // Log para sa debugging
+        console.log(`Stage 1 Completed: ${stage1Completed}`);
+        console.log(`Stage 2 Completed: ${stage2Completed}`);
+
+        const stageButtons = document.querySelectorAll('.stage');
+
+        // Loop through the buttons and apply styles for locked stages
+        stageButtons.forEach(button => {
+            const stageId = button.closest('button') ? button.closest('button').getAttribute('id') : null;
+
+            // Check if stageId is valid
+            if (stageId && stageId.startsWith(selectedMap)) {
+                const stageNumber = parseInt(stageId.split('-')[1].replace('stage', ''));
+
+                // Lock stage 2 if stage 1 is not completed
+                if (stageNumber === 2 && !stage1Completed) {
+                    button.closest('button').style.filter = 'grayscale(100%)';
+                    button.closest('button').style.pointerEvents = 'none';
+                } 
+                // Lock stage 3 if stage 2 is not completed
+                else if (stageNumber === 3 && !stage2Completed) {
+                    button.closest('button').style.filter = 'grayscale(100%)';
+                    button.closest('button').style.pointerEvents = 'none';
+                } 
+                // Unlock stages if previous stages are completed
+                else {
+                    button.closest('button').style.filter = 'none';
+                    button.closest('button').style.pointerEvents = 'auto';
+                }
+            } else {
+                console.warn(`Invalid stage id: ${stageId}`);
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching stage progress:', error);
     }
-  });
-
-  // Function to show the reward bubble and mark as claimed
-  function showRewardBubble(selectedMap) {
-  const rewardBubble = document.getElementById('rewardBubble');
-  const rewardImage = document.getElementById('rewardImage');
-  const rewardOkButton = document.getElementById('rewardOkButton');
-  const rewardText = document.getElementById('rewardText'); // Select the text element
-
-  // Set the reward image based on selected map
-  const rewardImageUrl = getRewardImage(selectedMap);
-  rewardImage.src = rewardImageUrl || " "; // fallback
-
-  // Set the reward text
-  rewardText.textContent = "NEW SKIN REWARD!"; // Update the text dynamically
-
-  // Show the reward bubble
-  rewardBubble.classList.remove('hidden');
-
-  requestAnimationFrame(() => {
-    rewardBubble.classList.add('visible');
-
-    // Delay the pop-in of the content (e.g., 300ms after background appears)
-    setTimeout(() => {
-      const bubbleContent = rewardBubble.querySelector('.bubble-content');
-      bubbleContent.classList.add('show');
-    }, 300);
-  });
-
-
-
-    // Mark as claimed in localStorage
-    const rewardKey = `${selectedMap}-stage3-skin`;
-
-    //================CONNECTION > DATABASE==========================//
-    localStorage.setItem(rewardKey, 'claimed');
-
-    // Also mark that reward bubble was already shown
-    const rewardBubbleShownKey = `rewardBubbleShown-${selectedMap}`;
-    //================CONNECTION > DATABASE==========================//
-    localStorage.setItem(rewardBubbleShownKey, 'true');
-
-    // OK button to close the bubble
-    rewardOkButton.addEventListener('click', closeRewardBubble);
-  }
-
-  // Function to close the reward bubble
-  function closeRewardBubble() {
-  const rewardBubble = document.getElementById('rewardBubble');
-  const bubbleContent = rewardBubble.querySelector('.bubble-content');
-
-  bubbleContent.classList.remove('show'); // Reset pop state
-  rewardBubble.classList.remove('visible');
-
-  setTimeout(() => {
-    rewardBubble.classList.add('hidden');
-  }, 400); // Wait for fade-out
 }
 
+// Call this function on page load to apply the correct stage lock state
+window.addEventListener('DOMContentLoaded', updateStageLock);
 
+  
+  // Function to show the reward bubble and mark as claimed
+  function showRewardBubble(selectedMap) {
+      const rewardBubble = document.getElementById('rewardBubble');
+      const rewardImage = document.getElementById('rewardImage');
+      const rewardOkButton = document.getElementById('rewardOkButton');
+      const rewardText = document.getElementById('rewardText');
+  
+      const rewardImageUrl = getRewardImage(selectedMap);
+      rewardImage.src = rewardImageUrl || " "; 
+  
+      rewardText.textContent = "NEW SKIN REWARD!";
+  
+      rewardBubble.classList.remove('hidden');
+      requestAnimationFrame(() => {
+          rewardBubble.classList.add('visible');
+          setTimeout(() => {
+              const bubbleContent = rewardBubble.querySelector('.bubble-content');
+              bubbleContent.classList.add('show');
+          }, 300);
+      });
+  
+      rewardOkButton.addEventListener('click', () => {
+          rewardBubble.classList.add('hidden');
+          localStorage.setItem(`rewardBubbleShown-${selectedMap}`, 'true');
+      });
+  }
+  
+  // Function to close the reward bubble
+  function closeRewardBubble() {
+      const rewardBubble = document.getElementById('rewardBubble');
+      const bubbleContent = rewardBubble.querySelector('.bubble-content');
+  
+      bubbleContent.classList.remove('show'); // Reset pop state
+      rewardBubble.classList.remove('visible');
+  
+      setTimeout(() => {
+          rewardBubble.classList.add('hidden');
+      }, 400); // Wait for fade-out
+  }
+  
   // Function to get the reward image based on the selected map
   function getRewardImage(selectedMap) {
-    switch (selectedMap) {
-      case 'multiplication':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r1.png') }}";
-      case 'addition':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r2.png') }}";
-      case 'subtraction':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r3.png') }}";
-      case 'division':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r4.png') }}";
-      case 'counting':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r5.png') }}";
-      case 'comparison':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r6.png') }}";
-      case 'numerals':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r7.png') }}";
-      case 'placevalue':
-        return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r8.png') }}";
-      default:
-        return "";
-    }
+      switch (selectedMap) {
+          case 'multiplication':
+              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r1.png') }}";
+          case 'addition':
+              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r2.png') }}";
+          case 'subtraction':
+              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r3.png') }}";
+          case 'division':
+              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r4.png') }}";
+          case 'counting':
+              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r5.png') }}";
+          case 'comparison':
+              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r6.png') }}";
+          case 'numerals':
+              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r7.png') }}";
+          case 'placevalue':
+              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r8.png') }}";
+          default:
+              return "";
+      }
   }
 </script>
 
+  
 
 
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-          function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-        }
 
-const selectedMap = getQueryParam("map") || "defaultMap";     // fallback if needed
-const selectedStageKey = getQueryParam("stage") || "stage1"; 
-    const stageProgress = JSON.parse(localStorage.getItem('stageProgress')) || {};
-  
-    function updateStageLock() {
-      const stage1Completed = stageProgress[`${selectedMap}-1`] && stageProgress[`${selectedMap}-1`].stars > 0;
-      const stage2Completed = stageProgress[`${selectedMap}-2`] && stageProgress[`${selectedMap}-2`].stars > 0;
-  
-      // Stage buttons based on completion
-      const stageButtons = document.querySelectorAll('.stage');
-  
-      stageButtons.forEach(button => {
-        const stageId = button.closest('button') ? button.closest('button').getAttribute('id') : null;
-  
-        // Check if the button has a valid id
-        if (stageId && stageId.startsWith(selectedMap)) {
-          const stageNumber = parseInt(stageId.split('-')[1].replace('stage', ''));
-  
-          if (stageNumber === 2 && !stage1Completed) {
-            // Stage 2 is locked
-            button.closest('button').style.filter = 'grayscale(100%)';
-            button.closest('button').style.pointerEvents = 'none';
-          } else if (stageNumber === 3 && !stage2Completed) {
-            // Stage 3 is locked
-            button.closest('button').style.filter = 'grayscale(100%)';
-            button.closest('button').style.pointerEvents = 'none';
-          } else {
-            // Stage is unlocked
-            button.closest('button').style.filter = 'none';
-            button.closest('button').style.pointerEvents = 'auto';
-          }
-        } else {
-          console.warn(`Invalid stage id: ${stageId}`);
-        }
-      });
-    }
-  
-    // Call the function to update the stage locks
-    updateStageLock();
-  });
-  </script>
-  
 
 
 
