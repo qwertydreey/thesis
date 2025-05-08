@@ -269,9 +269,209 @@ def get_stage_progress():
 
 
 
+reward_data = {
+    'multiplication': {
+        1: {
+            'badge': "/static/images/gameimg/rewardimg/badge/badge-1.png",
+        },
+        2: {
+            'title': "/static/images/gameimg/rewardimg/title/title-1.png",
+        },
+        3: {
+            'border': "/static/images/gameimg/rewardimg/border/border-1.png"
+        }
+    },
+    'addition': {
+        1: {
+            'badge': "/static/images/gameimg/rewardimg/badge/badge-2.png",
+        },
+        2: {
+            'title': "/static/images/gameimg/rewardimg/title/title-2.png",
+        },
+        3: {
+            'border': "/static/images/gameimg/rewardimg/border/border-2.png"
+        }
+    },
+    'subtraction': {
+        1: {
+            'badge': "/static/images/gameimg/rewardimg/badge/badge-3.png",
+        },
+        2: {
+            'title': "/static/images/gameimg/rewardimg/title/title-3.png",
+        },
+        3: {
+            'border': "/static/images/gameimg/rewardimg/border/border-3.png"
+        }
+    },
+    'division': {
+        1: {
+            'badge': "/static/images/gameimg/rewardimg/badge/badge-4.png",
+        },
+        2: {
+            'title': "/static/images/gameimg/rewardimg/title/title-4.png",
+        },
+        3: {
+            'border': "/static/images/gameimg/rewardimg/border/border-4.png"
+        }
+    },
+    'counting': {
+        1: {
+            'badge': "/static/images/gameimg/rewardimg/badge/badge-5.png",
+        },
+        2: {
+            'title': "/static/images/gameimg/rewardimg/title/title-5.png",
+        },
+        3: {
+            'border': "/static/images/gameimg/rewardimg/border/border-5.png"
+        }
+    },
+    'comparison': {
+        1: {
+            'badge': "/static/images/gameimg/rewardimg/badge/badge-6.png",
+        },
+        2: {
+            'title': "/static/images/gameimg/rewardimg/title/title-6.png",
+        },
+        3: {
+            'border': "/static/images/gameimg/rewardimg/border/border-6.png"
+        }
+    },
+    'numerals': {
+        1: {
+            'badge': "/static/images/gameimg/rewardimg/badge/badge-7.png",
+        },
+        2: {
+            'title': "/static/images/gameimg/rewardimg/title/title-7.png",
+        },
+        3: {
+            'border': "/static/images/gameimg/rewardimg/border/border-7.png"
+        }
+    },
+    'placevalue': {
+        1: {
+            'badge': "/static/images/gameimg/rewardimg/badge/badge-8.png",
+        },
+        2: {
+            'title': "/static/images/gameimg/rewardimg/title/title-8.png",
+        },
+        3: {
+            'border': "/static/images/gameimg/rewardimg/border/border-8.png"
+        }
+    }
+    # Add more maps and stages as needed
+}
+
+@app.route('/get_stage_reward', methods=['GET'])
+def get_stage_reward():
+    map_name = request.args.get('map')
+    stage = request.args.get('stage')
+
+    if not map_name or not stage:
+        return jsonify({'error': 'Map and stage are required'}), 400
+
+    try:
+        stage = int(stage)
+    except ValueError:
+        return jsonify({'error': 'Stage must be an integer'}), 400
+
+    if map_name not in reward_data:
+        return jsonify({'error': 'Map not found'}), 404
+
+    if stage not in reward_data[map_name]:
+        return jsonify({'error': 'Stage not found for this map'}), 404
+
+    return jsonify(reward_data[map_name][stage])
+
+
+
+@app.route('/claim_reward', methods=['POST'])
+def claim_reward():
+    try:
+        # Kunin ang user_id mula sa session
+        user_id = session.get('user_id')
+        
+        # Kunin ang map_name at stage_number mula sa JSON body ng request
+        map_name = request.json.get('map')
+        stage_number = request.json.get('stage')
+
+        # Siguraduhing kumpleto ang mga parameters
+        if not user_id or not map_name or not stage_number:
+            return jsonify({"error": "User ID, map, and stage parameters are required"}), 400
+        
+        print(f"Claiming reward for user_id={user_id}, map={map_name}, stage={stage_number}")
+
+        # I-execute ang INSERT o UPDATE query sa database para i-claim ang reward
+        cursor.execute("""
+            INSERT INTO stage_rewards_claimed (user_id, map_name, stage_number, claimed)
+            VALUES (%s, %s, %s, TRUE)
+            ON DUPLICATE KEY UPDATE claimed = TRUE
+        """, (user_id, map_name, stage_number))
+
+        # I-commit ang changes sa database
+        db.commit()
+
+        print("Reward claimed successfully")
+        
+        # Ibalik ang success response
+        return jsonify({"success": True})
+
+    except Exception as e:
+        # I-print ang error kung may mangyari
+        print(f"[ERROR] /claim_reward failed: {e}")
+        
+        # Ibalik ang error response sa client
+        return jsonify({"error": "Unable to claim reward"}), 500
+
+@app.route('/check_reward_claimed', methods=['POST'])
+def check_reward_claimed():
+    try:
+        # Retrieve the user ID from session
+        user_id = session.get('user_id')
+        if not user_id:
+            return jsonify({"error": "User not logged in"}), 400
+
+        # Retrieve map and stage from the request
+        map_name = request.json.get('map')
+        stage_number = request.json.get('stage')
+
+        if not map_name or not stage_number:
+            return jsonify({"error": "Map and stage are required"}), 400
+
+        # SQL query to check if the reward has been claimed
+        cursor.execute("""
+            SELECT claimed
+            FROM stage_rewards_claimed
+            WHERE user_id = %s AND map_name = %s AND stage_number = %s
+        """, (user_id, map_name, stage_number))
+
+        reward_claimed = cursor.fetchone()
+        
+        # Log the result of the query
+        print(f"Reward claimed for user {user_id} on {map_name} stage {stage_number}: {reward_claimed}")
+
+        if reward_claimed is None:
+            return jsonify({"claimed": False})
+
+        # Access the value correctly from the query result
+        claimed = reward_claimed['claimed'] if reward_claimed else 0
+
+        return jsonify({"claimed": bool(claimed)})
+
+    except Exception as e:
+        print(f"Error in /check_reward_claimed: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=True)
 
     

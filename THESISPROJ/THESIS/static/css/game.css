@@ -1875,6 +1875,13 @@ body {
   padding: 1vh 2vh;
   border-radius: 1vh;
   z-index: 5;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+
+}
+
+.reward-claimed-text.fade-in {
+  opacity: 1;
 }
 
 .reward-container {

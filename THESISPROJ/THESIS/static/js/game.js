@@ -1102,120 +1102,134 @@ function checkGameOver() {
   }
 
 
+
+
+
+
+
+
+
+
+
+
   function showVictoryScreen() {
     const gameContainer = document.querySelector('.ground');
-    if (!gameContainer) {
-      console.error('Game container not found!');
-      return;
-    }
-  
+    if (!gameContainer) return;
+
     const victoryScreen = document.getElementById('victory-screen');
     const victoryBox = victoryScreen.querySelector('.victory-box');
     const continueBtn = document.getElementById('continue-btn');
     const retryBtn = document.getElementById('retry-btn');
     const homeBtn = document.getElementById('home-btn');
-  
+
     const urlParams = new URLSearchParams(window.location.search);
     const selectedMap = urlParams.get('map') || 'multiplication';
     const selectedStage = parseInt(urlParams.get('stage')) || 1;
-  
-    // Redirect buttons
-    continueBtn.addEventListener('click', () => {
-      window.location.href = `/stages?map=${selectedMap}&stage=${selectedStage}`;
-    });
-  
-    retryBtn.addEventListener('click', () => {
-      window.location.reload();
-    });
-  
-    homeBtn.addEventListener('click', () => {
-      window.location.href = "/roadmap";
-    });
-  
-    // Remove monsters and pause
+
+    // Button actions
+    continueBtn.onclick = () => window.location.href = `/stages?map=${selectedMap}&stage=${selectedStage}`;
+    retryBtn.onclick = () => window.location.reload();
+    homeBtn.onclick = () => window.location.href = "/roadmap";
+
+    // Remove all monsters and pause the game
     document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => el.remove());
     gameContainer.classList.add('paused');
     victoryScreen.style.visibility = 'visible';
     victoryScreen.classList.add('visible');
     victoryBox.classList.add('box-animation');
-  
-    console.log("Victory Screen Loaded:");
-    console.log("Map:", selectedMap);
-    console.log("Stage:", selectedStage);
-  
-    // === REWARD DISPLAY ===
-    const reward = rewardData[selectedMap]; // Contains { badge, title, border }
-    const rewardCategories = rewardMap[selectedMap]; // Contains element IDs: [badgeId, titleId, borderId]
-  
-    if (reward && rewardCategories) {
-      const badgeElement = document.getElementById(rewardCategories[1]);
-      const titleElement = document.getElementById(rewardCategories[2]);
-      const borderElement = document.getElementById(rewardCategories[3]);
-  
-      // Hide all rewards first
-      if (badgeElement) badgeElement.classList.add('hidden');
-      if (titleElement) titleElement.classList.add('hidden');
-      if (borderElement) borderElement.classList.add('hidden');
-  
-      // Remove existing status
-      const existingStatus = document.getElementById('reward-claimed-text');
-      if (existingStatus) existingStatus.remove();
-  
-      const rewardClaimedKey = `${selectedMap}-stage${selectedStage}-claimed`;
-      const alreadyClaimed = localStorage.getItem(rewardClaimedKey);
-  
-      if (!alreadyClaimed) {
-        let rewardItem = null;
-  
-        if (selectedStage === 1 && badgeElement) {
-          badgeElement.src = reward.badge;
-          badgeElement.classList.remove('hidden');
-          badgeElement.style.display = 'block';
-          rewardItem = { map: selectedMap, stage: selectedStage, type: 'badge', image: reward.badge };
-        } else if (selectedStage === 2 && titleElement) {
-          titleElement.src = reward.title;
-          titleElement.classList.remove('hidden');
-          titleElement.style.display = 'block';
-          rewardItem = { map: selectedMap, stage: selectedStage, type: 'title', image: reward.title };
-        } else if (selectedStage === 3 && borderElement) {
-          borderElement.src = reward.border;
-          borderElement.classList.remove('hidden');
-          borderElement.style.display = 'block';
-          rewardItem = { map: selectedMap, stage: selectedStage, type: 'border', image: reward.border };
-        }
-  
-        localStorage.setItem(rewardClaimedKey, 'true');
-  
-        // Save to collectedRewards
-        if (rewardItem) {
-          const collectedRewards = JSON.parse(localStorage.getItem('collectedRewards')) || [];
-          const alreadyExists = collectedRewards.some(item =>
-            item.map === rewardItem.map &&
-            item.stage === rewardItem.stage &&
-            item.type === rewardItem.type
-          );
-          if (!alreadyExists) {
-            collectedRewards.push(rewardItem);
-            localStorage.setItem('collectedRewards', JSON.stringify(collectedRewards));
-          }
-        }
-      } else {
-        // Show claimed message
-        const rewardStatusText = document.createElement('div');
-        rewardStatusText.id = "reward-claimed-text";
-        rewardStatusText.className = "reward-claimed-text";
-        rewardStatusText.textContent = "🎉 Reward Claimed!";
-        victoryBox.appendChild(rewardStatusText);
-      }
-    }
-  
+
+    // Fetch reward for the selected stage
+    fetch(`/get_stage_reward?map=${selectedMap}&stage=${selectedStage}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) return;
+
+            const { badge, title, border } = data;
+            const rewardCategories = rewardMap[selectedMap];
+            if (!rewardCategories) return;
+
+            const badgeElement = document.getElementById(rewardCategories[1]);
+            const titleElement = document.getElementById(rewardCategories[2]);
+            const borderElement = document.getElementById(rewardCategories[3]);
+
+            // Hide reward elements initially
+            [badgeElement, titleElement, borderElement].forEach(el => el?.classList.add('hidden'));
+            document.getElementById('reward-claimed-text')?.remove();
+
+            // Check if the reward has already been claimed
+            fetch('/check_reward_claimed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    map: selectedMap,
+                    stage: selectedStage
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                const rewardStatusText = document.createElement('div');
+                rewardStatusText.id = "reward-claimed-text";
+                rewardStatusText.className = "reward-claimed-text fade-in";
+
+                if (data.error) {
+                    console.warn('Reward check failed:', data.error);
+                    rewardStatusText.textContent = "⚠️ Unable to verify reward.";
+                    victoryBox.appendChild(rewardStatusText);
+                    return; // Exit if there's an error
+                }
+
+                // If reward is already claimed, show the message
+                if (data.claimed) {
+                    rewardStatusText.textContent = "🎉 Reward Claimed!";
+                    victoryBox.appendChild(rewardStatusText); // Show "Reward Claimed" message
+                } else {
+                    // Show the appropriate reward based on the stage
+                    if (selectedStage === 1 && badgeElement) {
+                        badgeElement.src = badge;
+                        badgeElement.classList.remove('hidden');
+                    } else if (selectedStage === 2 && titleElement) {
+                        titleElement.src = title;
+                        titleElement.classList.remove('hidden');
+                    } else if (selectedStage === 3 && borderElement) {
+                        borderElement.src = border;
+                        borderElement.classList.remove('hidden');
+                    }
+
+                    // Claim reward safely only if not already claimed
+                    fetch('/claim_reward', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            map: selectedMap,
+                            stage: selectedStage
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(() => {
+                        console.log("Reward claimed successfully");
+                    })
+                    .catch(err => {
+                        console.warn('Claim reward failed:', err.message);
+                    });
+                }
+            })
+            .catch(err => console.error('Error checking reward:', err));
+        })
+        .catch(err => console.error('Error fetching stage reward:', err));
+
     // === PROGRESS UPDATE ===
     if (selectedMap && selectedStage) {
-      const starsEarned = 1;
-      updateStageProgress(selectedMap, selectedStage, starsEarned);
-      updateRoadmapStars(`${selectedMap}-${selectedStage}`);
+        const starsEarned = 1;  // Example value for stars earned
+        updateStageProgress(selectedMap, selectedStage, starsEarned);
+        updateRoadmapStars(`${selectedMap}-${selectedStage}`);
     }
-  }
+}
+
+
+
+  
+
+
   
   
   
