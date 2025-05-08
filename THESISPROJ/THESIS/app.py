@@ -21,7 +21,7 @@ cursor = db.cursor(dictionary=True)
 
 # 🔥 OpenRouter Setup
 openai.api_base = "https://openrouter.ai/api/v1"
-openai.api_key = "Bearer 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"  # ← Replace this with your OpenRouter API Key
+openai.api_key = "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"  # ← Replace this with your OpenRouter API Key
 
 # --- Routes ---
 
@@ -106,33 +106,61 @@ def register():
     return render_template('register.html')
 
 # ✅ CHATBOT API ROUTE
+user_question_status = {}
+
 @app.route('/chatbot-api', methods=['POST'])
 def chatbot_api():
     try:
         user_message = request.json['message']
 
+        # Check if the user has asked for the solution before in the current session
+        if user_message in user_question_status:
+            asked_before = user_question_status[user_message]
+        else:
+            asked_before = False
+            user_question_status[user_message] = False  # Mark as not asked yet
+
+        # Determine response based on if it's the first or second time asking
+        if asked_before:
+            prompt = (
+                "You are Counticus, a wise math wizard who helps young children learn math. "
+                "Use simple words and speak in a friendly and gentle tone, like you're talking to a young child. "
+                "You ONLY respond to questions that are about math or basic greetings. "
+                "If someone asks about anything else (like colors, science, or personal opinions), politely say you only talk about math. "
+                "For subsequent questions, provide the step-by-step solution and final answer."
+            )
+        else:
+            # Provide hints for the first ask
+            prompt = (
+                "You are Counticus, a wise math wizard who helps young children learn math. "
+                "Use simple words and speak in a friendly and gentle tone, like you're talking to a young child. "
+                "You ONLY respond to questions that are about math or basic greetings. "
+                "If someone asks about anything else (like colors, science, or personal opinions), politely say you only talk about math. "
+                "For the first time a question is asked, give helpful hints, strategies, or steps to solve it, "
+                "but not the final answer."
+            )
+        
+        # Make the OpenAI API call
         response = openai.ChatCompletion.create(
-            model="openai/gpt-3.5-turbo",
+            model="gpt-3.5-turbo",
             messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are Counticus, a wise math wizard. "
-                        "IMPORTANT: Never directly give the final answer to math problems. "
-                        "Instead, only provide helpful hints, strategies, or steps to solve it. "
-                        "Encourage the student to try solving it themselves."
-                    )
-                },
+                {"role": "system", "content": prompt},
                 {"role": "user", "content": user_message}
             ]
         )
 
+        # Check response for hint or solution
         reply = response['choices'][0]['message']['content'].strip()
+
+        # Update status after the first ask, so we know the user is asking again
+        user_question_status[user_message] = True  # Mark as asked before
+
         return jsonify({"reply": reply})
 
     except Exception as e:
         print("❌ OpenRouter Error:", e)
         return jsonify({"reply": "Oops! Counticus couldn’t reach the magic scrolls. Try again later."})
+
 
 @app.route('/chatbot')
 def chatbot():
@@ -460,11 +488,6 @@ def check_reward_claimed():
     except Exception as e:
         print(f"Error in /check_reward_claimed: {e}")
         return jsonify({"error": "Internal server error"}), 500
-
-
-
-
-
 
 
 
