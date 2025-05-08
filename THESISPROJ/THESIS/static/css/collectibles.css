@@ -99,13 +99,14 @@ body {
 #multiplication-stage2-claimed {
   position: absolute;
   top: 10%;
-  left: 39.5%;
+  left: 29%;
 }
 
 #multiplication-stage3-claimed {
   position: absolute;
   top: 10%;
-  left: 29%;
+  left: 39.5%;
+
 }
 
 #addition-stage1-claimed {
@@ -117,13 +118,14 @@ body {
 #addition-stage2-claimed {
   position: absolute;
   top: 10%;
-  left: 76.5%;
+  left: 63%;
+
 }
 
 #addition-stage3-claimed {
   position: absolute;
   top: 10%;
-  left: 63%;
+  left: 76.5%;
 }
 
 #subtraction-stage1-claimed {
@@ -135,13 +137,14 @@ body {
 #subtraction-stage2-claimed {
   position: absolute;
   top: 27.5%;
-  left: 39.5%;
+  left: 29%;
 }
 
 #subtraction-stage3-claimed {
   position: absolute;
   top: 27.5%;
-  left: 29%;
+  left: 39.5%;
+
 }
 
 #division-stage1-claimed {
@@ -153,13 +156,13 @@ body {
 #division-stage2-claimed {
   position: absolute;
   top: 27.5%;
-  left: 76.5%;
+  left: 63%;
 }
 
 #division-stage3-claimed {
   position: absolute;
   top: 27.5%;
-  left: 63%;
+  left: 76.5%;
 }
 
 #counting-stage1-claimed {
@@ -171,13 +174,13 @@ body {
 #counting-stage2-claimed {
   position: absolute;
   top: 45%;
-  left: 39.5%;
+  left: 29%;
 }
 
 #counting-stage3-claimed {
   position: absolute;
   top: 45%;
-  left: 29%;
+  left: 39.5%;
 }
 
 #comparison-stage1-claimed {
@@ -189,13 +192,13 @@ body {
 #comparison-stage2-claimed {
   position: absolute;
   top: 45%;
-  left: 76.5%;
+  left: 63%;
 }
 
 #comparison-stage3-claimed {
   position: absolute;
   top: 45%;
-  left: 63%;
+  left: 76.5%;
 }
 
 #numerals-stage1-claimed {
@@ -207,13 +210,13 @@ body {
 #numerals-stage2-claimed {
   position: absolute;
   top: 62.3%;
-  left: 39.5%;
+  left: 29%;
 }
 
 #numerals-stage3-claimed {
   position: absolute;
   top: 62.3%;
-  left: 29%;
+  left: 39.5%;
 }
 
 #placevalue-stage1-claimed {
@@ -225,13 +228,13 @@ body {
 #placevalue-stage2-claimed {
   position: absolute;
   top: 62.3%;
-  left: 76.5%;
+  left: 63%;
 }
 
 #placevalue-stage3-claimed {
   position: absolute;
   top: 62.3%;
-  left: 63%;
+  left: 76.5%;
 }
 
   

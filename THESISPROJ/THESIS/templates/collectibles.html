@@ -79,70 +79,59 @@
     
       
     <script>
-      const badges = [
-        // Multiplication
-        { id: 'multiplication-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-1.png") }}' },
-        { id: 'multiplication-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-1.png") }}' },
-        { id: 'multiplication-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-1.png") }}' },
-    
-        // Addition
-        { id: 'addition-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-2.png") }}' },
-        { id: 'addition-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-2.png") }}' },
-        { id: 'addition-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-2.png") }}' },
-    
-        // Subtraction
-        { id: 'subtraction-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-3.png") }}' },
-        { id: 'subtraction-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-3.png") }}' },
-        { id: 'subtraction-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-3.png") }}' },
-    
-        // Division
-        { id: 'division-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-4.png") }}' },
-        { id: 'division-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-4.png") }}' },
-        { id: 'division-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-4.png") }}' },
-    
-        // Counting
-        { id: 'counting-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-5.png") }}' },
-        { id: 'counting-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-5.png") }}' },
-        { id: 'counting-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-5.png") }}' },
-    
-        // Comparison
-        { id: 'comparison-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-6.png") }}' },
-        { id: 'comparison-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-6.png") }}' },
-        { id: 'comparison-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-6.png") }}' },
-    
-        // Numerals
-        { id: 'numerals-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-7.png") }}' },
-        { id: 'numerals-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-7.png") }}' },
-        { id: 'numerals-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-7.png") }}' },
-    
-        // Place Value
-        { id: 'placevalue-stage1-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/badge/badge-8.png") }}' },
-        { id: 'placevalue-stage2-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/border/border-8.png") }}' },
-        { id: 'placevalue-stage3-claimed', src: '{{ url_for("static", filename="images/gameimg/rewardimg/title/title-8.png") }}' }
-      ];
-    
+      const maps = ['multiplication', 'addition', 'subtraction', 'division', 'counting', 'comparison', 'numerals', 'placevalue'];
+      const stages = [1, 2, 3];
       const medalsGrid = document.getElementById('medals-grid');
-
-badges.forEach(badge => {
-  const badgeDiv = document.createElement('div');
-  badgeDiv.className = 'squarebadge';
-  badgeDiv.id = badge.id;  // Make sure each div has a unique id
-
-  const img = document.createElement('img');
-  img.src = badge.src;
-  img.alt = 'Badge';
-  img.className = 'badge-image';
-
-  const claimed = localStorage.getItem(badge.id);
-  if (!claimed) {
-    img.style.filter = 'grayscale(100%)'; // optional: make unclaimed badge grayscale
-    img.style.opacity = '0.3'; // optional: make it look locked
-  }
-
-  badgeDiv.appendChild(img);
-  medalsGrid.appendChild(badgeDiv);
-});
+    
+      async function loadRewards() {
+        for (const map of maps) {
+          for (const stage of stages) {
+            try {
+              const res = await fetch(`/get_stage_reward?map=${map}&stage=${stage}`);
+              const reward = await res.json();
+    
+              if (reward.error) continue;
+    
+              // Identify which type of image is present
+              const [type, path] = Object.entries(reward)[0];
+              const id = `${map}-stage${stage}-claimed`;
+    
+              const badgeDiv = document.createElement('div');
+              badgeDiv.className = 'squarebadge';
+              badgeDiv.id = id;
+    
+              const img = document.createElement('img');
+              img.src = path;
+              img.alt = `${type}`;
+              img.className = 'badge-image';
+    
+              // Check if claimed from the server
+              const claimCheck = await fetch('/check_reward_claimed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ map, stage })
+              });
+    
+              const claimResult = await claimCheck.json();
+              const claimed = claimResult.claimed;
+    
+              if (!claimed) {
+                img.style.filter = 'grayscale(100%)';
+                img.style.opacity = '0.3';
+              }
+    
+              badgeDiv.appendChild(img);
+              medalsGrid.appendChild(badgeDiv);
+            } catch (err) {
+              console.error(`Error loading reward for ${map} stage ${stage}:`, err);
+            }
+          }
+        }
+      }
+    
+      loadRewards();
     </script>
+    
     
 
   <script>
