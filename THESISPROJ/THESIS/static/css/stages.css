@@ -209,10 +209,9 @@ body {
 .reward-img {
   position: absolute;
   width: auto;
-  height: 45vh;
+  height: 34vh;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0); /* Start small */
+  left: 49.5%;
   opacity: 0;
   display: block;
   transition: transform 0.5s ease-out, opacity 0.5s ease-out;
@@ -257,39 +256,27 @@ body {
 
 /* OK button fade-in and pop animation */
 .reward-btn {
-  background: linear-gradient(45deg, #4CAF50, #45a049); /* Gradient background */
-  color: white;
-  padding: 4px 10px;
-  border: none;
-  border-radius: 2vh; /* Rounded corners for a softer look */
+  position: absolute;
+  background-image: url('../images/gameimg/rewardimg/claimbtn.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   cursor: pointer;
-  width: 18vh;
-  height: 6vh;
-  font-size: 2.5vh;
-  font-family: 'Poppins', sans-serif;
-  margin-top: 63vh;
-  margin-left: 20vh;
+  width: 22vh;
+  height: 6.5vh;
+  top: 91vh;
+  left: 93vh;
   opacity: 0;
-  transform: scale(0.8);
   transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease, background 0.3s ease;
   animation: buttonFadePop 1.3s ease-out forwards;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Soft shadow effect */
 }
 
-.reward-btn:hover {
-  background: linear-gradient(45deg, #45a049, #4CAF50); /* Slightly change gradient on hover */
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); /* Larger shadow on hover */
-  transform: scale(1.05); /* Slightly enlarge the button on hover */
-}
 
 .reward-btn:active {
-  transform: scale(1); /* Button will snap back to normal when clicked */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Return shadow to normal */
+  transform: scale(1.05); /* Button will snap back to normal when clicked */
 }
 
-.reward-btn:focus {
-  outline: none; /* Remove default focus outline */
-}
+
 
 /* Pop-in animation for the OK button */
 @keyframes buttonFadePop {
@@ -326,21 +313,4 @@ body {
   }
 }
 
-/* Add the new reward text */
-.reward-text {
-  font-size: 6vh;
-  font-weight: bold;
-  color: #fff;
-  text-align: center;
-  margin-bottom: 15px; /* Space between text and image */
-  animation: fadeIn 1.5s ease-out;
-}
 
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}

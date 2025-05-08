@@ -48,18 +48,14 @@
   
     </div>
     
-  </div>
-  <div id="rewardBubble" class="reward-bubble hidden">
-    <div class="bubble-content">
-      
-      <p id="rewardText" class="reward-text">New Skin Reward!</p> <!-- Added text here -->
-      
-      <img id="rewardImage" src="" alt="reward" class="reward-img" />
-      <button id="rewardOkButton" class="reward-btn">Claim</button>
-      
+    <div id="rewardBubble" class="reward-bubble hidden">
+      <div class="bubble-content">
+        <p id="rewardText" class="reward-text" style="visibility: hidden;"></p> <!-- Keep the element, but hide the text -->
+        <img id="rewardImage" src="" alt="reward" class="reward-img" />
+        <button id="rewardOkButton" class="reward-btn"></button>
+      </div>
     </div>
-  </div>
-  
+    
 
   <script>
 function getQueryParam(param) {
@@ -263,12 +259,14 @@ const selectedStageKey = getQueryParam("stage") || "stage1";  // fallback if nee
           console.error('Error fetching stage progress:', error);
       }
   }
-  
   // Call this function on page load to apply the correct stage lock state
   window.addEventListener('DOMContentLoaded', updateStageLock);
-  
+</script>
+
+  <script> 
+
     
-  // Function to show the reward bubble and mark as claimed
+   // Function to show the reward bubble and mark as claimed
   function showRewardBubble(selectedMap) {
       const rewardBubble = document.getElementById('rewardBubble');
       const rewardImage = document.getElementById('rewardImage');
@@ -278,7 +276,8 @@ const selectedStageKey = getQueryParam("stage") || "stage1";  // fallback if nee
       const rewardImageUrl = getRewardImage(selectedMap);
       rewardImage.src = rewardImageUrl || " "; 
   
-      rewardText.textContent = "NEW SKIN REWARD!";
+      // Remove or replace this line to not show the "NEW SKIN REWARD!" text
+      rewardText.textContent = "";  // No text will be displayed
   
       rewardBubble.classList.remove('hidden');
       requestAnimationFrame(() => {
