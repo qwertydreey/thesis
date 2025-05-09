@@ -671,61 +671,61 @@ const rewardData = {
 // Define skins
 const skins = [
   {
-    id: 'default-skin', // <- ito ang tama at consistent
+    id: 'default-skin', // Example skin ID
     name: 'Default Skin',
     src: '/static/images/anim/sprite/idle.png',
     attackSrc: '/static/images/anim/sprite/attack.png',
   },
   {
-    id: 'multiplication-stage3-skin',
+    id: 'r1',
     name: 'Multiplication Skin',
     src: '/static/images/anim/sprite/idle1.png',
     attackSrc: '/static/images/anim/sprite/attack1.png',
   },
   {
-    id: 'addition-stage3-skin',
+    id: 'r2',
     name: 'Addition Skin',
     src: '/static/images/anim/sprite/idle2.png',
     attackSrc: '/static/images/anim/sprite/attack2.png',
   },
   {
-    id: 'subtraction-stage3-skin',
+    id: 'r3',
     name: 'Subtraction Skin',
     src: '/static/images/anim/sprite/idle3.png',
     attackSrc: '/static/images/anim/sprite/attack3.png',
   },
   {
-    id: 'division-stage3-skin',
+    id: 'r4',
     name: 'Division Skin',
     src: '/static/images/anim/sprite/idle4.png',
     attackSrc: '/static/images/anim/sprite/attack4.png',
   },
   {
-    id: 'counting-stage3-skin',
+    id: 'r5',
     name: 'Counting Skin',
     src: '/static/images/anim/sprite/idle5.png',
     attackSrc: '/static/images/anim/sprite/attack5.png',
   },
-
   {
-    id: 'comparison-stage3-skin',
+    id: 'r6',
     name: 'Comparison Skin',
     src: '/static/images/anim/sprite/idle6.png',
     attackSrc: '/static/images/anim/sprite/attack6.png',
   },
   {
-    id: 'numerals-stage3-skin',
+    id: 'r7',
     name: 'Numerals Skin',
     src: '/static/images/anim/sprite/idle7.png',
     attackSrc: '/static/images/anim/sprite/attack7.png',
   },
   {
-    id: 'placevalue-stage3-skin',
+    id: 'r8',
     name: 'Place Value Skin',
     src: '/static/images/anim/sprite/idle8.png',
     attackSrc: '/static/images/anim/sprite/attack8.png',
   },
 ];
+
 
 
 
@@ -1469,146 +1469,162 @@ function fireballAttack() {
   // 🧪 Charging effect
   player.classList.add("charging");
 
-  setTimeout(() => {
-    const equippedSkinId = localStorage.getItem('equippedCharacterId');
-    const skin = skins.find(s => s.id === equippedSkinId) || skins[0];
-    player.src = skin.attackSrc;
-    player.style.height = "35vh";
-    player.style.width = "auto";
-
-    // 🔥 Fireball appears
-    groundContainer.appendChild(fireball);
-    sessionStorage.setItem('fireballTriggered', true);
-
-    // 💢 Monster takes visual damage
-    setTimeout(() => {
-      monster.classList.add("damaged");
-      setTimeout(() => {
-        monster.classList.remove("damaged");
-      }, 600);
-    }, 770);
-
-    // 🌀 Shake effect
-    setTimeout(() => {
-      monster.classList.add("shake");
-      setTimeout(() => {
-        monster.classList.remove("shake");
-      }, 600);
-    }, 1100);
-
-    // 💀 Apply damage + wait for animation to end
-    setTimeout(() => {
-      const damage = 1;
-      currentMonsterHealth -= damage;
-      updateHealthBars();
-
-      if (currentMonsterHealth <= 0) {
-        console.log("Death animation added"); // Add log when death animation starts
-        isMonsterDeathAnimationInProgress = true;
-        monster.classList.add("monster-death");
-
-        // ✔️ Wait for death animation to finish
-        const onDeath = () => {
-          console.log("Death animation ended (fireball)"); // Log when death animation ends
-          monster.removeEventListener("animationend", onDeath);
-          monster.classList.remove("monster-death");
-          currentMonsterIndex++;
-          spawnMonster(currentMonsterIndex, true);
-          isMonsterDeathAnimationInProgress = false;
-        };
-
-        monster.addEventListener("animationend", onDeath);
+  // Fetch equipped skin from the backend
+  fetch('/get_user_skins')
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error("Error fetching equipped skin:", data.error);
+        return;
       }
-    }, 1400);
 
-    // 🧼 Remove fireball
-    setTimeout(() => {
-      fireball.remove();
-      sessionStorage.removeItem('fireballTriggered');
-    }, 1000);
+      // Get the equipped skin from the backend response
+      const equippedSkinId = data.equipped_skin || 'default-skin'; // Default to 'default-skin' if no skin found
+      const skin = skins.find(s => s.id === equippedSkinId) || skins[0];  // Default to first skin if not found
 
-    // 🟢 Reset to idle
-    setTimeout(() => {
-      player.src = skin.src;
-      player.style.height = "35vh";
-      player.style.width = "auto";
-      player.classList.remove("charging");
+      setTimeout(() => {
+        // Update the player's skin to attack state
+        player.src = skin.attackSrc;
+        player.style.height = "35vh";
+        player.style.width = "auto";
 
-      // Remove freeze effect after fireball hits the monster
-      if (freezeTurns > 0) {
-        freezeTurns--;
-        if (freezeTurns === 0) {
+        // 🔥 Fireball appears
+        groundContainer.appendChild(fireball);
+        sessionStorage.setItem('fireballTriggered', true);
+
+        // 💢 Monster takes visual damage
+        setTimeout(() => {
+          monster.classList.add("damaged");
           setTimeout(() => {
-            removeFreezeEffect();
-            freezeTurnsDisplay.style.display = 'none';
-            console.log("⏹ Freeze effect has ended.");
-          }, 100);
-        }
-        updateFreezeTurnsDisplay();
-      }
-    }, 700);
-  }, 600);
+            monster.classList.remove("damaged");
+          }, 600);
+        }, 770);
+
+        // 🌀 Shake effect
+        setTimeout(() => {
+          monster.classList.add("shake");
+          setTimeout(() => {
+            monster.classList.remove("shake");
+          }, 600);
+        }, 1100);
+
+        // 💀 Apply damage + wait for animation to end
+        setTimeout(() => {
+          const damage = 1;
+          currentMonsterHealth -= damage;
+          updateHealthBars();
+
+          if (currentMonsterHealth <= 0) {
+            console.log("Death animation added"); // Add log when death animation starts
+            isMonsterDeathAnimationInProgress = true;
+            monster.classList.add("monster-death");
+
+            // ✔️ Wait for death animation to finish
+            const onDeath = () => {
+              console.log("Death animation ended (fireball)"); // Log when death animation ends
+              monster.removeEventListener("animationend", onDeath);
+              monster.classList.remove("monster-death");
+              currentMonsterIndex++;
+              spawnMonster(currentMonsterIndex, true);
+              isMonsterDeathAnimationInProgress = false;
+            };
+
+            monster.addEventListener("animationend", onDeath);
+          }
+        }, 1400);
+
+        // 🧼 Remove fireball
+        setTimeout(() => {
+          fireball.remove();
+          sessionStorage.removeItem('fireballTriggered');
+        }, 1000);
+
+        // 🟢 Reset to idle
+        setTimeout(() => {
+          player.src = skin.src;
+          player.style.height = "35vh";
+          player.style.width = "auto";
+          player.classList.remove("charging");
+
+          // Remove freeze effect after fireball hits the monster
+          if (freezeTurns > 0) {
+            freezeTurns--;
+            if (freezeTurns === 0) {
+              setTimeout(() => {
+                removeFreezeEffect();
+                freezeTurnsDisplay.style.display = 'none';
+                console.log("⏹ Freeze effect has ended.");
+              }, 100);
+            }
+            updateFreezeTurnsDisplay();
+          }
+        }, 700);
+      }, 600);
+    })
+    .catch(error => {
+      console.error("Error fetching equipped skin:", error);
+    });
 }
 
 
 
 
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const spawn = document.getElementById("player-spawn");
   const player = document.getElementById("player-idle");
 
   // Check if elements exist before proceeding
   if (!spawn || !player) {
-      console.error("Player elements not found in the DOM");
-      return;
+    console.error("Player elements not found in the DOM");
+    return;
   }
 
-  // Get the equipped skin (or default to the first skin)
-  const equippedSkinId = localStorage.getItem('equippedCharacterId');
-  console.log("Equipped skin ID:", equippedSkinId);
+  // Fetch the equipped skin from the server (GET request to '/get_user_skins')
+  fetch('/get_user_skins')
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error('Error fetching user skins:', data.error);
+        return;
+      }
 
-  const skin = skins.find(s => s.id === equippedSkinId) || skins[0]; // Default to the first skin if none is found
-  console.log("Using skin:", skin);
+      // Get the equipped skin from the server response
+      const equippedSkinId = data.equipped_skin || 'default-skin'; // Default to 'default-skin' if no equipped skin
+      console.log("Equipped skin ID from server:", equippedSkinId);
 
-  // Set the idle and spawn images based on the equipped skin
-  player.src = skin.src;  // Set the idle image
-  spawn.src = skin.src;   // Set the spawn image
+      // Find the skin by its ID in the skins array or default to the first skin if none is found
+      const skin = skins.find(s => s.id === equippedSkinId) || skins[0];
+      console.log("Using skin:", skin);
 
-  setTimeout(() => {
-      // Hide the spawn image after the spawn effect duration
-      spawn.classList.add("hidden");
+      // Set the idle and spawn images based on the equipped skin
+      player.src = skin.src;  // Set the idle image
+      spawn.src = skin.src;   // Set the spawn image
 
-      // Instantly show the player (idle state) without animation delay
-      player.classList.remove("hidden");
-  }, 1000); // Adjust this delay if needed
+      setTimeout(() => {
+        // Hide the spawn image after the spawn effect duration
+        spawn.classList.add("hidden");
+
+        // Instantly show the player (idle state) without animation delay
+        player.classList.remove("hidden");
+      }, 1000); // Adjust this delay if needed
+    })
+    .catch(error => {
+      console.error('Error fetching skins:', error);
+    });
 });
 
 
 
+
+// For the monster image (if needed, based on other skins or states)
 window.addEventListener("DOMContentLoaded", () => {
   const monster = document.querySelector(".monster");
-});
+  if (monster) {
 
-
-
-
-document.addEventListener('DOMContentLoaded', function () {
-  const player = document.querySelector(".player");
-
-  // Get equipped skin ID from localStorage
-  const equippedSkinId = localStorage.getItem('equippedCharacterId');
-  if (equippedSkinId) {
-      // Find the skin by its ID in the skins array
-      const skin = skins.find(s => s.id === equippedSkinId);
-      if (skin) {
-          player.src = skin.src; // Update the player's image
-      }
-  } else {
-      // Fallback to default idle skin if no equipped skin found
-      player.src = "/static/images/anim/sprite/idle.png";
   }
 });
+
 
 
 

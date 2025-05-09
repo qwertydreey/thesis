@@ -682,6 +682,7 @@ def get_user_skins():
 
 
 
+
 @app.route('/update_equipped_skin', methods=['POST'])
 def update_equipped_skin():
     user_id = session.get('user_id')
