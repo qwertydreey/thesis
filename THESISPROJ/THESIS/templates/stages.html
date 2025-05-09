@@ -57,115 +57,115 @@
     </div>
     
 
-  <script>
-function getQueryParam(param) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
-}
-
-const selectedMap = getQueryParam("map") || "defaultMap";     // fallback if needed
-const selectedStageKey = getQueryParam("stage") || "stage1";  // fallback if needed
-
-
-    // Function to navigate to the stage
-    function goToStage(stageNumber) {
-      if (selectedMap) {
-        // Create a loading overlay with blur effect
-        const loadingOverlay = document.createElement('div');
-        loadingOverlay.style.position = 'fixed';
-        loadingOverlay.style.top = '0';
-        loadingOverlay.style.left = '0';
-        loadingOverlay.style.width = '100vw';
-        loadingOverlay.style.height = '100vh';
-        loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.3)'; // slightly dim for contrast
-        loadingOverlay.style.backdropFilter = 'blur(10px)'; // BLUR EFFECT HERE
-        loadingOverlay.style.webkitBackdropFilter = 'blur(10px)'; // Safari support
-        loadingOverlay.style.display = 'flex';
-        loadingOverlay.style.justifyContent = 'center';
-        loadingOverlay.style.alignItems = 'center';
-        loadingOverlay.style.zIndex = '9999';
-  
-        // Create the top and bottom parts of the image (up and down)
-        const topHalf = document.createElement('img');
-        topHalf.src = '/static/images/anim/loading/up.png';
-        topHalf.style.position = 'absolute';
-        topHalf.style.top = '0';
-        topHalf.style.left = '0';
-        topHalf.style.width = '100vw';
-        topHalf.style.height = '50%';
-        topHalf.style.objectFit = 'fill';
-        topHalf.style.transition = 'transform 0.7s ease';
-  
-        const bottomHalf = document.createElement('img');
-        bottomHalf.src = '/static/images/anim/loading/down.png';
-        bottomHalf.style.position = 'absolute';
-        bottomHalf.style.bottom = '0';
-        bottomHalf.style.left = '0';
-        bottomHalf.style.width = '100vw';
-        bottomHalf.style.height = '50%';
-        bottomHalf.style.objectFit = 'fill';
-        bottomHalf.style.transition = 'transform 0.7s ease';
-  
-        loadingOverlay.appendChild(topHalf);
-        loadingOverlay.appendChild(bottomHalf);
-        document.body.appendChild(loadingOverlay);
-  
-        // Animate after 1s delay
-        setTimeout(() => {
-          topHalf.style.transform = 'translateY(-100%)';
-          bottomHalf.style.transform = 'translateY(100%)';
-        }, 600);
-  
-        // Navigate after animation
-        setTimeout(() => {
-          window.location.href = `/game?map=${selectedMap}&stage=${stageNumber}`;
-        }, 1450);
-      } else {
-        alert('No map selected.');
+    <script>
+      function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
       }
-    }
-  
-    // Attach event listeners to stage buttons
-    document.querySelectorAll('.stage').forEach((stageImg, index) => {
-      stageImg.addEventListener('click', () => {
-        goToStage(index + 1);
+    
+      const selectedMap = getQueryParam("map") || "defaultMap";     // fallback if needed
+      const selectedStageKey = getQueryParam("stage") || "stage1";  // fallback if needed
+    
+      // Function to navigate to the stage
+      function goToStage(stageNumber) {
+        if (selectedMap) {
+          // Create a loading overlay with blur effect
+          const loadingOverlay = document.createElement('div');
+          loadingOverlay.style.position = 'fixed';
+          loadingOverlay.style.top = '0';
+          loadingOverlay.style.left = '0';
+          loadingOverlay.style.width = '100vw';
+          loadingOverlay.style.height = '100vh';
+          loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.3)'; // slightly dim for contrast
+          loadingOverlay.style.backdropFilter = 'blur(10px)'; // BLUR EFFECT HERE
+          loadingOverlay.style.webkitBackdropFilter = 'blur(10px)'; // Safari support
+          loadingOverlay.style.display = 'flex';
+          loadingOverlay.style.justifyContent = 'center';
+          loadingOverlay.style.alignItems = 'center';
+          loadingOverlay.style.zIndex = '9999';
+    
+          // Create the top and bottom parts of the image (up and down)
+          const topHalf = document.createElement('img');
+          topHalf.src = '/static/images/anim/loading/up.png';
+          topHalf.style.position = 'absolute';
+          topHalf.style.top = '0';
+          topHalf.style.left = '0';
+          topHalf.style.width = '100vw';
+          topHalf.style.height = '50%';
+          topHalf.style.objectFit = 'fill';
+          topHalf.style.transition = 'transform 0.7s ease';
+    
+          const bottomHalf = document.createElement('img');
+          bottomHalf.src = '/static/images/anim/loading/down.png';
+          bottomHalf.style.position = 'absolute';
+          bottomHalf.style.bottom = '0';
+          bottomHalf.style.left = '0';
+          bottomHalf.style.width = '100vw';
+          bottomHalf.style.height = '50%';
+          bottomHalf.style.objectFit = 'fill';
+          bottomHalf.style.transition = 'transform 0.7s ease';
+    
+          loadingOverlay.appendChild(topHalf);
+          loadingOverlay.appendChild(bottomHalf);
+          document.body.appendChild(loadingOverlay);
+    
+          // Animate after 1s delay
+          setTimeout(() => {
+            topHalf.style.transform = 'translateY(-100%)';
+            bottomHalf.style.transform = 'translateY(100%)';
+          }, 600);
+    
+          // Navigate after animation
+          setTimeout(() => {
+            window.location.href = `/game?map=${selectedMap}&stage=${stageNumber}`;
+          }, 1450);
+        } else {
+          alert('No map selected.');
+        }
+      }
+    
+      // Attach event listeners to stage buttons
+      document.querySelectorAll('.stage').forEach((stageImg, index) => {
+        stageImg.addEventListener('click', () => {
+          goToStage(index + 1);
+        });
       });
-    });
-  </script>
+    </script>
+    
   
   
   
   
     
 <script>
-    // Change background image based on selectedMap
-    const mapImgDiv = document.querySelector('.map-img');
-    const mapImages = {
-      addition: "{{ url_for('static', filename='images/stageimg/addition-bg.png') }}",
-      subtraction: "{{ url_for('static', filename='images/stageimg/subtraction-bg.png') }}",
-      multiplication: "{{ url_for('static', filename='images/stageimg/multiplication-bg.png') }}",
-      division: "{{ url_for('static', filename='images/stageimg/division-bg.png') }}",
-      counting: "{{ url_for('static', filename='images/stageimg/counting-bg.png') }}",
-      comparison: "{{ url_for('static', filename='images/stageimg/comparison-bg.png') }}",
-      numerals: "{{ url_for('static', filename='images/stageimg/numerals-bg.png') }}",
-      placevalue: "{{ url_for('static', filename='images/stageimg/placevalue-bg.png') }}"
-    };
+  // Change background image based on selectedMap
+  const mapImgDiv = document.querySelector('.map-img');
+  const mapImages = {
+    addition: "{{ url_for('static', filename='images/stageimg/addition-bg.png') }}",
+    subtraction: "{{ url_for('static', filename='images/stageimg/subtraction-bg.png') }}",
+    multiplication: "{{ url_for('static', filename='images/stageimg/multiplication-bg.png') }}",
+    division: "{{ url_for('static', filename='images/stageimg/division-bg.png') }}",
+    counting: "{{ url_for('static', filename='images/stageimg/counting-bg.png') }}",
+    comparison: "{{ url_for('static', filename='images/stageimg/comparison-bg.png') }}",
+    numerals: "{{ url_for('static', filename='images/stageimg/numerals-bg.png') }}",
+    placevalue: "{{ url_for('static', filename='images/stageimg/placevalue-bg.png') }}"
+  };
 
-    if (selectedMap && mapImgDiv) {
-      mapImgDiv.style.backgroundImage = `url('${mapImages[selectedMap]}')`;
-      mapImgDiv.style.backgroundSize = 'cover';
-      mapImgDiv.style.backgroundPosition = 'center';
-    }
+  if (selectedMap && mapImgDiv) {
+    mapImgDiv.style.backgroundImage = `url('${mapImages[selectedMap]}')`;
+    mapImgDiv.style.backgroundSize = 'cover';
+    mapImgDiv.style.backgroundPosition = 'center';
+  }
 </script>
 
 <script>
-  window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => {
     const selectedMap = getQueryParam("map") || "defaultMap"; // fallback if needed
-  
+
     const starFilled = "{{ url_for('static', filename='images/stageimg/star-filled.png') }}";  // Filled star
     const starEmpty = "{{ url_for('static', filename='images/stageimg/star-empty.png') }}";   // Empty star
-  
-    // Fetch stage progress directly from the server (no need for localStorage)
+
+    // Fetch stage progress directly from the server
     fetch(`/get_stage_progress?map=${selectedMap}`)
       .then(response => response.json())
       .then(stageProgress => {
@@ -174,163 +174,223 @@ const selectedStageKey = getQueryParam("stage") || "stage1";  // fallback if nee
           for (let stage = 1; stage <= 3; stage++) {
             const stageKey = `${selectedMap}-${stage}`;
             const stageData = stageProgress[stageKey];
-            const stars = stageData ? stageData.stars : 0; // Default to 0 stars if not set
-  
+            const stars = stageData ? stageData.stars : 0;
+
             // Update stars in stages
             const stageElements = document.querySelectorAll(`.st${stage}`);
             stageElements.forEach(element => {
               element.src = stars > 0 ? starFilled : starEmpty;
             });
-  
-            // Update stars in roadmap (you can adjust class here to match your roadmap)
+
+            // Update stars in roadmap
             const roadmapStageElements = document.querySelectorAll(`.roadmap-${stage}`);
             roadmapStageElements.forEach(element => {
               element.src = stars > 0 ? starFilled : starEmpty;
             });
           }
-  
-          // Check if Stage 3 is completed and if the reward bubble has not been shown before for this map
+
+          // Check if Stage 3 is completed
           const stage3Key = `${selectedMap}-3`;
           const stage3Data = stageProgress[stage3Key];
-          const rewardBubbleShownKey = `rewardBubbleShown-${selectedMap}`; // Unique key per map
-  
-          // If Stage 3 is completed, show reward bubble
-          if (stage3Data && stage3Data.stars > 0 && !localStorage.getItem(rewardBubbleShownKey)) {
-            showRewardBubble(selectedMap);
+
+          if (stage3Data && stage3Data.stars > 0) {
+            fetch(`/has_claimed_skin?map=${selectedMap}`)
+              .then(res => res.json())
+              .then(data => {
+                if (data.claimed) {
+                  console.log("Skin already claimed for this user, skipping reward bubble.");
+                  return;
+                }
+
+                // Show reward bubble if not claimed
+                showRewardBubble(selectedMap);
+              })
+              .catch(error => {
+                console.error("Error checking skin claim status:", error);
+              });
           }
+
         }
       })
       .catch(error => {
         console.error('Failed to load stage progress:', error);
       });
-  });
-    
+});
+
   // Function to update the stage lock buttons (grayscale & pointer-events)
   async function updateStageLock() {
-      const selectedMap = getQueryParam("map") || "defaultMap"; 
-  
-      try {
-          // Fetch stage progress mula sa server
-          const response = await fetch(`/get_stage_progress?map=${selectedMap}`);
-          if (!response.ok) {
-              throw new Error('Failed to fetch stage progress');
+    const selectedMap = getQueryParam("map") || "defaultMap";
+
+    try {
+      const response = await fetch(`/get_stage_progress?map=${selectedMap}`);
+      if (!response.ok) throw new Error('Failed to fetch stage progress');
+
+      const stageProgress = await response.json();
+
+      const stage1Completed = stageProgress[`${selectedMap}-1`] && stageProgress[`${selectedMap}-1`].stars > 0;
+      const stage2Completed = stageProgress[`${selectedMap}-2`] && stageProgress[`${selectedMap}-2`].stars > 0;
+
+      const stageButtons = document.querySelectorAll('.stage');
+
+      stageButtons.forEach(button => {
+        const stageId = button.closest('button')?.getAttribute('id');
+
+        if (stageId && stageId.startsWith(selectedMap)) {
+          const stageNumber = parseInt(stageId.split('-')[1].replace('stage', ''));
+
+          if (stageNumber === 2 && !stage1Completed) {
+            button.closest('button').style.filter = 'grayscale(100%)';
+            button.closest('button').style.pointerEvents = 'none';
+          } else if (stageNumber === 3 && !stage2Completed) {
+            button.closest('button').style.filter = 'grayscale(100%)';
+            button.closest('button').style.pointerEvents = 'none';
+          } else {
+            button.closest('button').style.filter = 'none';
+            button.closest('button').style.pointerEvents = 'auto';
           }
-          
-          const stageProgress = await response.json();
-  
-          // Kumuha ng completion status ng stage 1 at stage 2
-          const stage1Completed = stageProgress[`${selectedMap}-1`] && stageProgress[`${selectedMap}-1`].stars > 0;
-          const stage2Completed = stageProgress[`${selectedMap}-2`] && stageProgress[`${selectedMap}-2`].stars > 0;
-  
-          // Log para sa debugging
-          console.log(`Stage 1 Completed: ${stage1Completed}`);
-          console.log(`Stage 2 Completed: ${stage2Completed}`);
-  
-          const stageButtons = document.querySelectorAll('.stage');
-  
-          // Loop through the buttons and apply styles for locked stages
-          stageButtons.forEach(button => {
-              const stageId = button.closest('button') ? button.closest('button').getAttribute('id') : null;
-  
-              // Check if stageId is valid
-              if (stageId && stageId.startsWith(selectedMap)) {
-                  const stageNumber = parseInt(stageId.split('-')[1].replace('stage', ''));
-  
-                  // Lock stage 2 if stage 1 is not completed
-                  if (stageNumber === 2 && !stage1Completed) {
-                      button.closest('button').style.filter = 'grayscale(100%)';
-                      button.closest('button').style.pointerEvents = 'none';
-                  } 
-                  // Lock stage 3 if stage 2 is not completed
-                  else if (stageNumber === 3 && !stage2Completed) {
-                      button.closest('button').style.filter = 'grayscale(100%)';
-                      button.closest('button').style.pointerEvents = 'none';
-                  } 
-                  // Unlock stages if previous stages are completed
-                  else {
-                      button.closest('button').style.filter = 'none';
-                      button.closest('button').style.pointerEvents = 'auto';
-                  }
-              } else {
-                  console.warn(`Invalid stage id: ${stageId}`);
-              }
-          });
-      } catch (error) {
-          console.error('Error fetching stage progress:', error);
-      }
+        } else {
+          console.warn(`Invalid stage id: ${stageId}`);
+        }
+      });
+
+    } catch (error) {
+      console.error('Error fetching stage progress:', error);
+    }
   }
-  // Call this function on page load to apply the correct stage lock state
+
   window.addEventListener('DOMContentLoaded', updateStageLock);
 </script>
 
-  <script> 
 
-    
-   // Function to show the reward bubble and mark as claimed
-  function showRewardBubble(selectedMap) {
-      const rewardBubble = document.getElementById('rewardBubble');
-      const rewardImage = document.getElementById('rewardImage');
-      const rewardOkButton = document.getElementById('rewardOkButton');
-      const rewardText = document.getElementById('rewardText');
-  
-      const rewardImageUrl = getRewardImage(selectedMap);
-      rewardImage.src = rewardImageUrl || " "; 
-  
-      // Remove or replace this line to not show the "NEW SKIN REWARD!" text
-      rewardText.textContent = "";  // No text will be displayed
-  
-      rewardBubble.classList.remove('hidden');
-      requestAnimationFrame(() => {
-          rewardBubble.classList.add('visible');
-          setTimeout(() => {
-              const bubbleContent = rewardBubble.querySelector('.bubble-content');
-              bubbleContent.classList.add('show');
-          }, 300);
-      });
-  
-      rewardOkButton.addEventListener('click', () => {
-          rewardBubble.classList.add('hidden');
-          localStorage.setItem(`rewardBubbleShown-${selectedMap}`, 'true');
-      });
-  }
-  
-  // Function to close the reward bubble
-  function closeRewardBubble() {
-      const rewardBubble = document.getElementById('rewardBubble');
-      const bubbleContent = rewardBubble.querySelector('.bubble-content');
-  
-      bubbleContent.classList.remove('show'); // Reset pop state
-      rewardBubble.classList.remove('visible');
-  
-      setTimeout(() => {
-          rewardBubble.classList.add('hidden');
-      }, 400); // Wait for fade-out
-  }
-  
-  // Function to get the reward image based on the selected map
-  function getRewardImage(selectedMap) {
-      switch (selectedMap) {
-          case 'multiplication':
-              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r1.png') }}";
-          case 'addition':
-              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r2.png') }}";
-          case 'subtraction':
-              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r3.png') }}";
-          case 'division':
-              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r4.png') }}";
-          case 'counting':
-              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r5.png') }}";
-          case 'comparison':
-              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r6.png') }}";
-          case 'numerals':
-              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r7.png') }}";
-          case 'placevalue':
-              return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r8.png') }}";
-          default:
-              return "";
-      }
-  }
-  </script>
+
+<script>
+// Function to show the reward bubble and mark as claimed
+function showRewardBubble(selectedMap) {
+    const rewardBubble = document.getElementById('rewardBubble');
+    const rewardImage = document.getElementById('rewardImage');
+    const rewardText = document.getElementById('rewardText');
+
+    // Proceed to show the reward bubble
+    const rewardImageUrl = getRewardImage(selectedMap);
+    rewardImage.src = rewardImageUrl || ""; 
+    rewardText.textContent = "";  // No text will be displayed
+
+    rewardBubble.classList.remove('hidden');
+    requestAnimationFrame(() => {
+        rewardBubble.classList.add('visible');
+        setTimeout(() => {
+            const bubbleContent = rewardBubble.querySelector('.bubble-content');
+            bubbleContent.classList.add('show');
+        }, 300);
+    });
+}
+
+// Function to close the reward bubble
+function closeRewardBubble() {
+    const rewardBubble = document.getElementById('rewardBubble');
+    const bubbleContent = rewardBubble.querySelector('.bubble-content');
+
+    bubbleContent.classList.remove('show'); // Reset pop state
+    rewardBubble.classList.remove('visible');
+
+    setTimeout(() => {
+        rewardBubble.classList.add('hidden');
+    }, 400); // Wait for fade-out
+}
+
+// Function to get the reward image based on the selected map
+function getRewardImage(selectedMap) {
+    switch (selectedMap) {
+        case 'multiplication':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r1.png') }}";
+        case 'addition':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r2.png') }}";
+        case 'subtraction':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r3.png') }}";
+        case 'division':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r4.png') }}";
+        case 'counting':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r5.png') }}";
+        case 'comparison':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r6.png') }}";
+        case 'numerals':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r7.png') }}";
+        case 'placevalue':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r8.png') }}";
+        default:
+            return "";
+    }
+}
+
+
+// Function to close the reward bubble
+function closeRewardBubble() {
+    const rewardBubble = document.getElementById('rewardBubble');
+    const bubbleContent = rewardBubble.querySelector('.bubble-content');
+
+    bubbleContent.classList.remove('show'); // Reset pop state
+    rewardBubble.classList.remove('visible');
+
+    setTimeout(() => {
+        rewardBubble.classList.add('hidden');
+    }, 400); // Wait for fade-out
+}
+
+
+// Function to get the reward image based on the selected map
+function getRewardImage(selectedMap) {
+    switch (selectedMap) {
+        case 'multiplication':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r1.png') }}";
+        case 'addition':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r2.png') }}";
+        case 'subtraction':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r3.png') }}";
+        case 'division':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r4.png') }}";
+        case 'counting':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r5.png') }}";
+        case 'comparison':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r6.png') }}";
+        case 'numerals':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r7.png') }}";
+        case 'placevalue':
+            return "{{ url_for('static', filename='images/gameimg/rewardimg/skins/r8.png') }}";
+        default:
+            return "";
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const rewardOkButton = document.getElementById('rewardOkButton');
+    rewardOkButton.addEventListener('click', () => {
+        const selectedMap = getQueryParam("map") || "defaultMap";
+
+        fetch('/claim_skin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ map: selectedMap })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Skin successfully claimed!');
+            } else {
+                console.error('Failed to claim skin:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error claiming skin:', error);
+        });
+
+        document.getElementById('rewardBubble').classList.add('hidden');
+    });
+});
+
+</script>
+
+
   
 
   

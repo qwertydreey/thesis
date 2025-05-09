@@ -494,6 +494,105 @@ def check_reward_claimed():
 
 
 
+
+@app.route('/has_claimed_skin')
+def has_claimed_skin():
+    user_id = session.get('user_id')
+    map_param = request.args.get('map')
+
+    if not user_id or not map_param:
+        print("Error: Missing user ID or map parameter")
+        return jsonify({'claimed': False, 'error': 'Missing user ID or map parameter'})
+
+    try:
+        cursor = db.cursor()  # 🔧 Fresh cursor
+        cursor.execute("""
+            SELECT claimed FROM user_skins WHERE user_id = %s AND map = %s
+        """, (user_id, map_param))
+        result = cursor.fetchone()
+
+        if result is None:
+            print(f"Error: No result found for user {user_id} and map {map_param}")
+            return jsonify({'claimed': False, 'error': 'No skin data found'})
+
+        if result[0] == 1:
+            return jsonify({'claimed': True})
+        else:
+            return jsonify({'claimed': False})
+
+    except Exception as e:
+        print(f"Error in /has_claimed_skin: {e}")
+        return jsonify({'claimed': False, 'error': str(e)})
+    finally:
+        cursor.close()
+
+
+
+@app.route('/claim_skin', methods=['POST'])
+def claim_skin():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'message': 'User not logged in'})
+
+    data = request.get_json()
+    selected_map = data.get('map')
+
+    if not selected_map:
+        return jsonify({'error': 'Missing map parameter'}), 400
+
+    skin_code_mapping = {
+        'multiplication': 'r1',
+        'addition': 'r2',
+        'subtraction': 'r3',
+        'division': 'r4',
+        'counting': 'r5',
+        'comparison': 'r6',
+        'numerals': 'r7',
+        'placevalue': 'r8',
+    }
+
+    skin_code = skin_code_mapping.get(selected_map)
+
+    if not skin_code:
+        return jsonify({'error': 'Invalid map provided'}), 400
+
+    try:
+        print(f"User {user_id} claiming skin for map: {selected_map} => skin_code: {skin_code}")
+
+        cursor = db.cursor()  # 🔧 Create a new cursor here
+
+        cursor.execute("""
+            SELECT claimed FROM user_skins WHERE user_id = %s AND map = %s
+        """, (user_id, selected_map))
+        existing_skin = cursor.fetchone()
+
+        if existing_skin and existing_skin[0] == 1:
+            return jsonify({'success': False, 'message': 'Skin already claimed by this user'})
+
+        if existing_skin:
+            cursor.execute("""
+                UPDATE user_skins SET claimed = 1, skin_code = %s
+                WHERE user_id = %s AND map = %s
+            """, (skin_code, user_id, selected_map))
+        else:
+            cursor.execute("""
+                INSERT INTO user_skins (user_id, map, claimed, skin_code)
+                VALUES (%s, %s, 1, %s)
+            """, (user_id, selected_map, skin_code))
+
+        db.commit()
+        return jsonify({'success': True, 'message': 'Skin claimed successfully'})
+
+    except Exception as e:
+        print(f"Error in /claim_skin: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
+    finally:
+        cursor.close()  # Close this route's cursor only
+
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
