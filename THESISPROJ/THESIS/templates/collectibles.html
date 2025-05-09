@@ -134,124 +134,163 @@
     
     
 
-  <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const skins = [
-        { id: 'default-skin', src: '/static/images/gameimg/rewardimg/skins/idle.png' },
-        { id: 'multiplication-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle1.png' },
-        { id: 'addition-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle2.png' },
-        { id: 'subtraction-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle3.png' },
-        { id: 'division-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle4.png' },
-        { id: 'counting-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle5.png' },
-        { id: 'comparison-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle6.png' },
-        { id: 'numerals-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle7.png' },
-        { id: 'placevalue-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle8.png' }
-    ];
+    
+  
+  
 
-    const skinImage = document.getElementById('skin-image');
-    const prevSkinBtn = document.getElementById('prev-skin-btn');
-    const nextSkinBtn = document.getElementById('next-skin-btn');
-    const equipBtn = document.getElementById('equip-btn');
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          fetch('/get_user_skins')
+              .then(response => response.json())
+              .then(data => {
+                  if (data.error) {
+                      console.error('Error fetching skins:', data.error);
+                      return;
+                  }
+      
+                  const claimedSkinCodes = data.skins.map(skin => skin.skin_code);
+                  const equippedSkinCode = data.equipped_skin;  // from server
+                  console.log('Claimed skins:', claimedSkinCodes);
+                  console.log('Equipped skin:', equippedSkinCode);
+      
+                  const skinMap = {
+                      'r1': 'multiplication-stage3-skin',
+                      'r2': 'addition-stage3-skin',
+                      'r3': 'subtraction-stage3-skin',
+                      'r4': 'division-stage3-skin',
+                      'r5': 'counting-stage3-skin',
+                      'r6': 'comparison-stage3-skin',
+                      'r7': 'numerals-stage3-skin',
+                      'r8': 'placevalue-stage3-skin'
+                  };
+      
+                  const reverseSkinMap = Object.fromEntries(
+                      Object.entries(skinMap).map(([code, id]) => [id, code])
+                  );
+      
+                  const skins = [
+                      { id: 'default-skin', src: '/static/images/gameimg/rewardimg/skins/idle.png' },
+                      { id: 'multiplication-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle1.png' },
+                      { id: 'addition-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle2.png' },
+                      { id: 'subtraction-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle3.png' },
+                      { id: 'division-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle4.png' },
+                      { id: 'counting-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle5.png' },
+                      { id: 'comparison-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle6.png' },
+                      { id: 'numerals-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle7.png' },
+                      { id: 'placevalue-stage3-skin', src: '/static/images/gameimg/rewardimg/skins/idle8.png' }
+                  ];
+      
+                  const equippedSkinId = skinMap[equippedSkinCode] || 'default-skin';
+      
+                  const skinImage = document.getElementById('skin-image');
+                  const prevSkinBtn = document.getElementById('prev-skin-btn');
+                  const nextSkinBtn = document.getElementById('next-skin-btn');
+                  const equipBtn = document.getElementById('equip-btn');
+      
+                  let currentSkinIndex = 0;
+                  let currentEquippedSkin = equippedSkinId;
+      
+                  function updateSkinDisplay() {
+                      const skin = skins[currentSkinIndex];
+                      const isClaimed = skin.id === 'default-skin' || claimedSkinCodes.some(code => skinMap[code] === skin.id);
+      
+                      skinImage.src = skin.src;
+                      skinImage.className = `skin-${currentSkinIndex + 1}`;
+      
+                      skinImage.style.filter = isClaimed ? 'none' : 'grayscale(100%)';
+                      skinImage.style.opacity = isClaimed ? '1' : '0.3';
+      
+                      equipBtn.classList.remove('equip', 'equipped', 'locked');
+      
+                      if (!isClaimed) {
+                          equipBtn.classList.add('locked');
+                          equipBtn.disabled = true;
+                      } else if (currentEquippedSkin === skin.id) {
+                          equipBtn.classList.add('equipped');
+                          equipBtn.disabled = true;
+                      } else {
+                          equipBtn.classList.add('equip');
+                          equipBtn.disabled = false;
+                      }
+                  }
+      
+                  function equipSkin(skinId) {
+                        let skinCode = reverseSkinMap[skinId];
+                        
+                        if (!skinCode && skinId === 'default-skin') {
+                            skinCode = 'default';  // explicitly set for default skin
+                        }
 
-    let currentSkinIndex = 0;
+                        if (!skinCode) {
+                            console.error("No skin_code found for:", skinId);
+                            return;
+                        }
 
-    // Initialize default skin
-    if (!localStorage.getItem('default-skin')) {
-        localStorage.setItem('default-skin', 'claimed');
-    }
+                        console.log("Equipping skin_code:", skinCode);
 
-    // Set equipped skin from localStorage or default to first skin
-    let currentEquippedSkin = localStorage.getItem('equippedCharacterId') || 'default-skin';
-    localStorage.setItem('equippedCharacterId', currentEquippedSkin);
+                        fetch('/update_equipped_skin', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ skin_id: skinCode })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("HTTP error " + response.status);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.error) {
+                                console.error('Failed to equip skin:', data.error);
+                            } else {
+                                console.log(data.message);
+                                currentEquippedSkin = skinId;
+                                updateSkinDisplay();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Equip error:', error);
+                        });
+                    }
 
-    // Function to update the display of the equipped skin
-    function updateSkinDisplay() {
-        const skin = skins[currentSkinIndex];
-        const isClaimed = skin.id === 'default-skin' || localStorage.getItem(skin.id) === 'claimed';
-
-        skinImage.src = skin.src;
-
-        // Remove all previous skin-specific classes
-        skinImage.classList.remove(...skinImage.classList);
-
-        // Add the new skin-specific class based on the index
-        skinImage.classList.add(`skin-${currentSkinIndex + 1}`);  // Add skin-1, skin-2, etc.
-
-        // Make skin grayscale and low opacity if not acquired
-        if (isClaimed) {
-            skinImage.style.filter = 'none';
-            skinImage.style.opacity = '1';
-        } else {
-            skinImage.style.filter = 'grayscale(100%)';
-            skinImage.style.opacity = '0.3';
-        }
-
-        // Show "Equip" button only if skin is claimed
-        equipBtn.classList.remove('equip', 'equipped', 'locked');
-
-        if (!isClaimed) {
-            equipBtn.classList.add('locked');
-            equipBtn.disabled = true;
-        } else if (currentEquippedSkin === skin.id) {
-            equipBtn.classList.add('equipped');
-            equipBtn.disabled = true;
-        } else {
-            equipBtn.classList.add('equip');
-            equipBtn.disabled = false;
-        }
-    }
-
-    // Equip the selected skin
-    function equipSkin(skinId) {
-        const selectedSkin = skins.find(skin => skin.id === skinId);
-        if (!selectedSkin) {
-            console.error("Selected skin not found:", skinId);
-            return;
-        }
-
-        // Save the skin ID to localStorage
-        localStorage.setItem('equippedCharacterId', selectedSkin.id);
-
-        // Update display immediately
-        currentEquippedSkin = selectedSkin.id;
-        updateSkinDisplay();
-
-        // Apply the selected skin to the player's character
-        const player = document.getElementById("player-idle");
-        if (player) {
-            player.src = selectedSkin.src;
-        }
-
-        console.log("Skin equipped:", selectedSkin.src);
-    }
-
-    // Update to show next skin in carousel
-    function showNextSkin() {
-        currentSkinIndex = (currentSkinIndex + 1) % skins.length;
-        updateSkinDisplay();
-    }
-
-    // Update to show previous skin in carousel
-    function showPrevSkin() {
-        currentSkinIndex = (currentSkinIndex - 1 + skins.length) % skins.length;
-        updateSkinDisplay();
-    }
-
-    // Add event listeners for buttons
-    nextSkinBtn.addEventListener('click', showNextSkin);
-    prevSkinBtn.addEventListener('click', showPrevSkin);
-
-    // Add event listener for the Equip button
-    equipBtn.addEventListener('click', function () {
-        const selectedSkin = skins[currentSkinIndex];
-        equipSkin(selectedSkin.id);
-    });
-
-    // Initialize display
-    updateSkinDisplay();
-});
-
-  </script>
+      
+                  function showNextSkin() {
+                      currentSkinIndex = (currentSkinIndex + 1) % skins.length;
+                      updateSkinDisplay();
+                  }
+      
+                  function showPrevSkin() {
+                      currentSkinIndex = (currentSkinIndex - 1 + skins.length) % skins.length;
+                      updateSkinDisplay();
+                  }
+      
+                  nextSkinBtn.addEventListener('click', showNextSkin);
+                  prevSkinBtn.addEventListener('click', showPrevSkin);
+                  equipBtn.addEventListener('click', () => {
+                      const selectedSkin = skins[currentSkinIndex];
+                      equipSkin(selectedSkin.id);
+                  });
+      
+                  // Set current index to equipped skin
+                  currentSkinIndex = skins.findIndex(s => s.id === equippedSkinId);
+                  if (currentSkinIndex === -1) currentSkinIndex = 0;
+      
+                  updateSkinDisplay();
+              })
+              .catch(error => {
+                  console.error('Fetch error:', error);
+              });
+      });
+      </script>
+      
+      
+    
+    
+  
+    
+    
+    
+      
 
     
 

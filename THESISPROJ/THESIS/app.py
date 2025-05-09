@@ -78,32 +78,56 @@ def register():
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
-        # Check if passwords match
         if password != confirm_password:
             flash('Passwords do not match!', 'danger')
             return redirect(url_for('register'))
 
-        # Check if username already exists
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-        if cursor.fetchone():
-            flash('Username already exists.', 'danger')
+        try:
+            cursor = db.cursor()
+
+            # Check if username already exists
+            cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+            if cursor.fetchone():
+                flash('Username already exists.', 'danger')
+                cursor.close()
+                return redirect(url_for('register'))
+
+            # Hash the password
+            hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
+
+            # Insert new user
+            cursor.execute("""
+                INSERT INTO users 
+                (username, first_name, last_name, birth_day, birth_month, birth_year, gender, password)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (username, first_name, last_name, birth_day, birth_month, birth_year, gender, hashed_pw))
+            db.commit()
+
+            # Get new user_id
+            cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
+            user_id = cursor.fetchone()[0]
+
+            # Insert default skin as claimed and equipped
+            cursor.execute("""
+                INSERT INTO user_skins (user_id, skin_code, map, claimed, equipped)
+                VALUES (%s, 'default', NULL, 1, 1)
+            """, (user_id,))
+            db.commit()
+
+            cursor.close()
+
+            flash('Registration successful! You can now log in.', 'success')
+            return redirect(url_for('login'))
+
+        except Exception as e:
+            db.rollback()
+            print(f"[Registration Error] {e}")
+            flash('An error occurred during registration. Please try again.', 'danger')
             return redirect(url_for('register'))
 
-        # Hash the password
-        hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
-
-        # Insert user into database
-        cursor.execute("""
-            INSERT INTO users 
-            (username, first_name, last_name, birth_day, birth_month, birth_year, gender, password)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        """, (username, first_name, last_name, birth_day, birth_month, birth_year, gender, hashed_pw))
-        db.commit()
-
-        flash('Registration successful! You can now log in.', 'success')
-        return redirect(url_for('login'))
-
     return render_template('register.html')
+
+
 
 # ✅ CHATBOT API ROUTE
 user_question_status = {}
@@ -191,9 +215,41 @@ def roadmap():
 def shop():
     return render_template('shop.html')
 
+
+import json
+
 @app.route('/collectibles')
 def collectibles():
-    return render_template('collectibles.html')
+    cursor = db.cursor()
+    
+    user_id = session.get('user_id')  # Get user_id from session or other source
+    
+    # Query to get the skins claimed by the user
+    cursor.execute("SELECT skin_code FROM user_skins WHERE user_id = %s AND claimed = 1", (user_id,))
+    claimed_skins = cursor.fetchall()
+    
+    # Debugging: Print out the fetched skins
+    print("Claimed skins from DB:", claimed_skins)
+    
+    # Extract skin codes
+    claimed_skin_ids = [skin[0] for skin in claimed_skins]
+    
+    # Debugging: Print the list of claimed skin IDs
+    print("Claimed skin IDs:", claimed_skin_ids)
+    
+    # Close the cursor
+    cursor.close()
+    
+    # Convert to JSON for passing to JavaScript
+    claimed_skin_ids_json = json.dumps(claimed_skin_ids)
+    
+    return render_template('collectibles.html', claimed_skin_ids_json=claimed_skin_ids_json)
+
+
+
+
+
+
 
 @app.route('/monster_atlas')
 def monster_atlas():
@@ -588,6 +644,95 @@ def claim_skin():
         return jsonify({'error': 'Internal server error'}), 500
     finally:
         cursor.close()  # Close this route's cursor only
+
+@app.route('/get_user_skins')
+def get_user_skins():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'User not logged in'}), 401
+
+    try:
+        cursor = db.cursor()
+
+        # Fetch claimed skins
+        cursor.execute("""
+            SELECT map, skin_code FROM user_skins WHERE user_id = %s AND claimed = 1
+        """, (user_id,))
+        skins = cursor.fetchall()
+
+        # Get the equipped skin
+        cursor.execute("""
+            SELECT skin_code FROM user_skins WHERE user_id = %s AND equipped = 1 LIMIT 1
+        """, (user_id,))
+        equipped = cursor.fetchone()
+        equipped_skin = equipped[0] if equipped else 'default'
+
+        # Return skins data with equipped skin info
+        return jsonify({
+            'skins': [{'skin_code': skin[1], 'map': skin[0]} for skin in skins],
+            'equipped_skin': equipped_skin
+        })
+
+    except Exception as e:
+        print(f"Error fetching user skins: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
+    finally:
+        cursor.close()
+
+
+
+
+@app.route('/update_equipped_skin', methods=['POST'])
+def update_equipped_skin():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'User not logged in'}), 401
+    
+    skin_id = request.json.get('skin_id')
+    if skin_id is None:
+        return jsonify({'error': 'Skin ID is required'}), 400
+
+    try:
+        cursor = db.cursor()
+
+        # Allow 'default' skin
+        if skin_id != 'default':
+            cursor.execute("""
+                SELECT * FROM user_skins WHERE user_id = %s AND skin_code = %s
+            """, (user_id, skin_id))
+            skin = cursor.fetchone()
+
+            if not skin:
+                return jsonify({'error': 'Skin not found for this user'}), 404
+
+        # Unequip all skins first
+        cursor.execute("""
+            UPDATE user_skins SET equipped = 0 WHERE user_id = %s
+        """, (user_id,))
+
+        # Equip selected skin
+        cursor.execute("""
+            UPDATE user_skins SET equipped = 1 WHERE user_id = %s AND skin_code = %s
+        """, (user_id, skin_id))
+
+        # If no row was updated, insert the default skin
+        if cursor.rowcount == 0 and skin_id == 'default':
+            cursor.execute("""
+                INSERT INTO user_skins (user_id, skin_code, map, claimed, equipped)
+                VALUES (%s, 'default', NULL, 1, 1)
+            """, (user_id,))
+
+        db.commit()
+        return jsonify({'message': 'Skin equipped successfully'})
+
+    except Exception as e:
+        print(f"Error equipping skin: {e}")
+        db.rollback()
+        return jsonify({'error': 'Internal server error'}), 500
+    finally:
+        cursor.close()
+
+
 
 
 
