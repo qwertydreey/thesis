@@ -254,20 +254,18 @@ body {
 
 /* Freeze Turns Display Styling */
 .freeze-turn {
+  position: absolute;
   font-weight: 600; /* Slightly lighter weight for readability */
   color: #fff; /* White text */
   background-color: rgba(135, 206, 250, 0.85); /* Slightly less transparent for a more prominent ice blue effect */
-  padding: 8px 15px; /* Increased padding for better spacing */
+  padding: 1vh 2vh; /* Increased padding for better spacing */
   border-radius: 1vh; /* More rounded corners */
-  margin-top: 29.6vh; /* Adjusted to position using viewport height */
-  
+  top: 39vh;
+  left: 22vh;
   text-align: center;
-  font-size: 1.8vh; /* Slightly larger font size */
-  width: 28vh; /* Auto width based on content */
+  font-size: 1.6vh;
+  width: 24vh;
   height: auto;
-  margin-left: auto;
-  margin-right: auto;
-
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
   z-index: 9999;
 }
@@ -2861,6 +2859,42 @@ body {
   }
 }
 
+
+
+/* Add this CSS to position the difficulty display */
+.difficulty-display {
+  position: absolute;
+  top: 18vh;
+  left: 1vh;
+  width: 19vh;
+  height: 5vh;
+  padding: 1vh 2vh;
+  font-size: 2vh;
+  font-weight: bold;
+  color: #ffffff;
+  border-radius: 1vh;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.6); /* Slightly darker background for better contrast */
+}
+
+/* Difficulty levels with distinct colors */
+.difficulty-display.easy {
+  background-color: #28a745; /* Green for easy */
+}
+
+.difficulty-display.normal {
+  background-color: #ffc107; /* Yellow for normal */
+}
+
+.difficulty-display.hard {
+  background-color: #fd7e14; /* Orange for hard */
+}
+
+.difficulty-display.extreme {
+  background-color: #dc3545; /* Red for extreme */
+}
+
+/* Optional hover effect for interactivity */
 
 
 

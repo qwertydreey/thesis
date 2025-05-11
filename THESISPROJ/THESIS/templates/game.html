@@ -21,6 +21,8 @@
         <div class="player-container">
           <p class="player-name">{{ first_name | upper }}</p>
           <div id="player-health" class="hp-bar-container playerhp"></div>
+          <div id="difficulty-display" class="difficulty-display"></div>
+
         </div>
 
         <!-- Lightning Effect -->
@@ -36,6 +38,7 @@
         <div class="monster-container">
           <p class="monster-name"></p>
           <div id="monster-health" class="hp-bar-container monsterhp"></div>
+
         </div>
       </div>
 
@@ -150,10 +153,11 @@
     <p id="question-text" class="question-text"></p>
   </div>
   <input type="hidden" id="correct-answer">
-  <div id="freeze-turn" class="freeze-turn"></div>
   <div class="menu-btn-wrapper">
     <button id="menuButton" class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
   </div>
+  <div id="freeze-turn" class="freeze-turn"></div>
+
 </div>
 
 <p id="feedback"></p>

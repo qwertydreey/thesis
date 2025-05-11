@@ -139,17 +139,31 @@ async function loadDifficultyForMap(mapName) {
 
     if (data.success) {
       console.log(`✅ Loaded difficulty for ${mapName}: ${data.difficulty}`);
+      currentDifficulty = data.difficulty;
+      updateDifficultyDisplay();  // Update the difficulty display
       return data.difficulty;
     } else {
-      return mapDifficulty[mapName]; // fallback
+      currentDifficulty = mapDifficulty[mapName]; // fallback
+      updateDifficultyDisplay();  // Update the difficulty display
+      return mapDifficulty[mapName];
     }
   } catch (error) {
     console.error(`❌ Failed to load difficulty for ${mapName}:`, error);
+    currentDifficulty = mapDifficulty[mapName];
+    updateDifficultyDisplay();  // Update the difficulty display
     return mapDifficulty[mapName];
   }
 }
 
+function updateDifficultyDisplay() {
+  const difficultyDisplay = document.getElementById('difficulty-display');
+  difficultyDisplay.style.display = 'block'; // Make the display visible
 
+  // Set the text and class based on current difficulty
+  difficultyDisplay.innerText = `Difficulty: ${currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1)}`;
+  difficultyDisplay.classList.remove('easy', 'normal', 'hard', 'extreme');
+  difficultyDisplay.classList.add(currentDifficulty);
+}
 
 // === Difficulty Evaluation ===
 function evaluateDifficulty(correctAnswers, totalQuestionsAnswered) {
