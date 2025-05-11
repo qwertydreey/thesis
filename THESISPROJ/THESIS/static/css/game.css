@@ -264,7 +264,7 @@ body {
   left: 22vh;
   text-align: center;
   font-size: 1.6vh;
-  width: 24vh;
+  width: auto;
   height: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
   z-index: 9999;
@@ -2866,7 +2866,7 @@ body {
   position: absolute;
   top: 18vh;
   left: 1vh;
-  width: 19vh;
+  width: auto;
   height: 5vh;
   padding: 1vh 2vh;
   font-size: 2vh;
