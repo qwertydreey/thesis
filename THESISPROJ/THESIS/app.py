@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_bcrypt import Bcrypt
 import mysql.connector
-import random
 import openai
 
 app = Flask(__name__)
@@ -27,7 +26,9 @@ openai.api_key = "sk-or-v1-496a2dccc03cc234cee6e19ea9f8b81ebf4cbd9721141db105bde
 
 @app.route('/')
 def index():
+
     return render_template('index.html')
+
 
 from flask import session
 
@@ -112,8 +113,14 @@ def register():
                 INSERT INTO user_skins (user_id, skin_code, map, claimed, equipped)
                 VALUES (%s, 'default', NULL, 1, 1)
             """, (user_id,))
-            db.commit()
 
+            # ✅ Insert default game progress
+            cursor.execute("""
+                INSERT INTO user_game_progress (user_id, map, stage_key, correct, wrong, total, difficulty)
+                VALUES (%s, 'multiplication', '1', 0, 0, 0, 'easy')
+            """, (user_id,))
+
+            db.commit()
             cursor.close()
 
             flash('Registration successful! You can now log in.', 'success')
@@ -126,6 +133,7 @@ def register():
             return redirect(url_for('register'))
 
     return render_template('register.html')
+
 
 
 
@@ -735,8 +743,192 @@ def update_equipped_skin():
 
 
 
+def get_db_connection():
+    try:
+        return mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="qweqwe",  # Replace this with your actual password
+            database="learning_game"
+        )
+    except Exception as e:
+        print(f"Error connecting to database: {e}")
+        return None
+
+@app.route('/get-progress')
+def get_progress():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'message': 'User not logged in'}), 400
+
+    db = get_db_connection()
+    if db is None:
+        return jsonify({'success': False, 'message': 'Failed to connect to database'}), 500
+
+    cursor = db.cursor(dictionary=True)
+
+    try:
+        cursor.execute("SELECT * FROM user_game_progress WHERE user_id = %s", (user_id,))
+        rows = cursor.fetchall()
+
+        if not rows:
+            cursor.execute("""
+                INSERT INTO user_game_progress (user_id, map, stage_key, correct, wrong, total, difficulty)
+                VALUES (%s, 'multiplication', 'stage1', 0, 0, 0, 'easy')
+            """, (user_id,))
+            db.commit()
+
+            cursor.execute("SELECT * FROM user_game_progress WHERE user_id = %s", (user_id,))
+            rows = cursor.fetchall()
+
+        result = {'success': True, 'mapDifficulty': {}, 'selectedMap': 'multiplication', 'selectedStageKey': 'stage1'}
+
+        for row in rows:
+            map_name = row['map']
+            result['mapDifficulty'][map_name] = row['difficulty']
+            result[map_name] = {
+                'correctAnswersCount': row['correct'],
+                'wrongAnswersCount': row['wrong'],
+                'totalQuestionsAnswered': row['total']
+            }
+
+        return jsonify(result)
+    
+    except Exception as e:
+        print(f"Error loading progress: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/save-game-progress', methods=['POST'])
+def save_game_progress():
+    try:
+        data = request.get_json()
+        user_id = session.get('user_id')
+
+        if not user_id:
+            raise ValueError("User not logged in")
+
+        selected_map = data.get('map')
+        selected_stage = data.get('stage')
+        correct = data.get('correctAnswersCount', 0)
+        wrong = data.get('wrongAnswersCount', 0)
+        total = data.get('totalQuestionsAnswered', 0)
+        difficulty = data.get('difficulty')
+
+        db = get_db_connection()
+        if db is None:
+            raise ConnectionError("Failed to connect to the database")
+        
+        cursor = db.cursor()
+
+        cursor.execute("""
+            INSERT INTO user_game_progress (user_id, map, stage_key, correct, wrong, total, difficulty)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+            correct = VALUES(correct),
+            wrong = VALUES(wrong),
+            total = VALUES(total),
+            difficulty = VALUES(difficulty)
+        """, (user_id, selected_map, selected_stage, correct, wrong, total, difficulty))
+        
+        db.commit()
+        
+        return jsonify({'success': True, 'message': 'Progress saved successfully'})
+
+    except ValueError as ve:
+        print(f"ValueError: {ve}")
+        return jsonify({'success': False, 'message': str(ve)}), 400  # Bad request
+    except ConnectionError as ce:
+        print(f"ConnectionError: {ce}")
+        return jsonify({'success': False, 'message': str(ce)}), 500  # Internal server error
+    except mysql.connector.Error as mysql_err:
+        print(f"MySQL Error: {mysql_err}")
+        return jsonify({'success': False, 'message': 'Database error occurred'}), 500  # Internal server error
+    except Exception as e:
+        print(f"Exception: {e}")
+        return jsonify({'success': False, 'message': 'An unexpected error occurred'}), 500  # Generic server error
+    finally:
+        if db:
+            db.close()
 
 
+@app.route('/get-difficulty')
+def get_difficulty():
+    user_id = session.get('user_id')
+    map_name = request.args.get('map')
+
+    db = get_db_connection()
+    if db is None:
+        return jsonify({'success': False, 'message': 'Failed to connect to database'}), 500
+
+    cursor = db.cursor()
+    cursor.execute("SELECT difficulty FROM user_game_progress WHERE user_id = %s AND map = %s", (user_id, map_name))
+    result = cursor.fetchone()
+
+    if result:
+        return jsonify({'success': True, 'difficulty': result[0]})
+    return jsonify({'success': False})
+
+@app.route('/update-difficulty', methods=['POST'])
+def update_difficulty():
+    data = request.json
+    user_id = session.get('user_id')
+    map_name = data['map']
+    difficulty = data['difficulty']
+
+    db = get_db_connection()
+    if db is None:
+        return jsonify({'success': False, 'message': 'Failed to connect to database'}), 500
+
+    cursor = db.cursor()
+    cursor.execute("""
+        UPDATE user_game_progress SET difficulty = %s WHERE user_id = %s AND map = %s
+    """, (difficulty, user_id, map_name))
+
+    db.commit()
+    return jsonify({'success': True})
+
+
+@app.route('/reset-counters', methods=['POST'])
+def reset_counters():
+    data = request.get_json()
+    user_id = session.get('user_id')  # Make sure user is logged in
+    selected_map = data.get('map')
+
+    if not user_id or not selected_map:
+        return jsonify({"message": "Missing user ID or map"}), 400
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        reset_query = """
+            UPDATE user_game_progress
+            SET correct = 0,
+                wrong = 0,
+                total = 0
+            WHERE user_id = %s AND map = %s
+        """
+
+        print(f"Executing query: {reset_query} with params: (user_id={user_id}, map={selected_map})")
+
+        cursor.execute(reset_query, (user_id, selected_map))
+        connection.commit()
+
+        if cursor.rowcount > 0:
+            return jsonify({"message": "Counters reset successfully!"}), 200
+        else:
+            return jsonify({"message": "No progress found for this map."}), 404
+
+    except Exception as e:
+        connection.rollback()
+        print("❌ Error resetting counters:", str(e))
+        return jsonify({"message": "Error resetting counters", "error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        connection.close()
 
 
 if __name__ == '__main__':

@@ -22,83 +22,108 @@ let mapDifficulty = {
 let currentDifficulty = loadDifficultyForMap(selectedMap);
 
 // === INITIAL LOAD ===
-window.addEventListener('DOMContentLoaded', () => {
-  loadProgress();
+window.addEventListener('DOMContentLoaded', async () => {
+  await Promise.all([
+    loadProgress(),  // Load progress asynchronously
+    fetchNewQuestion()  // Fetch new question asynchronously
+  ]);
+  
   initMapAndStage();
   updateHealthBars();
   
   console.log(`Selected Map: ${selectedMap}`);
   console.log(`Selected Stage: ${selectedStageKey}`);
   console.log(`Current Difficulty: ${currentDifficulty}`);
-  
-  fetchNewQuestion();  // Now call this after ensuring progress is loaded
 });
 
+
+
+
 // === Progress Functions ===
-function loadProgress() {
-  const savedProgress = JSON.parse(localStorage.getItem('gameProgress'));
+async function loadProgress() {
+  try {
+    const response = await fetch('/get-progress');
+    const data = await response.json();
 
-  if (savedProgress) {
-    if (!urlParams.get('map')) {
-      selectedMap = savedProgress.selectedMap;
+    if (data.success) {
+      if (!urlParams.get('map')) {
+        selectedMap = data.selectedMap || selectedMap;
+      }
+
+      if (!urlParams.get('stage')) {
+        selectedStageKey = data.selectedStageKey || selectedStageKey;
+      }
+
+      if (data.mapDifficulty) {
+        mapDifficulty = data.mapDifficulty;
+      }
+
+      if (data[selectedMap]) {
+        const progress = data[selectedMap];
+        correctAnswersCount = progress.correctAnswersCount || 0;
+        wrongAnswersCount = progress.wrongAnswersCount || 0;
+        totalQuestionsAnswered = progress.totalQuestionsAnswered || 0;
+
+        console.log(`📝 Loaded DB progress for ${selectedMap}: Correct: ${correctAnswersCount}, Wrong: ${wrongAnswersCount}, Total: ${totalQuestionsAnswered}`);
+      }
     }
-
-    if (!urlParams.get('stage')) {
-      selectedStageKey = savedProgress.selectedStageKey;
-    }
-
-    mapDifficulty = savedProgress.mapDifficulty;
-
-    // Log the previous map's answer counts before switching to a new one
-    if (savedProgress[selectedMap]) {
-      console.log(`📝 Loaded previous progress for ${selectedMap}: Correct Answers: ${savedProgress[selectedMap].correctAnswersCount}, Wrong Answers: ${savedProgress[selectedMap].wrongAnswersCount}, Total Questions Answered: ${savedProgress[selectedMap].totalQuestionsAnswered}`);
-
-      // Load counts for the current map
-      correctAnswersCount = savedProgress[selectedMap].correctAnswersCount || 0;
-      wrongAnswersCount = savedProgress[selectedMap].wrongAnswersCount || 0;
-      totalQuestionsAnswered = savedProgress[selectedMap].totalQuestionsAnswered || 0;
-    }
+  } catch (error) {
+    console.error("❌ Failed to load progress from DB:", error);
   }
 }
+
+
+
 
 
 // === Saving Progress ===
-function saveProgress() {
-  const savedProgress = JSON.parse(localStorage.getItem('gameProgress')) || {};
+async function saveProgress() {
+  const data = {
+      map: selectedMap,  // Ensure this is properly set before the POST request
+      stage: selectedStage,
+      correctAnswersCount: correctAnswersCount,
+      wrongAnswersCount: wrongAnswersCount,  // Correct variable name
+      totalQuestionsAnswered: totalQuestionsAnswered,
+      difficulty: currentDifficulty,
+  };
 
-  // Save counts per map
-  if (!savedProgress[selectedMap]) {
-    savedProgress[selectedMap] = {
-      correctAnswersCount: 0,
-      wrongAnswersCount: 0,
-      totalQuestionsAnswered: 0
-    };
+  console.log("Sending data:", data);  // Log data for debugging
+
+  try {
+      const response = await fetch('/save-game-progress', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+          console.log("Progress saved successfully");
+      } else {
+          console.error("Failed to save progress:", result.message);
+      }
+  } catch (error) {
+      console.error("Error saving progress:", error);
   }
-
-  // Update the progress for the current map
-  savedProgress[selectedMap].correctAnswersCount = correctAnswersCount;
-  savedProgress[selectedMap].wrongAnswersCount = wrongAnswersCount;
-  savedProgress[selectedMap].totalQuestionsAnswered = totalQuestionsAnswered;
-
-  // Log the progress for the current map
-  console.log(`💾 Progress saved for ${selectedMap}: Correct Answers: ${correctAnswersCount}, Wrong Answers: ${wrongAnswersCount}, Total Questions Answered: ${totalQuestionsAnswered}`);
-
-  // Save map-specific progress
-  localStorage.setItem('gameProgress', JSON.stringify(savedProgress));
 }
 
 
-function switchMap(newMap) {
+
+
+
+async function switchMap(newMap) {
   // Before switching, save the current map progress
-  saveProgress();
+  await saveProgress();
 
   // Log the switch
   console.log(`🔄 Switching from ${selectedMap} to ${newMap}`);
 
   // Now switch to the new map and load the new progress
   selectedMap = newMap;
-  loadProgress();  // Load progress for the new map
-  fetchNewQuestion();  // Get a new question for the new map
+  await loadProgress();  // Load progress for the new map
+  await fetchNewQuestion();  // Get a new question for the new map
 }
 
 
@@ -107,15 +132,24 @@ function switchMap(newMap) {
 
 
 
-function loadDifficultyForMap(mapName) {
-  let savedDifficulty = localStorage.getItem(`${mapName}-difficulty`);
-  if (!savedDifficulty) {
-    savedDifficulty = mapDifficulty[mapName];  // Default difficulty per map
-    localStorage.setItem(`${mapName}-difficulty`, savedDifficulty);
+async function loadDifficultyForMap(mapName) {
+  try {
+    const response = await fetch(`/get-difficulty?map=${mapName}`);
+    const data = await response.json();
+
+    if (data.success) {
+      console.log(`✅ Loaded difficulty for ${mapName}: ${data.difficulty}`);
+      return data.difficulty;
+    } else {
+      return mapDifficulty[mapName]; // fallback
+    }
+  } catch (error) {
+    console.error(`❌ Failed to load difficulty for ${mapName}:`, error);
+    return mapDifficulty[mapName];
   }
-  console.log(`✅ Loaded difficulty for ${mapName}: ${savedDifficulty}`);
-  return savedDifficulty;
 }
+
+
 
 // === Difficulty Evaluation ===
 function evaluateDifficulty(correctAnswers, totalQuestionsAnswered) {
@@ -136,7 +170,7 @@ function evaluateDifficulty(correctAnswers, totalQuestionsAnswered) {
   return currentDifficulty;  // If we haven't reached 10 questions, return current difficulty
 }
 
-
+// Get next difficulty level
 function getNextDifficulty(currentDifficulty) {
   if (!['easy', 'normal', 'hard', 'extreme'].includes(currentDifficulty)) {
     console.error("Invalid currentDifficulty:", currentDifficulty);
@@ -147,6 +181,7 @@ function getNextDifficulty(currentDifficulty) {
   return levels[Math.min(index + 1, levels.length - 1)];
 }
 
+// Get previous difficulty level
 function getPreviousDifficulty(currentDifficulty) {
   if (!['easy', 'normal', 'hard', 'extreme'].includes(currentDifficulty)) {
     console.error("Invalid currentDifficulty:", currentDifficulty);
@@ -157,13 +192,15 @@ function getPreviousDifficulty(currentDifficulty) {
   return levels[Math.max(index - 1, 0)];
 }
 
+
 // === Question Fetching ===
-function fetchNewQuestion() {
+async function fetchNewQuestion() {
   const qText = document.getElementById('question-text');
   const cAns = document.getElementById('correct-answer');
   const fb = document.getElementById('feedback');
 
-  currentDifficulty = loadDifficultyForMap(selectedMap);
+  // Await for difficulty to be loaded asynchronously
+  currentDifficulty = await loadDifficultyForMap(selectedMap);
 
   if (!questions[selectedMap] || !questions[selectedMap][selectedStageKey]) {
     console.error("❌ No questions available for the selected map or stage.");
@@ -208,8 +245,7 @@ let correctAnswersCount = 0;
 let wrongAnswersCount = 0;
 let totalQuestionsAnswered = 0;
 
-
-function handleAttack() {
+async function handleAttack() {
   const input = document.getElementById('number-input').value.trim();
   const answer = document.getElementById('correct-answer').value.trim();
   const feedbackMessage = document.getElementById('feedback-message');
@@ -221,74 +257,95 @@ function handleAttack() {
 
   const isCorrect = parseFloat(input) === parseFloat(answer);
 
-  // Call handleAnswer to show the speech bubble based on whether the answer is correct or not
+  // Show speech bubble
   handleAnswer(input, answer);
 
-  // Update progress whether the answer is correct or not
+  // Update counters
   totalQuestionsAnswered++;
 
-  // Handle correct answer
   if (isCorrect) {
     fireballAttack(() => {
-      // Fireball has completed; decrease freeze turns only after fireball animation
-      decreaseFreezeTurns();
+      decreaseFreezeTurns(); // After fireball animation
     });
     correctAnswersCount++;
-    console.log(`✅ Answered ${totalQuestionsAnswered} questions. Correct: ${correctAnswersCount}, Wrong: ${wrongAnswersCount}`);
 
-    // Apply correct class and display feedback
     feedbackMessage.textContent = "✅ Correct!";
     feedbackMessage.classList.remove('wrong');
     feedbackMessage.classList.add('correct');
-    feedbackMessage.style.display = 'inline-block'; // Make feedback message visible
-    feedbackMessage.classList.add('fade-in'); // Add fade-in class to animate
-
   } else {
     wrongAnswersCount++;
 
     if (freezeTurns <= 0) {
-      monsterAttack(); // Monster attack happens if no freeze
+      monsterAttack();
     } else {
       console.log("❄️ Monster is frozen — no damage to player.");
     }
 
-    // ** Immediately decrease freeze turns when the answer is incorrect **
     decreaseFreezeTurns();
 
-    // Apply wrong class and display feedback
     feedbackMessage.textContent = "❌ Incorrect answer!";
     feedbackMessage.classList.remove('correct');
     feedbackMessage.classList.add('wrong');
-    feedbackMessage.style.display = 'inline-block'; // Make feedback message visible
-    feedbackMessage.classList.add('fade-in'); // Add fade-in class to animate
   }
 
-  // Hide feedback message after 4 seconds
+  // Show feedback
+  feedbackMessage.style.display = 'inline-block';
+  feedbackMessage.classList.add('fade-in');
+
   setTimeout(() => {
-    feedbackMessage.classList.remove('fade-in'); // Remove fade-in class
-    feedbackMessage.classList.add('fade-out'); // Add fade-out class for animation
-
-    // Wait for fade-out to finish, then hide the element
+    feedbackMessage.classList.remove('fade-in');
+    feedbackMessage.classList.add('fade-out');
     setTimeout(() => {
-      feedbackMessage.style.display = 'none'; // Hide feedback message
-    }, 500); // Adjust this time to match the fade-out duration
-  }, 3000); // 4000ms = 4 seconds
+      feedbackMessage.style.display = 'none';
+    }, 500);
+  }, 3000);
 
+  // Reset wrong counter every time it hits 1
   if (wrongAnswersCount >= 1) {
     wrongAnswersCount = 0;
   }
 
-  // Update difficulty after 10 questions answered, based on correct answers
+  // === RESET COUNTERS AND UPDATE DIFFICULTY IF 10 ANSWERS ===
   if (totalQuestionsAnswered >= 10) {
     currentDifficulty = evaluateDifficulty(correctAnswersCount, totalQuestionsAnswered);
-    updateDifficulty(); // Save updated difficulty to localStorage
-    resetCounters(); // Reset counters for the next round
+    updateDifficulty();
+
+    console.log("🔁 Resetting counters after 10 answers...");
+    await resetCounters(); // ✅ Backend reset
+    correctAnswersCount = 0; // ✅ Frontend reset
+    wrongAnswersCount = 0;
+    totalQuestionsAnswered = 0;
   }
 
-  // Save progress after each question
-  saveProgress();
-  fetchNewQuestion(); // Always fetch a new question after answering
-  document.getElementById('number-input').value = '';  // Clear input
+  await saveProgress();
+  await fetchNewQuestion();
+
+  // Clear input
+  document.getElementById('number-input').value = '';
+}
+
+
+// === Reset Counters ===
+async function resetCounters() {
+  try {
+    const response = await fetch('/reset-counters', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ map: selectedMap })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log(`✅ Counters reset: ${data.message}`);
+    } else {
+      console.error(`❌ Failed to reset: ${data.message}`);
+    }
+  } catch (error) {
+    console.error("❌ Error resetting counters:", error);
+  }
 }
 
 
@@ -320,38 +377,27 @@ function decreaseFreezeTurns() {
 
 
 // === Difficulty Update Function ===
-function updateDifficulty() {
-  localStorage.setItem(`${selectedMap}-difficulty`, currentDifficulty);  
-  console.log(`Difficulty for ${selectedMap} updated to: ${currentDifficulty}`);
-}
+async function updateDifficulty() {
+  try {
+    const data = { map: selectedMap, difficulty: currentDifficulty };
 
-// === Reset Counters ===
-function resetCounters() {
-  const savedProgress = JSON.parse(localStorage.getItem('gameProgress')) || {};
+    const response = await fetch('/update-difficulty', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
 
-  // Initialize selected map if it doesn't exist in saved progress
-  if (!savedProgress[selectedMap]) {
-    savedProgress[selectedMap] = {
-      correctAnswersCount: 0,
-      wrongAnswersCount: 0,
-      totalQuestionsAnswered: 0
-    };
+    const result = await response.json();
+    if (result.success) {
+      console.log(`✅ Difficulty updated in DB to ${currentDifficulty}`);
+    }
+  } catch (error) {
+    console.error("❌ Error updating difficulty:", error);
   }
-
-  // Reset the counters for the selected map
-  savedProgress[selectedMap].correctAnswersCount = 0;
-  savedProgress[selectedMap].wrongAnswersCount = 0;
-  savedProgress[selectedMap].totalQuestionsAnswered = 0;
-
-  // Save the reset progress back to localStorage
-  localStorage.setItem('gameProgress', JSON.stringify(savedProgress));
-
-  // Also reset the in-game variables
-  correctAnswersCount = 0; // Reset correct answers count
-  wrongAnswersCount = 0; // Reset wrong answers count
-  totalQuestionsAnswered = 0; // Reset total questions answered
-  console.log(`✅ Counters reset for ${selectedMap}`);
 }
+
 
 
 
@@ -781,7 +827,7 @@ function initMapAndStage() {
 
 
 
-function spawnMonster(idx, shouldFetchQuestion = false) {
+async function spawnMonster(idx, shouldFetchQuestion = false) {
   const m = monstersInStage[idx];
   if (!m) return showVictoryScreen();
 
@@ -822,7 +868,7 @@ function spawnMonster(idx, shouldFetchQuestion = false) {
     void monsterImg.offsetWidth; // Force reflow
     monsterImg.classList.add('monster-spawn');
 
-    monsterImg.addEventListener('animationend', function clearSpawn() {
+    monsterImg.addEventListener('animationend', async function clearSpawn() {
       monsterImg.classList.remove('monster-spawn');
       isMonsterSpawnAnimationInProgress = false;
       monsterImg.removeEventListener('animationend', clearSpawn);
@@ -830,15 +876,15 @@ function spawnMonster(idx, shouldFetchQuestion = false) {
       // Update health bars after monster spawns
       updateHealthBars();
 
-      // Add fade-in effect for new question
+      // Add fade-out effect for current question
       const qText = document.getElementById('question-text');
       qText.classList.remove('fade-in');
       qText.classList.add('fade-out'); // Fade out current question
 
-      setTimeout(() => {
+      setTimeout(async () => {
         // ✅ Only fetch a question if instructed
         if (shouldFetchQuestion) {
-          fetchNewQuestion();
+          await fetchNewQuestion(); // Ensure the question fetch happens after animation
         }
 
         // Apply fade-in effect for the new question
@@ -850,6 +896,7 @@ function spawnMonster(idx, shouldFetchQuestion = false) {
     console.log("Spawn in progress, skipping spawn for now.");
   }
 }
+
 
 
 
