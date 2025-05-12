@@ -6,12 +6,13 @@
   <title>Roadmap</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/shop.css') }}" />
 </head>
-<body>
+<body data-bgm="/static/bgm/shop.mp3">
   <div class="shop-wrapper">
     <div class="shop-content">
       <!-- Fullscreen Background Image -->
       <img src="{{ url_for('static', filename='images/shopimg/shop.png') }}" alt="Shop Image" class="shop-img"/> 
 
+      <audio id="buttonClickSound" src="/static/sfx/click.mp3" preload="auto"></audio>
 
 
         <div class="shop-btn-wrapper">
@@ -20,24 +21,24 @@
 
         <div class="back-btn-wrapper">
             <a href="{{ url_for('dashboard') }}">
-              <button class="back-btn"></button>
+              <button class="back-btn"onclick="playButtonClickSound();"></button>
             </a>
           </div>
 
         <div class="shop-btn-wrapper">
-            <button class="shop-btn health"></button>
+            <button class="shop-btn health"onclick="playButtonClickSound();"></button>
           </div>
           
           <div class="shop-btn-wrapper">
-            <button class="shop-btn thunder"></button>
+            <button class="shop-btn thunder"onclick="playButtonClickSound();"></button>
           </div>
           
           <div class="shop-btn-wrapper">
-            <button class="shop-btn freeze"></button>
+            <button class="shop-btn freeze" onclick="playButtonClickSound();"></button>
           </div>
           
           <div class="shop-btn-wrapper">
-            <button class="shop-btn counticus"></button>
+            <button class="shop-btn counticus"onclick="playButtonClickSound();"></button>
           </div>
           
 
@@ -99,8 +100,24 @@
 
           </script>
           
+          <script>
+            function playButtonClickSound() {
+              const originalSound = document.getElementById('buttonClickSound');
+              const soundClone = originalSound.cloneNode(); // clone the <audio> element
+              soundClone.volume = 1;
+              soundClone.playbackRate = 2;
           
-          
+              // Play the cloned audio
+              soundClone.play().catch((e) => {
+                  console.error('Playback failed:', e);
+              });
+            }
+      
+          </script>
+
+
+          <script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>
+
           
 
       </div>

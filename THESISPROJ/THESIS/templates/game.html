@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Chewy&family=Fredoka:wght@300..700&family=Varela+Round&display=swap" rel="stylesheet">
 </head>
 
-<body onload="fetchNewQuestion()">
+<body data-bgm="dynamic">
   <div class="game-wrapper">
 
     <!-- Game Background -->
@@ -85,7 +85,7 @@
 <div class="potion-section">
   <div class="potion-item">
     <div class="freeze-box-container">
-      <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="useFreezePotion()">
+      <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="playButtonClickSound(); useFreezePotion()">
       <img src="{{ url_for('static', filename='images/gameimg/freeze box.png') }}" class="freeze-box">
     </div>
     <span class="potion-quantity" id="freeze-quantity">3</span>
@@ -93,7 +93,7 @@
 
   <div class="potion-item">
     <div class="health-box-container">
-      <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="useHealthPotion()">
+      <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="playButtonClickSound(); useHealthPotion()">
       <img src="{{ url_for('static', filename='images/gameimg/health box.png') }}" class="health-box">
     </div>
     <span class="potion-quantity" id="health-quantity">1</span>
@@ -101,7 +101,7 @@
 
   <div class="potion-item">
     <div class="thunder-box-container">
-      <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="Thunder Potion" onclick="useThunderPotion()">
+      <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="Thunder Potion" onclick="playButtonClickSound(); useThunderPotion()">
       <img src="{{ url_for('static', filename='images/gameimg/thunder box.png') }}" class="thunder-box">
     </div>
     <span class="potion-quantity" id="thunder-quantity">3</span>
@@ -111,26 +111,28 @@
 
 
 
+<audio id="buttonClickSound" src="/static/sfx/click.mp3" preload="auto"></audio>
 
 
-        <div class="game-control-container">
-            <div class="button" onclick="addToInput(7)"></div>
-            <div class="button" onclick="addToInput(8)"></div>
-            <div class="button" onclick="addToInput(9)"></div>
-            <div class="button" onclick="addToInput(4)"></div>
-            <div class="button" onclick="addToInput(5)"></div>
-            <div class="button" onclick="addToInput(6)"></div>
-            <div class="button" onclick="addToInput(1)"></div>
-            <div class="button" onclick="addToInput(2)"></div>
-            <div class="button" onclick="addToInput(3)"></div>
-            <div class="button backspace" onclick="backspace()"></div>
-            <div class="button" onclick="addToInput(0)"></div>
-            <div class="button" onclick="addToInput('.')"></div>
-            <div class="placeholder-input">
-              <input type="text" class="input-field" id="number-input" />
-            </div>
-            <div class="attack-button" onclick="handleAttack()"></div>
-          </div>
+<div class="game-control-container">
+  <div class="button" onclick="playButtonClickSound(); addToInput(7)"></div>
+  <div class="button" onclick="playButtonClickSound(); addToInput(8)"></div>
+  <div class="button" onclick="playButtonClickSound(); addToInput(9)"></div>
+  <div class="button" onclick="playButtonClickSound(); addToInput(4)"></div>
+  <div class="button" onclick="playButtonClickSound(); addToInput(5)"></div>
+  <div class="button" onclick="playButtonClickSound(); addToInput(6)"></div>
+  <div class="button" onclick="playButtonClickSound(); addToInput(1)"></div>
+  <div class="button" onclick="playButtonClickSound(); addToInput(2)"></div>
+  <div class="button" onclick="playButtonClickSound(); addToInput(3)"></div>
+  <div class="button backspace" onclick="playButtonClickSound(); backspace()"></div>
+  <div class="button" onclick="playButtonClickSound(); addToInput(0)"></div>
+  <div class="button" onclick="playButtonClickSound(); addToInput('.')"></div>
+  <div class="placeholder-input">
+    <input type="text" class="input-field" id="number-input" />
+  </div>
+  <div class="attack-button" onclick="playButtonClickSound(); handleAttack()"></div>
+</div>
+
 
 
         <div class="chatbot-container">
@@ -168,46 +170,6 @@
     <!-- Feedback -->
 
   </div> <!-- End of game-wrapper -->
-
-
-  <!-- Game Menu Overlay -->
-  <div id="menuOverlay" class="menu-overlay hidden">
-    <div id="gameMenu" class="game-menu">
-      <button class="menu-item" data-lang="resume" onclick="resumeGame()">Resume</button>
-      <button class="menu-item" data-lang="restart" onclick="restartGame()">Restart</button>
-      <button class="menu-item" data-lang="settings" onclick="openSettings()">Settings</button>
-      <button class="menu-item" data-lang="quit" onclick="goToMainMenu()">Quit</button>
-    </div>
-
-    <!-- Settings Menu -->
-    <div id="settingsMenu" class="game-menu hidden">
-      <div class="settings-container">
-        <div class="setting-option">
-          <label for="volume" class="volume-label" data-lang="volumeLabel">Volume</label>
-          <input type="range" id="volume" min="0" max="100" value="50">
-        </div>
-        <div class="setting-option mute-align">
-          <div class="mute-wrapper">
-            <input type="checkbox" id="muteCheckbox" onchange="toggleMuteCheckbox()">
-            <span class="mute-label" data-lang="muteLabel">Mute</span>
-          </div>
-        </div>
-        <div class="language-container">
-          <label for="language" data-lang="languageLabel">Language</label>
-          <div class="language-box">
-            <button id="prevLanguage" onclick="changeLanguage('prev')"> &lt; </button>
-            <span id="languageText">English</span>
-            <button id="nextLanguage" onclick="changeLanguage('next')"> &gt; </button>
-          </div>
-        </div>
-        <div class="settings-item-container">
-          <button class="settings-item" onclick="applySettings()" data-lang="apply">Apply</button>
-          <button class="settings-item" onclick="closeSettings()" data-lang="back">Back</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
 <!-- Victory Screen -->
 <div id="victory-screen" class="victory-screen">
   <div class="victory-box">
@@ -286,6 +248,68 @@
 </div>
 
 
+  <!-- Game Menu Overlay -->
+  <div id="menuOverlay" class="menu-overlay hidden">
+    <div id="gameMenu" class="game-menu">
+      <button class="menu-item" data-lang="resume" onclick="resumeGame()">Resume</button>
+      <button class="menu-item" data-lang="restart" onclick="restartGame()">Restart</button>
+      <button class="menu-item" data-lang="settings" onclick="openSettings()">Settings</button>
+      <button class="menu-item" data-lang="quit" onclick="goToMainMenu()">Quit</button>
+    </div>
+
+<!-- Settings Menu -->
+<!-- Settings Menu -->
+<div id="settingsMenu" class="game-menu hidden">
+  <div class="settings-container">
+    <!-- Volume Control for BGM -->
+    <div class="setting-option">
+      <label for="volume" class="volume-label" data-lang="volumeLabel">BGM</label>
+      <input type="range" id="volume" class="volume-slider" min="0" max="30" value="30">
+    </div>
+
+    <!-- Mute Toggle for BGM -->
+    <div class="setting-option mute-align">
+      <div class="mute-wrapper">
+        <input type="checkbox" id="muteCheckbox" class="mute-checkbox" onchange="toggleMuteCheckbox(event)">
+        <span class="mute-label" data-lang="muteLabel">Mute</span>
+      </div>
+    </div>
+
+    <!-- Volume Control for SFX -->
+    <div class="setting-option">
+      <label for="sfx-volume" class="sfx-volume-label" data-lang="sfxVolumeLabel">SFX</label>
+      <input type="range" id="sfx-volume" class="volume-slider" min="0" max="30" value="30">
+    </div>
+
+    <!-- Mute Toggle for SFX -->
+    <div class="setting-option mute-align">
+      <div class="sfx-mute-wrapper">
+        <input type="checkbox" id="sfxMuteCheckbox" class="mute-checkbox" onchange="toggleSfxMuteCheckbox(event)">
+        <span class="mute-label" data-lang="sfxMuteLabel">Mute</span>
+      </div>
+    </div>
+
+    <!-- Language Settings -->
+    <div class="language-container">
+      <label for="language" data-lang="languageLabel">Language</label>
+      <div class="language-box">
+        <button id="prevLanguage" onclick="changeLanguage('prev')"> &lt; </button>
+        <span id="languageText">English</span>
+        <button id="nextLanguage" onclick="changeLanguage('next')"> &gt; </button>
+      </div>
+    </div>
+
+    <!-- Settings Buttons -->
+    <div class="settings-item-container">
+      <button class="settings-item" onclick="applySettings()" data-lang="apply">Apply</button>
+      <button class="settings-item" onclick="closeSettings()" data-lang="back">Back</button>
+    </div>
+  </div>
+</div>
+
+
+
+
 
   
 
@@ -340,6 +364,7 @@
 
 <script src="{{ url_for('static', filename='js/questions.js') }}"></script>
 <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>
 
 
 </body>

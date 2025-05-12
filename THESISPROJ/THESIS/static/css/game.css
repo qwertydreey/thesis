@@ -1395,8 +1395,8 @@ body {
     border-radius: 10px;
     padding: 40px 20px; /* Increased padding for spacing */
     z-index: 999;
-    width: 70vh;     /* 700px / 10 */
-    height: 50vh;    /* 500px / 10 */
+    width: 85vh;
+    height: 60vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1411,7 +1411,7 @@ body {
 
 
   .menu-item {
-    width: 44vh; /* or adjust as needed */
+    width: 55vh; /* or adjust as needed */
     height: 5.5vh; /* 55px / 10 */
     margin: 0 auto 4vh auto; /* Increased bottom margin to 40px as vh */
     background-color: #2f855a; /* Deep emerald green */
@@ -1484,13 +1484,15 @@ body {
 
 /* General Settings Container */
 .settings-container {
+  position: absolute;
   padding: 2vh;
   text-align: center;
   width: 100%;
-  max-width: 40vh; /* 400px */
+  max-width: 50vh; /* 400px */
   color: white;
   font-family: 'Poppins', sans-serif;
-  margin-top: 3vh; /* 30px */
+  top: 9vh;
+  left: 18vh;
 }
 
 /* Each Setting Block */
@@ -1511,16 +1513,17 @@ body {
 #volume {
   width: 100%;
   height: 0.8vh; /* 8px */
+  top:4vh;
   appearance: none;
   background: #ffffff;
   border-radius: 0.4vh;
   outline: none;
-  position: relative;
+  position: absolute;
   transition: background 0.3s ease;
 }
 .volume-label{
   position: absolute;
-  top:7vh;
+  top:0vh;
   font-size: 2vh;
 }
 /* Volume Slider Thumb */
@@ -1557,11 +1560,13 @@ body {
 
 /* Mute Wrapper aligns checkbox and label horizontally */
 .mute-wrapper {
+  top:6vh;
+  left:3vh;
+  position: absolute;
   display: flex;
   align-items: center;
   gap: 1vh;
-  margin-top: 0.5vh;
-  margin-left: 1.2vh;
+
 }
 
 /* Mute Checkbox Style */
@@ -1593,11 +1598,105 @@ body {
   font-weight: 600;
 }
 
+/* === SFX Volume Range === */
+#sfx-volume {
+  width: 100%;
+  height: 0.8vh;
+  top:15vh;
+  appearance: none;
+  background: #ffffff;
+  border-radius: 0.4vh;
+  outline: none;
+  position: absolute;
+  transition: background 0.3s ease;
+}
+
+.sfx-volume-label {
+  position: absolute;
+  top: 11vh; /* Adjust this as needed */
+  font-size: 2vh;
+}
+
+/* SFX Volume Slider Thumb */
+#sfx-volume::-webkit-slider-thumb {
+  appearance: none;
+  height: 2vh;
+  width: 2vh;
+  background: #4a90e2;
+  border: 0.2vh solid #1c5f94;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#sfx-volume::-webkit-slider-thumb:hover {
+  background: #1c5f94;
+  transform: scale(1.2);
+}
+
+#sfx-volume::-moz-range-thumb {
+  height: 2vh;
+  width: 2vh;
+  background: #4a90e2;
+  border: 0.2vh solid #1c5f94;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#sfx-volume::-moz-range-thumb:hover {
+  background: #1c5f94;
+  transform: scale(1.2);
+}
+
+/* SFX Mute Wrapper (aligns checkbox and label horizontally) */
+.sfx-mute-wrapper {
+  top:17vh;
+  left: 3vh;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+
+}
+
+/* SFX Mute Checkbox */
+#sfxMuteCheckbox {
+  appearance: none;
+  width: 2vh;
+  height: 2vh;
+  border: 0.2vh solid #4a90e2;
+  border-radius: 0.4vh;
+  position: relative;
+  cursor: pointer;
+}
+
+/* SFX Mute Icon when checked */
+#sfxMuteCheckbox:checked::before {
+  content: "🔇";
+  color: white;
+  font-size: 1.4vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* SFX Mute Label */
+.sfx-mute-label {
+  font-size: 1.6vh;
+  color: #fff;
+  font-weight: 600;
+}
+
+
 /* Language Container */
 .language-container {
+  top: 19vh;
+  left: 14vh;
+  position: absolute;
   text-align: center;
   font-weight: 600;
-  margin-top: -3vh;
 }
 
 .language-container label {
@@ -1644,16 +1743,18 @@ body {
 
 /* Buttons Section */
 .settings-item-container {
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 3vh;
+  top: 32vh;
+  left: 4vh;
 }
 
 /* Shared styles */
 .settings-item {
   display: block;
-  width: 28vh;
+  width: 45vh;
   margin-bottom: 1vh;
   padding: 1.2vh 2.5vh;
   border-radius: 0.8vh;

@@ -91,14 +91,13 @@ body {
 
 .user-name {
   color: #603002;
-  font-size: 2.5rem;
+  font-size: 4vh;
   font-weight: 700;
   text-align: left;
   font-family: "FSP DEMO - Merlo Neue Bold";
   position: absolute;
-  top: 13vh;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 12vh;
+  left: 6.4vh;
   width: 35vh;
   max-width: 35vh;
   word-wrap: break-word;
@@ -115,9 +114,55 @@ body {
      1px  1px 0 #fcd516;
 }
 
+.gender {
+  color: #603002;
+  font-size: 2.5vh;
+  font-weight: 500;
+  text-align: left;
+  font-family: "FSP DEMO - Merlo Neue Bold";
+  position: absolute;
+  top: 17.5vh;
+  left: 6.4vh;
+  width: 35vh;
+  max-width: 35vh;
+  word-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.4;
+  text-transform: uppercase;
 
 
+  /* Mas contrasty stroke-style */
+  text-shadow:
+    -1px -1px 0 #fcd516,
+     1px -1px 0 #fcd516,
+    -1px  1px 0 #fcd516,
+     1px  1px 0 #fcd516;
+}
 
+.id {
+  color: #603002;
+  font-size: 2.5vh;
+  font-weight: 500;
+  text-align: left;
+  font-family: "FSP DEMO - Merlo Neue Bold";
+  position: absolute;
+  top: 21vh;
+  left: 6.4vh;
+  width: 35vh;
+  max-width: 35vh;
+  word-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.4;
+  text-transform: uppercase;
+
+
+  /* Mas contrasty stroke-style */
+  text-shadow:
+    -1px -1px 0 #fcd516,
+     1px -1px 0 #fcd516,
+    -1px  1px 0 #fcd516,
+     1px  1px 0 #fcd516;
+}
 
 
 .profile:hover {

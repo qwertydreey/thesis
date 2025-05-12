@@ -30,6 +30,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204  # Returns no content, effectively ignoring the request
+
+
 from flask import session
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -57,7 +62,7 @@ def get_user_from_db():
         flash('You must be logged in to view your profile.', 'warning')
         return redirect(url_for('login'))  # Redirect to login page if user_id not found in session
     
-    cursor.execute("SELECT first_name, last_name FROM users WHERE id = %s", (user_id,))
+    cursor.execute("SELECT first_name, last_name, gender, id FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
     
     if user:
@@ -102,24 +107,36 @@ def register():
                 (username, first_name, last_name, birth_day, birth_month, birth_year, gender, password)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """, (username, first_name, last_name, birth_day, birth_month, birth_year, gender, hashed_pw))
-            db.commit()
 
             # Get new user_id
             cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
             user_id = cursor.fetchone()[0]
 
-            # Insert default skin as claimed and equipped
+            # Insert default skin
             cursor.execute("""
                 INSERT INTO user_skins (user_id, skin_code, map, claimed, equipped)
                 VALUES (%s, 'default', NULL, 1, 1)
             """, (user_id,))
 
-            # ✅ Insert default game progress
-            cursor.execute("""
-                INSERT INTO user_game_progress (user_id, map, stage_key, correct, wrong, total, difficulty)
-                VALUES (%s, 'multiplication', '1', 0, 0, 0, 'easy')
-            """, (user_id,))
+            # Insert default progress for all maps
+            maps = [
+                'multiplication',
+                'addition',
+                'subtraction',
+                'division',
+                'counting',
+                'comparison',
+                'numerals',
+                'placevalue'
+            ]
 
+            for map_name in maps:
+                cursor.execute("""
+                    INSERT INTO user_game_progress (user_id, map, stage_key, correct, wrong, total, difficulty)
+                    VALUES (%s, %s, '1', 0, 0, 0, 'easy')
+                """, (user_id, map_name))
+
+            # Commit all changes
             db.commit()
             cursor.close()
 
@@ -133,6 +150,7 @@ def register():
             return redirect(url_for('register'))
 
     return render_template('register.html')
+
 
 
 
@@ -207,12 +225,15 @@ def stages():
 
 @app.route('/dashboard')
 def dashboard():
-    user = get_user_from_db()
+    user = get_user_from_db()  # Fetch user from database
     if not user:
         flash('User not found or not logged in.', 'danger')
         return redirect(url_for('login'))
     
-    return render_template('dashboard.html', first_name=user['first_name'], last_name=user['last_name'])
+    # Pass first_name, last_name, and gender to the template
+    return render_template('dashboard.html', first_name=user['first_name'], 
+                           last_name=user['last_name'], gender=user['gender'], id=user ['id'])
+
 
 
 @app.route('/roadmap')
@@ -225,32 +246,34 @@ def shop():
 
 
 import json
+from flask import redirect, session, render_template
 
 @app.route('/collectibles')
 def collectibles():
-    cursor = db.cursor()
-    
     user_id = session.get('user_id')  # Get user_id from session or other source
-    
-    # Query to get the skins claimed by the user
-    cursor.execute("SELECT skin_code FROM user_skins WHERE user_id = %s AND claimed = 1", (user_id,))
-    claimed_skins = cursor.fetchall()
-    
-    # Debugging: Print out the fetched skins
-    print("Claimed skins from DB:", claimed_skins)
-    
-    # Extract skin codes
-    claimed_skin_ids = [skin[0] for skin in claimed_skins]
-    
-    # Debugging: Print the list of claimed skin IDs
-    print("Claimed skin IDs:", claimed_skin_ids)
-    
-    # Close the cursor
-    cursor.close()
-    
+
+    if not user_id:
+        # Redirect to login or show error if user not logged in
+        return redirect('/login')
+
+    try:
+        cursor = db.cursor()
+        cursor.execute("SELECT skin_code FROM user_skins WHERE user_id = %s AND claimed = 1", (user_id,))
+        claimed_skins = cursor.fetchall()
+        claimed_skin_ids = [skin[0] for skin in claimed_skins]
+
+        # Debugging outputs
+        print("Claimed skins from DB:", claimed_skins)
+        print("Claimed skin IDs:", claimed_skin_ids)
+
+        cursor.close()
+    except Exception as e:
+        print("Error fetching skins:", e)
+        claimed_skin_ids = []
+
     # Convert to JSON for passing to JavaScript
     claimed_skin_ids_json = json.dumps(claimed_skin_ids)
-    
+
     return render_template('collectibles.html', claimed_skin_ids_json=claimed_skin_ids_json)
 
 

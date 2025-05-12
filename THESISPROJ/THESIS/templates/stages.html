@@ -10,7 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
+<body data-bgm="/static/bgm/default.mp3">
   <div class="back">
     <a href="{{ url_for('roadmap') }}">
       <button class="back-btn"></button>
@@ -396,6 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
 
 
+<script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>
 
 
 

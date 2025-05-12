@@ -424,7 +424,33 @@ body {
     transition: transform 0.1s ease;
 }
 
+.back-btn {
+  position: absolute;
+  top: 3.1%;
+  left: 3%;
+  width: 9%;
+  height: 13.8%;
+  background: transparent center/contain no-repeat; /* Same layout (image background) */
+  background-image: url('../images/collectiblesimg/back.png'); /* Image as background */
+  border: none; /* No border */
+  padding: 0; /* No padding */
+  margin: 0; /* No margin */
+  outline: none; /* Remove outline */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: transform 0.5s ease; /* Smooth transition */
+  z-index: 999; /* Ensure it's on top */
+}
 
+.back-btn:hover {
+  transform: scale(1.03); /* Scale up on hover */
+}
+
+/* Shadow Border */
+.back-btn {
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.8)) /* Stronger shadow with higher opacity */
+          drop-shadow(0 0 12px rgba(0, 0, 0, 0.6)) /* Slightly larger shadow */
+          drop-shadow(0 0 18px rgba(0, 0, 0, 0.4)); /* Even larger shadow for deeper effect */
+}
 
 
 

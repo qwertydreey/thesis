@@ -909,6 +909,12 @@ async function spawnMonster(idx, shouldFetchQuestion = false) {
   } else {
     console.log("Spawn in progress, skipping spawn for now.");
   }
+      // === PROGRESS UPDATE ===
+      if (selectedMap && selectedStage) {
+        const starsEarned = 1;  // Example value for stars earned
+        updateStageProgress(selectedMap, selectedStage, starsEarned);
+        updateRoadmapStars(`${selectedMap}-${selectedStage}`);
+    }
 }
 
 
@@ -928,7 +934,9 @@ function triggerMonsterDeathAnimation() {
   const monsterImg = document.getElementById('monster-sprite');
   if (!monsterImg) return;
 
-  // Start death animationplayer
+  // Play death sound effect
+
+  // Start death animation
   monsterImg.classList.add('monster-death');
   
   // Set death animation flag
@@ -944,6 +952,7 @@ function triggerMonsterDeathAnimation() {
     nextMonster();
   });
 }
+
 
 
 // Go to next monster
@@ -1029,7 +1038,7 @@ function startMonsterSpawnAnimation() {
       return;
     }
   
-    // 🔥 Apply damage animation
+    // 🔥 Apply damage animation to the player
     player.classList.add('player-damaged', 'shake');
     setTimeout(() => {
       player.classList.remove('player-damaged', 'shake');
@@ -1042,6 +1051,9 @@ function startMonsterSpawnAnimation() {
       console.log('💔 Player HP →', currentPlayerHealth);
     }
   
+    // Play player damage sound
+    playSound('/static/sfx/playerdamaged.mp3', 100);  // Sound for player taking damage
+  
     checkGameOver();
   }
   
@@ -1049,54 +1061,57 @@ function startMonsterSpawnAnimation() {
   
 
   function monsterTakeDamage() {
-  const monsterImg = document.getElementById('monster-sprite');
-  if (currentMonsterHealth > 0) {
-    currentMonsterHealth--;
-    updateHealthBars();
-
-    if (currentMonsterHealth <= 0) {
-      // Cancel freeze effect if active
-      if (freezePotionUsed) {
-        freezePotionUsed = false;
-        freezeTurns = 1;
-        removeFreezeEffect();
-        freezeTurnsDisplay.style.display = 'none';
-      }
-
-      if (!monsterImg) return;
-
-      // 1) Trigger death animation
-      monsterImg.classList.add('monster-death');
-      console.log("Death animation added");
-
-      // 2) Wait for animation to complete
-      monsterImg.addEventListener('animationend', function onDeath() {
-        console.log("Death animation ended");
-        monsterImg.removeEventListener('animationend', onDeath);
-
-        // 3) Keep the monster there for 2s, but fade it out smoothly
-        setTimeout(() => {
-          
-          // Add fade out effect
-          monsterImg.style.transition = 'opacity 0.5s ease';
-          monsterImg.style.opacity = '0';
-
-          // After fade completes (0.5s), spawn the next monster
+    const monsterImg = document.getElementById('monster-sprite');
+    if (currentMonsterHealth > 0) {
+      currentMonsterHealth--;
+      updateHealthBars();
+  
+      if (currentMonsterHealth <= 0) {
+        // Cancel freeze effect if active
+        if (freezePotionUsed) {
+          freezePotionUsed = false;
+          freezeTurns = 1;
+          removeFreezeEffect();
+          freezeTurnsDisplay.style.display = 'none';
+        }
+  
+        if (!monsterImg) return;
+  
+        // 🔊 Play death SFX before animation starts
+        playSound('/static/sfx/deathanim.mp3', 0); // make sure the path is correct
+  
+        // 1) Trigger death animation
+        monsterImg.classList.add('monster-death');
+        console.log("Death animation added");
+  
+        // 2) Wait for animation to complete
+        monsterImg.addEventListener('animationend', function onDeath() {
+          console.log("Death animation ended");
+          monsterImg.removeEventListener('animationend', onDeath);
+  
+          // 3) Keep the monster there for 2s, but fade it out smoothly
           setTimeout(() => {
-            monsterImg.classList.remove('monster-death');
-            monsterImg.style.opacity = '';
-            monsterImg.style.transition = '';
-            monsterImg.style.transform = '';
-
-            nextMonster();
-          }, 500); // Wait for fade-out to finish
-        }, 100); // Wait 2 seconds before fade
-      });
+  
+            // Add fade out effect
+            monsterImg.style.transition = 'opacity 0.5s ease';
+            monsterImg.style.opacity = '0';
+  
+            // After fade completes (0.5s), spawn the next monster
+            setTimeout(() => {
+              monsterImg.classList.remove('monster-death');
+              monsterImg.style.opacity = '';
+              monsterImg.style.transition = '';
+              monsterImg.style.transform = '';
+  
+              nextMonster();
+            }, 500); // Wait for fade-out to finish
+          }, 100); // Short wait before fade
+        });
+      }
     }
+    checkGameOver();
   }
-  checkGameOver();
-}
-
+  
 
 
 // ======= GAME OVER =======
@@ -1173,9 +1188,20 @@ function checkGameOver() {
 
 
 
-  function showVictoryScreen() {
+// Define the victory sound
+const victorySound = new Audio('/static/sfx/victory.mp3');
+victorySound.volume = 0.7; // Optional: set volume
+
+// Define the click sound
+const clickSound = new Audio('/static/sfx/click.mp3');
+clickSound.volume = 0.5; // Optional: set volume
+
+function showVictoryScreen() {
     const gameContainer = document.querySelector('.ground');
-    if (!gameContainer) return;
+    if (!gameContainer) {
+        console.error("Game container not found!");
+        return;
+    }
 
     const victoryScreen = document.getElementById('victory-screen');
     const victoryBox = victoryScreen.querySelector('.victory-box');
@@ -1183,26 +1209,47 @@ function checkGameOver() {
     const retryBtn = document.getElementById('retry-btn');
     const homeBtn = document.getElementById('home-btn');
 
+    console.log("Victory screen elements initialized.");
+
     const urlParams = new URLSearchParams(window.location.search);
     const selectedMap = urlParams.get('map') || 'multiplication';
     const selectedStage = parseInt(urlParams.get('stage')) || 1;
 
-    // Button actions
-    continueBtn.onclick = () => window.location.href = `/stages?map=${selectedMap}&stage=${selectedStage}`;
-    retryBtn.onclick = () => window.location.reload();
-    homeBtn.onclick = () => window.location.href = "/roadmap";
+    // Button actions with click sound
+    continueBtn.onclick = () => {
+        console.log("Continue button clicked.");
+        clickSound.play();
+        window.location.href = `/stages?map=${selectedMap}&stage=${selectedStage}`;
+    };
+    retryBtn.onclick = () => {
+        console.log("Retry button clicked.");
+        clickSound.play();
+        window.location.reload();
+    };
+    homeBtn.onclick = () => {
+        console.log("Home button clicked.");
+        clickSound.play();
+        window.location.href = "/roadmap";
+    };
 
     // Remove all monsters and pause the game
     document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => el.remove());
     gameContainer.classList.add('paused');
+
+    // Show the victory screen and play the victory sound
     victoryScreen.style.visibility = 'visible';
     victoryScreen.classList.add('visible');
+    document.getElementById('bg-music')?.pause();
+    victorySound.play();
     victoryBox.classList.add('box-animation');
+
+    console.log("Victory screen displayed.");
 
     // Fetch reward for the selected stage
     fetch(`/get_stage_reward?map=${selectedMap}&stage=${selectedStage}`)
         .then(res => res.json())
         .then(data => {
+            console.log("Reward data fetched:", data);
             if (data.error) return;
 
             const { badge, title, border } = data;
@@ -1228,6 +1275,7 @@ function checkGameOver() {
             })
             .then(res => res.json())
             .then(data => {
+                console.log("Reward claim status:", data);
                 const rewardStatusText = document.createElement('div');
                 rewardStatusText.id = "reward-claimed-text";
                 rewardStatusText.className = "reward-claimed-text fade-in";
@@ -1236,15 +1284,13 @@ function checkGameOver() {
                     console.warn('Reward check failed:', data.error);
                     rewardStatusText.textContent = "⚠️ Unable to verify reward.";
                     victoryBox.appendChild(rewardStatusText);
-                    return; // Exit if there's an error
+                    return;
                 }
 
-                // If reward is already claimed, show the message
                 if (data.claimed) {
                     rewardStatusText.textContent = "🎉 Reward Claimed!";
-                    victoryBox.appendChild(rewardStatusText); // Show "Reward Claimed" message
+                    victoryBox.appendChild(rewardStatusText);
                 } else {
-                    // Show the appropriate reward based on the stage
                     if (selectedStage === 1 && badgeElement) {
                         badgeElement.src = badge;
                         badgeElement.classList.remove('hidden');
@@ -1256,7 +1302,6 @@ function checkGameOver() {
                         borderElement.classList.remove('hidden');
                     }
 
-                    // Claim reward safely only if not already claimed
                     fetch('/claim_reward', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -1277,14 +1322,8 @@ function checkGameOver() {
             .catch(err => console.error('Error checking reward:', err));
         })
         .catch(err => console.error('Error fetching stage reward:', err));
-
-    // === PROGRESS UPDATE ===
-    if (selectedMap && selectedStage) {
-        const starsEarned = 1;  // Example value for stars earned
-        updateStageProgress(selectedMap, selectedStage, starsEarned);
-        updateRoadmapStars(`${selectedMap}-${selectedStage}`);
-    }
 }
+
 
 
 
@@ -1448,6 +1487,8 @@ function showGameOverScreen() {
   // Show game over screen
   gameoverScreen.style.visibility = 'visible';
   gameoverScreen.classList.add('visible');
+  document.getElementById('bg-music')?.pause();
+  playSound('/static/sfx/gameover.mp3', 0);  // Adjust the sound speed and file path
   gameoverBox.classList.add('box-animation');
 
   // Button events
@@ -1469,6 +1510,9 @@ function showGameOverScreen() {
 function monsterAttack() {
   const monster = document.querySelector('.monster');
   const player = document.querySelector('.player');
+
+  // Play monster attack sound when the monster attacks
+  playSound('/static/sfx/monsterattack.mp3', 500);  // Adjust the sound speed and file path
 
   // Add the attack animation class to the monster
   monster.classList.add("monster-attack");
@@ -1509,6 +1553,9 @@ function updatePotionUI() {
 }
 
 
+
+
+
 function fireballAttack() {
   if (sessionStorage.getItem('fireballTriggered')) return;
 
@@ -1529,6 +1576,9 @@ function fireballAttack() {
 
   // 🧪 Charging effect
   player.classList.add("charging");
+
+  // Play fireball charging sound
+  playSound('/static/sfx/attack.mp3',640); // Flask static URL for fireball sound
 
   // Fetch equipped skin from the backend
   fetch('/get_user_skins')
@@ -1552,6 +1602,9 @@ function fireballAttack() {
         // 🔥 Fireball appears
         groundContainer.appendChild(fireball);
         sessionStorage.setItem('fireballTriggered', true);
+
+        // Play fireball hit sound
+        playSound('/static/sfx/damaged.mp3',900); // Flask static URL for fireball hit sound
 
         // 💢 Monster takes visual damage
         setTimeout(() => {
@@ -1737,6 +1790,9 @@ function useHealthPotion() {
   healthPotions--;
   updatePotionUI();
 
+  // Play health potion sound when using the potion
+  playSound('/static/sfx/heal.mp3', 0,);  // Adjust the sound file path and speed if needed
+
   playerHeal(3); // Heal the player
   showFeedback("🧪 Health Potion used!");
 
@@ -1753,6 +1809,7 @@ function useHealthPotion() {
     isHealthPotionInUse = false; // Unlock after short delay
   }, 200);
 }
+
 
 function useFreezePotion() {
   // Prevent if a potion is in use, or spawn/death animation is in progress
@@ -1778,6 +1835,9 @@ function useFreezePotion() {
   updatePotionUI();
   updateFreezeTurnsDisplay();
   freezeTurnsDisplay.style.display = 'block';
+
+  // Play Freeze Potion sound
+  playSound('/static/sfx/freeze.mp3', 100);  // Adjust the file path if needed
 
   // Apply the freeze effect after checking for spawn/death animations
   setTimeout(() => {
@@ -1805,10 +1865,10 @@ function removeFreezeEffect() {
   monsterContainer.classList.remove('frozen');
 }
 
-
 function updateFreezeTurnsDisplay() {
   freezeTurnsDisplay.innerText = `❄️ Freeze Turns Left: ${freezeTurns}`;
 }
+
 
 
 // ========== DAMAGE PLAYER (checks if frozen) ==========
@@ -1866,6 +1926,9 @@ function useThunderPotion() {
   thunderPotions--;
   updatePotionUI();
 
+  // Play Thunder Potion sound when it's used
+  playSound('/static/sfx/thunder.mp3',600); // Flask static URL for fireball hit sound
+
   setTimeout(() => {
     if (currentMonsterHealth > 0) {
       // Handle the Thunder Potion animation and damage
@@ -1875,13 +1938,17 @@ function useThunderPotion() {
       }
 
       console.log("Thunder Potion used!");
-      animationInterval = setInterval(changeFrame, 80); // faster lightning animation
+
+      animationInterval = setInterval(changeFrame, 80); // Faster lightning animation
 
       setTimeout(() => {
         const monster = document.querySelector(".monster");
 
         if (!monster.classList.contains('frozen')) {
           monster.classList.add("damaged");
+          // Play the lightning strike damage sound when the monster is hit
+          playSound('/static/sfx/damaged.mp3',0); // Flask static URL for fireball hit sound
+
           setTimeout(() => {
             monster.classList.remove("damaged");
             if (currentMonsterHealth > 0) {
@@ -1944,76 +2011,136 @@ function useThunderPotion() {
 // ================================================================================================ //
 
 // ===== SETTINGS MENU HANDLING =====
+// ===== SETTINGS MENU HANDLING =====
+// ===== SETTINGS MENU HANDLING =====
+let languages = ['English', 'Tagalog']; // Initialize languages before use
+let currentLanguageIndex = 0;
+let savedLanguageIndex = 0; // <-- This stores the last applied language
+
 function openSettings() {
+  playButtonClickSound();
   document.getElementById("settingsMenu").classList.remove("hidden");
   document.getElementById("gameMenu").classList.add("hidden");
 }
 
 function closeSettings() {
-  currentLanguageIndex = savedLanguageIndex; // Revert to last applied language
-  updateLanguageText(); // Update the display to show correct language
+  playButtonClickSound();
+  currentLanguageIndex = savedLanguageIndex;
+  updateLanguageText();
   document.getElementById("settingsMenu").classList.add("hidden");
   document.getElementById("gameMenu").classList.remove("hidden");
 }
 
-
 // ===== VOLUME CONTROL =====
 const volumeSlider = document.getElementById("volume");
+const bgMusic = document.getElementById("bg-music"); // Get the audio element
 
+// Function to update the volume of the audio element
 function updateVolumeFill() {
-  const value = volumeSlider.value;
-  const percentage = (value / volumeSlider.max) * 100;
-  volumeSlider.style.background = `linear-gradient(to right, #4a90e2 ${percentage}%, #d3d3d3 ${percentage}%)`;
+  if (volumeSlider) { // Ensure volumeSlider is available
+    const value = volumeSlider.value;
+    const percentage = (value / volumeSlider.max) * 100;
+    volumeSlider.style.background = `linear-gradient(to right, #4a90e2 ${percentage}%, #d3d3d3 ${percentage}%)`;
+
+    // Set the audio element's volume (value is between 0 and 1)
+    if (bgMusic) {
+      bgMusic.volume = value / 100; // Divide by 100 to make it a value between 0 and 1
+    }
+  }
 }
 
-volumeSlider.addEventListener('input', updateVolumeFill);
-updateVolumeFill(); // Initialize on load
+if (volumeSlider) {
+  volumeSlider.addEventListener('input', updateVolumeFill);
+  updateVolumeFill(); // Initialize on load
+}
 
-// ===== MUTE FUNCTIONALITY =====
-let isMuted = false;
-let previousVolume = 50;
+const sfxVolumeSlider = document.getElementById("sfx-volume");
+const sfxAudio = document.getElementById("sfx-audio"); // Replace with your actual SFX audio element ID
 
-function toggleMuteCheckbox() {
-  const muteCheckbox = document.getElementById("muteCheckbox");
+function updateSFXVolumeFill() {
+  if (sfxVolumeSlider) {
+    const value = sfxVolumeSlider.value;
+    const percentage = (value / sfxVolumeSlider.max) * 100;
+    sfxVolumeSlider.style.background = `linear-gradient(to right, #4a90e2 ${percentage}%, #d3d3d3 ${percentage}%)`;
 
-  if (muteCheckbox.checked) {
-    previousVolume = volumeSlider.value;
-    volumeSlider.value = 0;
-    isMuted = true;
-  } else {
-    volumeSlider.value = previousVolume;
-    isMuted = false;
+    if (sfxAudio) {
+      sfxAudio.volume = value / 100;
+    }
   }
+}
 
-  updateVolumeFill();
+if (sfxVolumeSlider) {
+  sfxVolumeSlider.addEventListener('input', updateSFXVolumeFill);
+  updateSFXVolumeFill(); // Initialize on load
+}
+
+
+// ===== MUTE CHECKBOX FOR BGM =====
+// Function to toggle mute on and off for BGM
+function toggleMuteCheckbox(event) {
+  const muteCheckbox = event.target;  // Get the checkbox element
+  if (bgMusic) {
+    if (muteCheckbox.checked) {
+      bgMusic.muted = true;  // Mute the audio
+    } else {
+      bgMusic.muted = false;  // Unmute the audio
+    }
+  }
+}
+
+// Assuming you have a checkbox with id 'muteCheckbox'
+const muteCheckbox = document.getElementById("muteCheckbox");
+if (muteCheckbox) {
+  muteCheckbox.addEventListener("change", toggleMuteCheckbox);
+}
+
+// ===== MUTE CHECKBOX FOR SFX =====
+// Function to toggle mute on and off for SFX
+let isSfxMuted = false; // Track the mute state for SFX
+const sfxMuteCheckbox = document.getElementById("sfxMuteCheckbox"); // Get the checkbox for SFX mute
+
+function toggleSfxMuteCheckbox(event) {
+  const muteCheckbox = event.target;
+  isSfxMuted = muteCheckbox.checked;
+  // Here you would have to mute/unmute your SFX logic, assuming you have a function to control SFX volume
+  // For example, if you're using a global SFX volume manager, update its state
+  if (isSfxMuted) {
+    // Mute SFX (assuming you have a global SFX manager)
+  } else {
+    // Unmute SFX
+  }
+}
+
+if (sfxMuteCheckbox) {
+  sfxMuteCheckbox.addEventListener("change", toggleSfxMuteCheckbox);
 }
 
 // Apply settings without closing the menu
 function applySettings() {
+  playButtonClickSound();
   const volume = volumeSlider.value;
   const selectedLanguage = languages[currentLanguageIndex];
-
   console.log("Volume:", volume);
   console.log("Language:", selectedLanguage);
-
-  savedLanguageIndex = currentLanguageIndex; // Save the selected language
-  updateAllGameTexts(); // Apply language to game texts
+  savedLanguageIndex = currentLanguageIndex;
+  updateAllGameTexts();
 }
-
 
 // ===== GAME CONTROL =====
 function restartGame() {
+  playButtonClickSound();
   location.reload();
 }
 
 function goToMainMenu() {
+  playButtonClickSound();
   const routePaths = document.getElementById("route-paths").dataset;
   window.location.href = routePaths.dashboard;
 }
 
-
 // ===== MENU OVERLAY HANDLING =====
 function toggleMenu() {
+  playButtonClickSound();
   const overlay = document.getElementById("menuOverlay");
   const menuButton = document.getElementById("menuButton");
 
@@ -2023,6 +2150,7 @@ function toggleMenu() {
 
 // Function to close the menu and resume the game
 function closeOverlayAndResume() {
+  playButtonClickSound();
   const overlay = document.getElementById("menuOverlay");
   const gameMenu = document.getElementById("gameMenu");
   const menuButton = document.getElementById("menuButton");
@@ -2034,7 +2162,7 @@ function closeOverlayAndResume() {
 
 // New function for resume functionality (same as closeOverlayAndResume)
 function resumeGame() {
-  closeOverlayAndResume(); // Reusing the function to close the menu and show the game menu
+  closeOverlayAndResume(); // Already plays click sound
 }
 
 // ===== ESC KEY FUNCTIONALITY =====
@@ -2047,6 +2175,7 @@ document.addEventListener('keydown', function(event) {
 // ===== LANGUAGE CHANGE FUNCTIONALITY =====
 // Change language based on direction
 function changeLanguage(direction) {
+  playButtonClickSound();
   if (direction === 'prev') {
     currentLanguageIndex = (currentLanguageIndex - 1 + languages.length) % languages.length;
   } else if (direction === 'next') {
@@ -2059,26 +2188,26 @@ function changeLanguage(direction) {
 // Update the display text for the language
 function updateLanguageText() {
   const languageText = document.getElementById('languageText');
-  languageText.textContent = languages[currentLanguageIndex];
+  if (languageText) {
+    languageText.textContent = languages[currentLanguageIndex];
+  }
 }
 
 // Update all text elements in the game
 function updateAllGameTexts() {
   const language = languages[currentLanguageIndex];
+  console.log(`All game text updated to ${language}`);
   
-  // Update specific buttons or elements
+  // Update specific buttons or elements based on their 'data-lang' attributes
   document.querySelectorAll('[data-lang]').forEach(element => {
     const key = element.getAttribute('data-lang');
+    // Check if a translation exists for the key in the current language
     if (languageData[language] && languageData[language][key]) {
+      // Update the element's text content with the corresponding translation
       element.textContent = languageData[language][key];
     }
   });
 }
-
-let languages = ['English', 'Tagalog'];
-let currentLanguageIndex = 0;
-let savedLanguageIndex = 0; // <-- This stores the last applied language
-
 
 // Language texts (You can expand this object as needed)
 const languageData = {
@@ -2087,8 +2216,6 @@ const languageData = {
     restart: 'Restart',
     settings: 'Settings',
     quit: 'Quit',
-    volumeLabel: 'Volume',
-    muteLabel: 'Mute',
     languageLabel: 'Language',
     apply: 'Apply',
     back: 'Back',
@@ -2098,14 +2225,11 @@ const languageData = {
     restart: 'Magsimula Muli',
     settings: 'Mga Setting',
     quit: 'Mag-quit',
-    volumeLabel: 'Bolyum',
-    muteLabel: 'I-mute',
     languageLabel: 'Wika',
     apply: 'I-apply',
     back: 'Bumalik',
   },
 };
-
 
 
 
@@ -2128,7 +2252,21 @@ const languageData = {
 
 
 
-      
+  function playButtonClickSound() {
+    const originalSound = document.getElementById('buttonClickSound');
+    const soundClone = originalSound.cloneNode(); // clone the <audio> element
+    soundClone.volume = 1;
+    soundClone.playbackRate = 2;
+
+    // Play the cloned audio
+    soundClone.play().catch((e) => {
+        // Handle autoplay restrictions or other errors
+        console.error('Playback failed:', e);
+    });
+}
+
+
+    
 
   function addToInput(value) {
     const inputField = document.getElementById('number-input');
@@ -2292,6 +2430,7 @@ function showSpeechBubble(isCorrect) {
 
 // Ensure that the bubble is initially hidden when the game starts
 window.onload = function() {
+  
   const bubble = document.getElementById('speech-bubble');
   bubble.style.display = 'none'; // Initially hide the speech bubble
 };

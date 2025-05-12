@@ -8,14 +8,21 @@
   </head>
   <body>
 
-    <body>
+    <body data-bgm="/static/bgm/collection.mp3">
       <div class="tab-sections">
+
+        <div class="back-btn-wrapper">
+            <a href="{{ url_for('dashboard') }}">
+              <button class="back-btn"onclick="playButtonClickSound();"></button>
+            </a>
+          </div>
+        
         <!-- Medals Section -->
         <div class="tab-slide active" id="medals-section">
                 <div class="grid" id="medals-grid">
                     <!-- Medals content will be dynamically inserted here -->
             </div>
-            <button class="nav-btn right" onclick="showSection('skins-section')">&#9654;</button>
+            <button class="nav-btn right" onclick="playButtonClickSound(); showSection('skins-section')">&#9654;</button>
         </div>
     
         <!-- Skins Section (Moved inside tab-sections) -->
@@ -28,13 +35,16 @@
                 <!-- Secondary Image -->
                 <div class="mirror" alt="mirror"></div> 
               </div>
-                <button class="carousel-btn prev-btn" id="prev-skin-btn"></button>
-                <button class="carousel-btn next-btn" id="next-skin-btn"></button>
+              <audio id="buttonClickSound" src="/static/sfx/click.mp3" preload="auto"></audio>
+
+              <button class="carousel-btn prev-btn" id="prev-skin-btn"></button>
+              <button class="carousel-btn next-btn" id="next-skin-btn"></button>
+              
               <!-- Equip Button -->
               <button class="equip-btn" id="equip-btn"></button>
             </div>
           </div>
-          <button class="nav-btn left" onclick="showSection('medals-section')">&#9664;</button>
+          <button class="nav-btn left" onclick="playButtonClickSound(); showSection('medals-section')">&#9664;</button>
         </div>
 
         
@@ -45,8 +55,33 @@
 
 
     
+    <script>
+      function playButtonClickSound() {
+        const originalSound = document.getElementById('buttonClickSound');
+        const soundClone = originalSound.cloneNode(); // clone the <audio> element
+        soundClone.volume = 1;
+        soundClone.playbackRate = 2;
     
-  
+        // Play the cloned audio
+        soundClone.play().catch((e) => {
+            console.error('Playback failed:', e);
+        });
+      }
+
+      document.getElementById('prev-skin-btn').addEventListener('click', () => {
+        playButtonClickSound();
+      });
+    
+      document.getElementById('next-skin-btn').addEventListener('click', () => {
+        playButtonClickSound();
+      });
+
+      document.getElementById('equip-btn').addEventListener('click', () => {
+      playButtonClickSound();
+      });
+    </script>
+    
+
     
     
     
@@ -283,8 +318,9 @@
       });
       </script>
       
-      
-    
+
+      <script defer src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>
+
     
   
     

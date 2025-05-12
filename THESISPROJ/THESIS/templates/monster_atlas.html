@@ -8,7 +8,7 @@
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/monster_atlas.css') }}">
 </head>
-<body>
+<body data-bgm="/static/bgm/atlas.mp3">
   <img src="{{ url_for('static', filename='images/atlasimg/bg.png') }}" alt="bg" class="bg"/> 
 
   
@@ -16,12 +16,13 @@
 
   <div class="back-btn-wrapper">
     <a href="{{ url_for('dashboard') }}">
-      <button class="back-btn"></button>
+      <button class="back-btn"onclick="playButtonClickSound()"></button>
     </a>
   </div>
 
 
     
+  <audio id="buttonClickSound" src="/static/sfx/click.mp3" preload="auto"></audio>
 
 
     <div id="monster-track"></div>
@@ -39,8 +40,8 @@
     </div>
 
     <div id="monster-navigation">
-        <button id="prev-btn"></button>
-        <button id="next-btn"></button>
+        <button id="prev-btn" onclick="playButtonClickSound()"></button>
+        <button id="next-btn"onclick="playButtonClickSound()"></button>
     </div>
 
 
@@ -50,28 +51,28 @@
 
 
 <div id="map-container">
-  <button class="map-btn btn-addition" data-operation="addition" onclick="displayMonsters('addition')">
+  <button class="map-btn btn-addition" data-operation="addition" onclick="playButtonClickSound(); displayMonsters('addition')">
     <img src="{{ url_for('static', filename='images/atlasimg/tomes/addition.png') }}" alt="Addition" />
   </button>
-  <button class="map-btn btn-subtraction" data-operation="subtraction" onclick="displayMonsters('subtraction')">
+  <button class="map-btn btn-subtraction" data-operation="subtraction" onclick="playButtonClickSound(); displayMonsters('subtraction')">
     <img src="{{ url_for('static', filename='images/atlasimg/tomes/subtraction.png') }}" alt="Subtraction" />
   </button>
-  <button class="map-btn btn-multiplication" data-operation="multiplication" onclick="displayMonsters('multiplication')">
+  <button class="map-btn btn-multiplication" data-operation="multiplication" onclick="playButtonClickSound(); displayMonsters('multiplication')">
     <img src="{{ url_for('static', filename='images/atlasimg/tomes/multiplication.png') }}" alt="Multiplication" />
   </button>
-  <button class="map-btn btn-division" data-operation="division" onclick="displayMonsters('division')">
+  <button class="map-btn btn-division" data-operation="division" onclick="playButtonClickSound(); displayMonsters('division')">
     <img src="{{ url_for('static', filename='images/atlasimg/tomes/division.png') }}" alt="Division" />
   </button>
-  <button class="map-btn btn-counting" data-operation="counting" onclick="displayMonsters('counting')">
+  <button class="map-btn btn-counting" data-operation="counting" onclick="playButtonClickSound(); displayMonsters('counting')">
     <img src="{{ url_for('static', filename='images/atlasimg/tomes/counting.png') }}" alt="Counting" />
   </button>
-  <button class="map-btn btn-comparison" data-operation="comparison" onclick="displayMonsters('comparison')">
+  <button class="map-btn btn-comparison" data-operation="comparison" onclick="playButtonClickSound(); displayMonsters('comparison')">
     <img src="{{ url_for('static', filename='images/atlasimg/tomes/comparison.png') }}" alt="Comparison" />
   </button>
-  <button class="map-btn btn-numerals" data-operation="numerals" onclick="displayMonsters('numerals')">
+  <button class="map-btn btn-numerals" data-operation="numerals" onclick="playButtonClickSound(); displayMonsters('numerals')">
     <img src="{{ url_for('static', filename='images/atlasimg/tomes/numerals.png') }}" alt="Numerals" />
   </button>
-  <button class="map-btn btn-placevalue" data-operation="placevalue" onclick="displayMonsters('placevalue')">
+  <button class="map-btn btn-placevalue" data-operation="placevalue" onclick="playButtonClickSound(); displayMonsters('placevalue')">
     <img src="{{ url_for('static', filename='images/atlasimg/tomes/placevalue.png') }}" alt="Place Value" />
   </button>
 </div>
@@ -376,6 +377,22 @@ nextBtn.addEventListener('click', function () {
 });
 
   </script>
+          <script>
+            function playButtonClickSound() {
+              const originalSound = document.getElementById('buttonClickSound');
+              const soundClone = originalSound.cloneNode(); // clone the <audio> element
+              soundClone.volume = 1;
+              soundClone.playbackRate = 2;
+          
+              // Play the cloned audio
+              soundClone.play().catch((e) => {
+                  console.error('Playback failed:', e);
+              });
+            }
+      
+          </script>
+
+<script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>
 
 </body>
 </html>
