@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}" />
+</head>
+<body>
+    <div class="settings-container">
+        <div class="settings-wrapper">
+            <img src="{{ url_for('static', filename='images/settingsimg/bg.png') }}" alt="Shop Image" class="settings-bg"/> 
+
+        <h2>⚙️ Settings</h2>
+
+        <!-- BGM Volume Control -->
+        <div class="setting-option">
+            <label for="volume">BGM Volume</label>
+            <input type="range" id="volume" min="0" max="100" value="50" class="volume-slider">
+            <div class="volume-labels">
+    
+            </div>
+        </div>
+
+        <!-- SFX Volume Control -->
+        <div class="setting-option">
+            <label for="sfx-volume">SFX Volume</label>
+            <input type="range" id="sfx-volume" min="0" max="100" value="50" class="volume-slider">
+            <div class="sfx-volume-labels">
+
+            </div>
+        </div>
+
+        <!-- Mute Background Music -->
+        <div class="mute-wrapper">
+            <input type="checkbox" id="muteCheckbox">
+            <label for="muteCheckbox" class="mute-label">Mute Background Music</label>
+        </div>
+
+        <!-- Language Selection -->
+        <div class="language-container">
+            <label for="language">Language</label>
+            <div class="language-box">
+                <span id="languageText">English</span>
+                <button>Change</button>
+            </div>
+        </div>
+
+        <!-- SFX Mute -->
+        <div class="sfx-mute-wrapper">
+            <input type="checkbox" id="sfxMuteCheckbox">
+            <label for="sfxMuteCheckbox" class="sfx-mute-label">Mute SFX</label>
+        </div>
+
+        <!-- Buttons -->
+        <div class="settings-item-container">
+            <button id="applyBtn" class="settings-item">Apply</button>
+            <div id="backBtn">
+                <a href="{{ url_for('dashboard') }}">
+                  <button class="settings-item">Back</button>
+                </a>
+              </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        let languages = ['English', 'Tagalog']; 
+        let currentLanguageIndex = 0;
+        let savedLanguageIndex = 0; 
+    
+        // Initialize settings from localStorage
+        function initializeSettings() {
+            const savedVolume = localStorage.getItem('volume');
+            const savedLanguageIndex = localStorage.getItem('languageIndex');
+    
+            if (savedVolume !== null) {
+                volumeSlider.value = savedVolume;
+                updateVolumeFill(); 
+            }
+    
+            if (savedLanguageIndex !== null) {
+                currentLanguageIndex = parseInt(savedLanguageIndex);
+                updateLanguageText(); 
+            }
+        }
+    
+        // Apply settings and save to localStorage
+        function applySettings() {
+            playButtonClickSound();
+            const volume = volumeSlider.value;
+            const selectedLanguage = languages[currentLanguageIndex];
+    
+            localStorage.setItem('volume', volume);
+            localStorage.setItem('languageIndex', currentLanguageIndex);
+    
+            console.log("Volume:", volume);
+            console.log("Language:", selectedLanguage);
+    
+            savedLanguageIndex = currentLanguageIndex;
+            updateAllGameTexts();
+        }
+    
+        window.addEventListener('load', function() {
+            initializeSettings();
+        });
+    
+        // Volume Control for BGM
+        const volumeSlider = document.getElementById("volume");
+        const bgMusic = document.getElementById("bg-music");
+    
+        function updateVolumeFill() {
+            if (volumeSlider) {
+                const value = volumeSlider.value;
+                const percentage = (value / volumeSlider.max) * 100;
+                volumeSlider.style.background = `linear-gradient(to right, #4a90e2 ${percentage}%, #d3d3d3 ${percentage}%)`;
+    
+                if (bgMusic) {
+                    bgMusic.volume = value / 100;
+                }
+            }
+        }
+    
+        if (volumeSlider) {
+            volumeSlider.addEventListener('input', updateVolumeFill);
+            updateVolumeFill();
+        }
+    
+        // Volume Control for SFX
+        const sfxVolumeSlider = document.getElementById("sfx-volume");
+        const sfxAudio = document.getElementById("sfx-audio");
+    
+        function updateSfxVolumeFill() {
+            if (sfxVolumeSlider) {
+                const value = sfxVolumeSlider.value;
+                const percentage = (value / sfxVolumeSlider.max) * 100;
+                sfxVolumeSlider.style.background = `linear-gradient(to right, #4a90e2 ${percentage}%, #d3d3d3 ${percentage}%)`;
+    
+                if (sfxAudio) {
+                    sfxAudio.volume = value / 100;
+                }
+            }
+        }
+    
+        if (sfxVolumeSlider) {
+            sfxVolumeSlider.addEventListener('input', updateSfxVolumeFill);
+            updateSfxVolumeFill();
+        }
+    
+        // Mute Checkbox for BGM
+        function toggleMuteCheckbox(event) {
+            const muteCheckbox = event.target;
+            if (bgMusic) {
+                if (muteCheckbox.checked) {
+                    bgMusic.muted = true;
+                } else {
+                    bgMusic.muted = false;
+                }
+            }
+        }
+    
+        const muteCheckbox = document.getElementById("muteCheckbox");
+        if (muteCheckbox) {
+            muteCheckbox.addEventListener("change", toggleMuteCheckbox);
+        }
+    
+        // Mute Checkbox for SFX
+        let isSfxMuted = false;
+        const sfxMuteCheckbox = document.getElementById("sfxMuteCheckbox");
+    
+        function toggleSfxMuteCheckbox(event) {
+            const muteCheckbox = event.target;
+            isSfxMuted = muteCheckbox.checked;
+        }
+    
+        if (sfxMuteCheckbox) {
+            sfxMuteCheckbox.addEventListener("change", toggleSfxMuteCheckbox);
+        }
+    
+        // Language Change Functionality
+        function changeLanguage(direction) {
+            playButtonClickSound();
+            if (direction === 'prev') {
+                currentLanguageIndex = (currentLanguageIndex - 1 + languages.length) % languages.length;
+            } else if (direction === 'next') {
+                currentLanguageIndex = (currentLanguageIndex + 1) % languages.length;
+            }
+    
+            updateLanguageText();
+        }
+    
+        function updateLanguageText() {
+            const languageText = document.getElementById('languageText');
+            if (languageText) {
+                languageText.textContent = languages[currentLanguageIndex];
+            }
+        }
+    
+        function updateAllGameTexts() {
+            const language = languages[currentLanguageIndex];
+            console.log(`All game text updated to ${language}`);
+    
+            document.querySelectorAll('[data-lang]').forEach(element => {
+                const key = element.getAttribute('data-lang');
+                if (languageData[language] && languageData[language][key]) {
+                    element.textContent = languageData[language][key];
+                }
+            });
+        }
+    
+        const languageData = {
+            English: {
+                resume: 'Resume',
+                restart: 'Restart',
+                settings: 'Settings',
+                quit: 'Quit',
+                languageLabel: 'Language',
+                apply: 'Apply',
+                back: 'Back',
+            },
+            Tagalog: {
+                resume: 'Magpatuloy',
+                restart: 'Magsimula Muli',
+                settings: 'Mga Setting',
+                quit: 'Mag-quit',
+                languageLabel: 'Wika',
+                apply: 'I-apply',
+                back: 'Bumalik',
+            },
+        };
+    </script>
+    
+    
+    
+</body>
+</html>

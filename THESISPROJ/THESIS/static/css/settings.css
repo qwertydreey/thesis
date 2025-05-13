@@ -1,0 +1,226 @@
+/* Global Styles */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif; /* Use the custom font */
+    color:#ffffff;
+
+}
+
+
+.settings-wrapper {
+    width: auto;
+    height: auto;
+    max-width: none; /* remove max-width if you want full stretch */
+}
+.settings-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+.settings-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: fill; /* Force stretching */
+    z-index: -1;
+}
+
+/* Each Setting Block */
+.setting-option {
+    margin-bottom: 3vh; /* Increased spacing between setting options */
+    text-align: left;
+}
+
+/* Label Styles */
+.setting-option label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 1vh;
+    color: #e6ffe6;
+}
+
+/* Volume Slider */
+.volume-slider {
+    width: 100%;
+    height: 0.8vh;
+    appearance: none;
+    background: #ffffff;
+    border-radius: 0.4vh;
+    outline: none;
+    transition: background 0.3s ease;
+}
+
+/* Volume Slider Fill */
+.volume-slider.bgm {
+    background: #d3d3d3; /* Default background */
+    border-radius: 0.4vh;
+}
+
+/* Volume Slider Thumb */
+.volume-slider::-webkit-slider-thumb {
+    appearance: none;
+    height: 2vh;
+    width: 2vh;
+    background: #4a90e2;
+    border: 0.2vh solid #1c5f94;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    background: #1c5f94;
+    transform: scale(1.2);
+}
+
+.volume-slider::-moz-range-thumb {
+    height: 2vh;
+    width: 2vh;
+    background: #4a90e2;
+    border: 0.2vh solid #1c5f94;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.volume-slider::-moz-range-thumb:hover {
+    background: #1c5f94;
+    transform: scale(1.2);
+}
+
+/* Mute Wrapper */
+.mute-wrapper, .sfx-mute-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1vh;
+    margin-bottom: 2vh; /* Added margin to separate mute options */
+}
+
+/* Mute Checkbox Style */
+input[type="checkbox"] {
+    appearance: none;
+    width: 2vh;
+    height: 2vh;
+    border: 0.2vh solid #4a90e2;
+    border-radius: 0.4vh;
+    position: relative;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked::before {
+    content: "🔇";
+    color: white;
+    font-size: 1.4vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Label Style for Mute Options */
+.mute-label, .sfx-mute-label {
+    font-size: 1.6vh;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Language Container */
+.language-container {
+    margin-top: 5vh;
+    text-align: center;
+    font-weight: 600;
+}
+
+.language-container label {
+    display: block;
+    margin-bottom: 1vh;
+    font-size: 2vh;
+    color: #fff;
+}
+
+/* Language Box */
+.language-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffa726;
+    padding: 1vh 2vh;
+    border-radius: 5vh;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.language-box button {
+    background-color: transparent;
+    color: white;
+    border: none;
+    font-size: 1.8vh;
+    cursor: pointer;
+    padding: 0.5vh 1vh;
+}
+
+.language-box button:hover {
+    transform: scale(1.1);
+}
+
+#languageText {
+    color: white;
+    font-size: 1.8vh;
+    font-weight: bold;
+    flex-grow: 1;
+}
+
+/* Buttons Section */
+.settings-item-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5vh;
+}
+
+.settings-item {
+    display: block;
+    width: 45%;
+    margin-bottom: 1vh;
+    padding: 1.2vh 2.5vh;
+    border-radius: 0.8vh;
+    cursor: pointer;
+    font-size: 1.6vh;
+    text-align: center;
+    color: white;
+    font-weight: 600;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.settings-item:first-child {
+    background-color: #38a169;
+}
+
+.settings-item:first-child:hover {
+    background-color: #2f855a;
+}
+
+.settings-item:last-child {
+    background-color: #e53e3e;
+}
+
+.settings-item:last-child:hover {
+    background-color: #c53030;
+}
+
+.settings-item:active {
+    transform: scale(0.98);
+}

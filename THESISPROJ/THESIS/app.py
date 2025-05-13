@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_bcrypt import Bcrypt
 import mysql.connector
 import openai
@@ -26,8 +26,7 @@ openai.api_key = "sk-or-v1-496a2dccc03cc234cee6e19ea9f8b81ebf4cbd9721141db105bde
 
 @app.route('/')
 def index():
-
-    return render_template('index.html')
+    return redirect(url_for('login'))
 
 
 @app.route('/favicon.ico')
@@ -48,27 +47,28 @@ def login():
 
         if user and bcrypt.check_password_hash(user['password'], password):
             # Set session for user ID
-            session['user_id'] = user['id']  # Assuming 'id' is the primary key of your users table
+            session['user_id'] = user['id']
             print(f"User ID saved to session: {session['user_id']}")  # Debug print
-            return redirect(url_for('dashboard'))
+            return jsonify({'success': True, 'redirect': url_for('dashboard')})
         else:
-            flash('Invalid username or password.', 'danger')
+            return jsonify({'success': False, 'message': 'Invalid username or password.'})
 
     return render_template('login.html')
+
 def get_user_from_db():
-    user_id = session.get('user_id')  # Get the user_id from session
+    user_id = session.get('user_id')
     if not user_id:
-        # Kung walang session, redirect to login
         flash('You must be logged in to view your profile.', 'warning')
-        return redirect(url_for('login'))  # Redirect to login page if user_id not found in session
-    
+        return redirect(url_for('login'))
+
     cursor.execute("SELECT first_name, last_name, gender, id FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
-    
+
     if user:
         return user
     else:
-        return None  # In case walang user found
+        return None
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -244,6 +244,9 @@ def roadmap():
 def shop():
     return render_template('shop.html')
 
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
 
 import json
 from flask import redirect, session, render_template

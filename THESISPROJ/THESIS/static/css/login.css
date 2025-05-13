@@ -1,330 +1,133 @@
-/* Load custom font */
-@font-face {
-    font-family: 'Squeid Gameis';
-    src: url('../fonts/SqueidGameisRegular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
-/* Apply a background image to the body */
-body {
-    background-size: cover;
-    background-position: center;
-    min-height: 100vh;
-    font-family: 'Poppins', sans-serif;
+body, html {
     margin: 0;
     padding: 0;
-}
-
-/* Login title text */
-.login-text {
-    font-size: 5rem;
-    font-weight: normal;
-    color: #ffffff;
-    text-align: center;
-    margin-bottom: 20px;
-    font-family: 'Squeid Gameis';
-    letter-spacing: 5px;
-}
-
-/* Wood login wrapper with hover effect */
-.wood-login-wrapper {
-    background-image: url('../images/wood.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 95vw;
-    max-width: 750px;
-    min-height: 600px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 30px;
-    position: relative;
-    z-index: 1;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    flex-direction: column;
+    height: 100%;
     overflow: hidden;
+    font-family: 'Poppins', sans-serif; /* Use the custom font */
+
 }
 
-/* Hover effect: scale and shadow */
-.wood-login-wrapper:hover {
+.custom-container {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+
+/* Background video always visible, but paused at first */
+#intro-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill; /* Fill screen without distortion */
+    z-index: 0;
+}
+
+/* Tap to Enter button image centered */
+#tap-to-enter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 1;
+    width: 120vh; /* Adjust size as needed */
+    transition: opacity 1.8s ease;
+}
+
+/* Background image and second image initially hidden */
+#background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill; /* Fill screen without distortion */
+    z-index: 10;
+    display: none; /* Hidden initially */
+    opacity: 0; /* Hidden initially */
+}
+
+#second-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11;
+    width: 95vh; /* Adjust size as needed */
+    transition: opacity 1.8s ease;
+    display: none; /* Hidden initially */
+    opacity: 0; /* Hidden initially */
+}
+
+
+
+
+.login-form {
+    position: absolute;
+    top: 54vh;
+    right: 104vh;
+    z-index: 20;
+    display: none; /* Hidden initially */
+
+}
+
+
+.login-box input[type="text"] {
+    position: absolute;
+    width: 52.5vh;
+    height: 5vh;
+    padding: 1vh 2vh;
+    top: -15.1vh;
+    left: -29.5vh;
+    border-radius: 1.5vh;
+    font-size: 2.5vh;
+    font-weight: 500;
+    outline: none;
+    border: none;
+    background: transparent; /* Transparent background */
+}
+
+
+.login-box input[type="password"] {
+    position: absolute;
+    width: 52.5vh;
+    height: 5vh;
+    padding: 1vh 2vh;
+    top: -5.8vh;
+    left: -29.5vh;
+    border-radius: 1.5vh;
+    font-size: 3.5vh;
+    outline: none;
+    border: none;
+    background: transparent; /* Transparent background */
+}
+
+
+
+.login-box button {
+    position: absolute;
+    top: 4vh;
+    left: -18.5vh;
+    height: 11vh;
+    width: 34vh;
+    background: transparent center/contain no-repeat;
+    background-image: url('../images/indeximg/loginbtn.png');
+    border: none;
+    cursor: pointer;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, transform 0.6s ease;
+}
+
+/* Hover effect: scale up slightly and add a soft shadow */
+.login-box button:hover {
     transform: scale(1.03);
 }
 
-/* Login content inside the wood background */
-.login-content {
-    background-color: rgba(255, 255, 255, 0); /* transparent */
-    width: 100%;
-    max-width: 400px;
-    padding: 30px;
+/* Active effect: press down effect */
+.login-box button:active {
+    transform: scale(0.95);
 }
 
-/* Fancy input styles for kids */
-.kid-input {
-    background-color: #ffffff;
-    border: 2px solid #D97706;
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #5B3A29;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    display: block;
-    margin-top: 0.25rem;
-    transition: all 0.3s ease;
-}
-
-.kid-input::placeholder {
-    color: #8b8b8b;
-    font-size: 1rem;
-    font-style: normal;
-}
-
-.kid-input:focus {
-    border-color: #B45309;
-    box-shadow: 0 0 12px rgba(234, 179, 8, 0.6);
-    outline: none;
-}
-
-/* Checkbox styling */
-form input[type="checkbox"] {
-    margin-right: 5px;
-}
-
-/* Submit button styling */
-button[type="submit"] {
-    background-color: #4CAF50;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 1rem;
-    width: 100%;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button[type="submit"]:hover {
-    background-color: #45a049;
-    transform: scale(1.02);
-}
-
-/* Links styling */
-a {
-    text-decoration: none;
-    color: #6a5acd;
-    transition: color 0.3s ease;
-}
-
-a:hover {
-    color: #4b0082;
-}
-
-/* Base responsive layout */
-@media (max-width: 768px) {
-    .wood-login-wrapper {
-        background-size: contain;
-        width: 100vw;
-        min-height: 500px;
-        padding: 20px;
-        
-    }
-
-    .login-text {
-        font-size: 3rem;
-    }
-
-    .login-content {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 0.5em;
-        gap: 0.4em;
-        
-    }
-
-    .kid-input {
-        font-size: 1em;
-        padding-top: 0.5em; /* Add padding to the top to move the placeholder up */
-        padding-left: 0.5em; /* Add padding to the left to move the placeholder right */
-        height: 2.5em;
-        width: 17em;
-        border: 2px solid #D97706;
-        border-radius: 0.5em;
-        color: #5B3A29;
-        font-weight: 600;
-    
-        display: block;
-        margin: 0 auto; /* ⬅️ this centers it horizontally */
-    }
-
-    .stay-signed-wrapper {
-        margin-left: 0.3em;     /* spacing from the left */
-    }
-    
-    /* Checkbox */
-    #stay-signed-in {
-        width: 1em;
-        height: 1em;
-        accent-color: #D97706;
-        cursor: pointer;
-        margin-right: 0.4em;
-        margin-top: -0.4em;   /* adjust this to move it upward */
-    
-    }
-    
-    /* Label text */
-    label[for="stay-signed-in"] {
-        font-size: 0.8rem;
-        color: #5B3A29;
-        font-weight: 500;
-        line-height: 1em;
-        margin-bottom: 0;
-        cursor: pointer;
-        margin-top: -0.4em;   /* adjust this to move it upward */
-    
-    }
-
-    .btn-wrapper .btn {
-        font-size: 0.9rem;
-        height: 2.5em;              
-        line-height: 1;        
-        width: auto;
-        border-radius: 0.7em;
-    }
-
-    .text-center a,
-.text-center span,
-.text-center {
-    font-size: 0.8rem !important;
-    line-height: 1.2em !important;
-    margin-top: 1 !important;
-    padding-top: 0 !important;
-}
-
-}
-
-@media screen and (max-width: 1024px) and (orientation: landscape) {
-    html, body {
-        height: 100vh;
-        overflow: hidden;
-    }
-
-/* Default styling for login text */
-
-
-.wood-login-wrapper {
-    width: 100vw;
-    height: 100vh;
-    padding: 8px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    
-    max-width: 30vw;
-    max-height: 15vh;
-    font-size: unset;  /* Remove font size inheritance from this element */
-}
-
-    
-    .login-content {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 0.5em;
-        gap: 0.4em;
-        
-    }
-    
-    .login-text {
-        font-size: 2em;
-        text-align: center;
-        position: relative;
-        top: 13px; /* move downward */
-        margin-top: -0.5em; /* Move the text down */
-
-    }
-    
-    
-    .kid-input {
-        font-size: 0.6rem;
-        padding-top: 1em; /* Add padding to the top to move the placeholder up */
-        padding-left:1em; /* Add padding to the left to move the placeholder right */
-        height: 3em;
-        width: 20em;
-        border: 2px solid #D97706;
-        border-radius: 0.5em;
-        color: #5B3A29;
-        font-weight: 600;
-    
-        display: block;
-        margin: 0 auto; /* ⬅️ this centers it horizontally */
-    }
-    
-    .kid-input::placeholder {
-        color: #8b8b8b;
-        font-size: 0.6rem;
-        font-style: normal;
-    }
-    
-/* Wrapper for the checkbox and label */
-.stay-signed-wrapper {
-    margin-left: 0.3em;     /* spacing from the left */
-}
-
-/* Checkbox */
-#stay-signed-in {
-    width: 0.7em;
-    height: 0.7em;
-    accent-color: #D97706;
-    cursor: pointer;
-    margin-right: 0.4em;
-    margin-top: -0.6em;   /* adjust this to move it upward */
-
-}
-
-/* Label text */
-label[for="stay-signed-in"] {
-    font-size: 0.6rem;
-    color: #5B3A29;
-    font-weight: 500;
-    line-height: 1em;
-    margin-bottom: 0;
-    cursor: pointer;
-    margin-top: -0.7em;   /* adjust this to move it upward */
-
-}
-
-.btn-wrapper .btn {
-    font-size: 0.7rem;
-    padding: 0 0.8em;  
-    height: 2.5em;              
-    line-height: 1;        
-    width: auto;
-    min-height: unset;
-    border-radius: 0.7em;
-}
-   
-.text-center a,
-.text-center span,
-.text-center {
-    font-size: 0.6rem !important;
-    line-height: 1.2em !important;
-    margin-top: 1 !important;
-    padding-top: 0 !important;
-}
-
-}
