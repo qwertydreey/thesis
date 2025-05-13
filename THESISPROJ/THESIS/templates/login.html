@@ -21,10 +21,15 @@
         <div id="login-form" class="login-form" style="display: none; opacity: 0;">
             <form id="loginForm" method="POST" action="{{ url_for('login') }}" class="login-box">
                 <input type="text" id="username" name="username" required autocomplete="off" autocorrect="off" autocapitalize="off">
-                <input type="password" id="password" name="password"  required autocomplete="off" autocorrect="off" autocapitalize="off">
+                <input type="password" id="password" name="password" required autocomplete="off" autocorrect="off" autocapitalize="off">
                 <button id="submit-btn" class="submit-button" type="submit" style="display: none;"></button>
             </form>
+            <!-- Register Link Section -->
+            <div class="register-link">
+                <p>Don't have an account? <a href="{{ url_for('register') }}" class="register-button">Register here</a></p>
+            </div>
         </div>
+        
         
 
         <!-- Background image and second image (initially hidden) -->
@@ -35,8 +40,15 @@
         <button id="skip-btn" style="display: none; position: absolute; top: 10px; left: 10px; z-index: 15; padding: 10px 20px; background-color: rgba(0, 0, 0, 0.5); color: white; border: none; cursor: pointer;">
             Skip
         </button>
+
+
+        
         <button id="mute-btn" style="display: none; position: absolute; top: 10px; right: 10px; z-index: 15; padding: 10px 20px; background-color: rgba(0, 0, 0, 0.5); border: none; cursor: pointer;">
             🔊
+        </button>
+
+        <button id="watch-intro-btn" style="display: none; position: absolute; top: 10px; left: 10px; z-index: 15; padding: 10px 20px; background-color: rgba(0, 0, 0, 0.5); color: white; border: none; cursor: pointer;">
+            Watch Intro
         </button>
     </div>
 
@@ -48,79 +60,141 @@
         const loginForm = document.getElementById('login-form');
         const skipButton = document.getElementById('skip-btn');
         const muteButton = document.getElementById('mute-btn');
-        const submitButton = document.getElementById('submit-btn'); // Add reference to the submit button
-        
+        const submitButton = document.getElementById('submit-btn');
+        const watchIntroButton = document.getElementById('watch-intro-btn');
+    
         let imagesShown = false;
-        
-        // Modify showImages function to include submit button
+    
+        // On page load
+        window.onload = () => {
+            video.pause();
+    
+            // Restore from sessionStorage if redirected from login
+            const preserved = sessionStorage.getItem('preserveSkip');
+            if (preserved) {
+                localStorage.setItem('videoSkipped', preserved);
+                sessionStorage.removeItem('preserveSkip');
+            }
+    
+            const skipState = localStorage.getItem('videoSkipped');
+            if (skipState === 'true') {
+                showImages();
+                skipButton.style.display = 'none';
+                watchIntroButton.style.display = 'block';
+            }
+        };
+    
+        // Show login form and visuals
         function showImages() {
             if (imagesShown) return;
             imagesShown = true;
+    
             bgImage.style.display = 'block';
             secondImage.style.display = 'block';
-            loginForm.style.display = 'block'; // Show login form
-            submitButton.style.display = 'block'; // Show submit button
+            loginForm.style.display = 'block';
+            submitButton.style.display = 'block';
+    
             setTimeout(() => {
                 bgImage.style.opacity = 1;
                 secondImage.style.opacity = 1;
-                loginForm.style.opacity = 1; // Fade in form as well
-                submitButton.style.opacity = 1; // Fade in submit button
+                loginForm.style.opacity = 1;
+                submitButton.style.opacity = 1;
             }, 10);
         }
-        
-        window.onload = () => {
-    // Clear skip flag on full page load (like refresh or first visit)
-    localStorage.removeItem('videoSkipped');
-
-    const video = document.getElementById('intro-video');
-
-    video.pause(); // Always pause first
-};
-
+    
+        // Skip the intro
+// Skip intro
 function skipIntro() {
-    const video = document.getElementById('intro-video');
-    video.currentTime = 18;
+    video.currentTime = 18; // Skip to 18 seconds
     video.pause();
+    
+    // Store video skipped state in localStorage and sessionStorage
+    localStorage.setItem('videoSkipped', 'true');
+    sessionStorage.setItem('preserveSkip', 'true'); // For redirect safety
+    
+    // Hide skip button and show "Watch Intro" button
+    skipButton.style.display = 'none';
+    watchIntroButton.style.display = 'block';
+    
+    // Show images and login form
+    showImages();
+}
 
-    localStorage.setItem('videoSkipped', 'true'); // Mark that video was skipped
-    showImages(); // Show login form etc.
+// Watch intro again
+function watchIntro() {
+    imagesShown = false;
+
+    // Hide login form and reset the view
+    bgImage.style.display = 'none';
+    secondImage.style.display = 'none';
+    loginForm.style.display = 'none';
+    submitButton.style.display = 'none';
+
+    bgImage.style.opacity = 0;
+    secondImage.style.opacity = 0;
+    loginForm.style.opacity = 0;
+    submitButton.style.opacity = 0;
+
+    // Reset video visuals (play from start)
+    video.currentTime = 0;
+    video.volume = 0.1; // Reset volume to 0.1
+    video.play();
+
+    // Show buttons
+    skipButton.style.display = 'block';
+    muteButton.style.display = 'block';
+    watchIntroButton.style.display = 'none';
+
+    // Clear skip status
+    localStorage.removeItem('videoSkipped');
+    sessionStorage.removeItem('preserveSkip');
+
+    // Hide "Tap to Play" image when intro is played again
+    const tapImage = document.getElementById('tap-to-enter');
+    if (tapImage) {
+        tapImage.style.display = 'none'; // Hide the "Tap to Play" image
+    }
 }
 
 
     
+        // Skip button event
+        skipButton.addEventListener('click', skipIntro);
+    
+        // Watch intro button event
+        watchIntroButton.addEventListener('click', watchIntro);
+    
+        // Video time checker
+        video.addEventListener('timeupdate', () => {
+            if (video.currentTime >= 18) {
+                localStorage.setItem('videoSkipped', 'true');
+                sessionStorage.setItem('preserveSkip', 'true');
+                skipButton.style.display = 'none';
+                watchIntroButton.style.display = 'block';
+                showImages();
+            }
+        });
+    
+        // Mute button toggle
+        muteButton.addEventListener('click', () => {
+            video.muted = !video.muted;
+            muteButton.textContent = video.muted ? '🔇' : '🔊';
+        });
+    
+        // Tap-to-enter start
         tapImage.addEventListener('click', () => {
             tapImage.style.opacity = 0;
             setTimeout(() => {
                 tapImage.style.display = 'none';
                 video.volume = 0.1;
                 video.play();
-                skipButton.style.display = 'block'; // Show skip
-                muteButton.style.display = 'block'; // Show mute
+                skipButton.style.display = 'block';
+                muteButton.style.display = 'block';
             }, 900);
         });
-        
-        // Show images and login form when video reaches 18 seconds
-        video.addEventListener('timeupdate', () => {
-            if (video.currentTime >= 18 && !imagesShown) {
-                localStorage.setItem('videoSkipped', 'true'); // Save to localStorage
-                showImages();
-            }
-        });
-        
-        // Skip to 18s without pause
-        skipButton.addEventListener('click', () => {
-            video.currentTime = 18;
-            video.play();
-            skipButton.style.display = 'none'; // Hide skip button after use
-            localStorage.setItem('videoSkipped', 'true'); // Save to localStorage
-        });
-        
-        // Mute/Unmute toggle
-        muteButton.addEventListener('click', () => {
-            video.muted = !video.muted;
-            muteButton.textContent = video.muted ? '🔇' : '🔊';
-        });
+    
     </script>
+    
     
     <script>
         // Wait until the DOM is fully loaded
@@ -209,7 +283,6 @@ function skipIntro() {
                         document.body.removeChild(overlay);
     
                         if (data.success) {
-                            localStorage.removeItem('videoSkipped');
                             window.location.href = data.redirect;
                         } else {
                             alert(data.message);
