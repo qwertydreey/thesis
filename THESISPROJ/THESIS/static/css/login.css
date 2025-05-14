@@ -51,43 +51,25 @@ body, html {
 
 #second-image {
     position: absolute;
-    top: 58%;
+    top: 34%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 11;
+    z-index: -1;
     width: 95vh; /* Adjust size as needed */
     transition: opacity 1.8s ease;
     display: none; /* Hidden initially */
     opacity: 0; /* Hidden initially */
 }
 
-.register-link {
-    position: absolute;
-    top: 16vh;
-    right: -16vh;
-    width: 36vh;
-    height: 3vh;
-    font-size: 2vh;
-    font-weight: 500;
-    text-align: center;
-}
-
-.register-button {
-    color: #ff0000db; /* Or any other color matching your theme */
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.register-button:hover {
-    text-decoration: underline;
-}
 
 
 
 .login-form {
     position: absolute;
-    top: 62.5vh;
-    right: 104vh;
+    height: 38vh;
+    width: 56vh;
+    top: 45vh;
+    left: 78vh;
     z-index: 20;
     display: none; /* Hidden initially */
 
@@ -99,8 +81,8 @@ body, html {
     width: 52.5vh;
     height: 5vh;
     padding: 1vh 2vh;
-    top: -15.1vh;
-    left: -29.5vh;
+    top: 2.6vh;
+    left: 0vh;
     border-radius: 1.5vh;
     font-size: 2.5vh;
     font-weight: 500;
@@ -115,21 +97,21 @@ body, html {
     width: 52.5vh;
     height: 5vh;
     padding: 1vh 2vh;
-    top: -5.8vh;
-    left: -29.5vh;
+    top: 12vh;
+    left: 0vh;
     border-radius: 1.5vh;
     font-size: 3.5vh;
     outline: none;
     border: none;
     background: transparent; /* Transparent background */
-}
+    }
 
 
 
 .login-box button {
     position: absolute;
-    top: 4vh;
-    right: -15vh;
+    top: 20vh;
+    left: 11vh;
     height: 11vh;
     width: 34vh;
     background: transparent center/contain no-repeat;
@@ -151,3 +133,57 @@ body, html {
     transform: scale(0.95);
 }
 
+.register-link {
+    position: absolute;
+    top: 34vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36vh;
+    height: 3vh;
+    font-size: 2vh;
+    font-weight: 500;
+    text-align: center;
+}
+
+.register-button {
+    color: #ff0000db; /* Or any other color matching your theme */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-button:hover {
+    text-decoration: underline;
+}
+
+.control-button {
+    position: absolute;
+    top: 1vh;
+    height: 5vh;
+    width: 13vh;
+    z-index: 15;
+    padding: 1vh 2vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.7vh;
+    border-radius: 1vh;
+}
+.mute {
+    position: absolute;
+    top: 1vh;
+    height: 5vh;
+    width: 5vh;
+    z-index: 15;
+    padding: 1vh 1vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.7vh;
+    border-radius: 1vh;
+}
+/* For mute button specifically (emoji already handles color) */
+#mute-btn {
+    color: white;
+}

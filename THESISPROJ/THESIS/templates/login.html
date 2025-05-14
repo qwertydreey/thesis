@@ -20,36 +20,39 @@
         <!-- Login form (initially hidden) -->
         <div id="login-form" class="login-form" style="display: none; opacity: 0;">
             <form id="loginForm" method="POST" action="{{ url_for('login') }}" class="login-box">
+                <img id="second-image" src="{{ url_for('static', filename='images/indeximg/login.png') }}" alt="Second Image" style="display: none;">
+
                 <input type="text" id="username" name="username" required autocomplete="off" autocorrect="off" autocapitalize="off">
                 <input type="password" id="password" name="password" required autocomplete="off" autocorrect="off" autocapitalize="off">
                 <button id="submit-btn" class="submit-button" type="submit" style="display: none;"></button>
+                <div class="register-link">
+                    <p>Don't have an account? <a href="{{ url_for('register') }}" class="register-button">Register here</a></p>
+                </div>
             </form>
             <!-- Register Link Section -->
-            <div class="register-link">
-                <p>Don't have an account? <a href="{{ url_for('register') }}" class="register-button">Register here</a></p>
-            </div>
+
         </div>
         
         
 
         <!-- Background image and second image (initially hidden) -->
         <img id="background-image" src="{{ url_for('static', filename='images/indeximg/loginbg.png') }}" alt="Background Image" style="display: none;">
-        <img id="second-image" src="{{ url_for('static', filename='images/indeximg/login.png') }}" alt="Second Image" style="display: none;">
         
-        <!-- Skip and Mute Buttons -->
-        <button id="skip-btn" style="display: none; position: absolute; top: 10px; left: 10px; z-index: 15; padding: 10px 20px; background-color: rgba(0, 0, 0, 0.5); color: white; border: none; cursor: pointer;">
-            Skip
-        </button>
+            <!-- Skip Button -->
+            <button id="skip-btn" class="control-button" style="display: none; left: 10px;">
+                Skip
+            </button>
 
+            <!-- Mute Button -->
+            <button id="mute-btn" class="control-button mute" style="display: none; right: 10px;">
+                🔊
+            </button>
 
-        
-        <button id="mute-btn" style="display: none; position: absolute; top: 10px; right: 10px; z-index: 15; padding: 10px 20px; background-color: rgba(0, 0, 0, 0.5); border: none; cursor: pointer;">
-            🔊
-        </button>
+            <!-- Watch Intro Button -->
+            <button id="watch-intro-btn" class="control-button" style="display: none; left: 10px;">
+                Watch Intro
+            </button>
 
-        <button id="watch-intro-btn" style="display: none; position: absolute; top: 10px; left: 10px; z-index: 15; padding: 10px 20px; background-color: rgba(0, 0, 0, 0.5); color: white; border: none; cursor: pointer;">
-            Watch Intro
-        </button>
     </div>
 
     <script>
