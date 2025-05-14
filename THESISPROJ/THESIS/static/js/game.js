@@ -258,6 +258,8 @@ function autoResizeFont(element) {
 let correctAnswersCount = 0;
 let wrongAnswersCount = 0;
 let totalQuestionsAnswered = 0;
+const correctSfx = new Audio('/static/sfx/correct.mp3');
+const wrongSfx = new Audio('/static/sfx/wrong.mp3');
 
 async function handleAttack() {
   const input = document.getElementById('number-input').value.trim();
@@ -278,29 +280,36 @@ async function handleAttack() {
   totalQuestionsAnswered++;
 
   if (isCorrect) {
+    correctSfx.currentTime = 0; // Rewind to start
+    correctSfx.play();
+  
     fireballAttack(() => {
       decreaseFreezeTurns(); // After fireball animation
     });
     correctAnswersCount++;
-
+  
     feedbackMessage.textContent = "✅ Correct!";
     feedbackMessage.classList.remove('wrong');
     feedbackMessage.classList.add('correct');
   } else {
+    wrongSfx.currentTime = 0; // Rewind to start
+    wrongSfx.play();
+  
     wrongAnswersCount++;
-
+  
     if (freezeTurns <= 0) {
       monsterAttack();
     } else {
       console.log("❄️ Monster is frozen — no damage to player.");
     }
-
+  
     decreaseFreezeTurns();
-
+  
     feedbackMessage.textContent = "❌ Incorrect answer!";
     feedbackMessage.classList.remove('correct');
     feedbackMessage.classList.add('wrong');
   }
+  
 
   // Show feedback
   feedbackMessage.style.display = 'inline-block';
@@ -843,11 +852,32 @@ function initMapAndStage() {
 
 
 
+function playBossSFX() {
+  const audio = new Audio('/static/sfx/bossbattle.mp3'); // Replace path if needed
+  audio.volume = 0.8;
+  audio.play();
+}
+function playFinalBossSFX() {
+  const audio = new Audio('/static/sfx/finalboss.mp3'); // change path as needed
+  audio.volume = 0.9;
+  audio.play();
+}
 
 
 async function spawnMonster(idx, shouldFetchQuestion = false) {
   const m = monstersInStage[idx];
   if (!m) return showVictoryScreen();
+
+  // ✅ Check if this is the last monster (boss)
+  const isFinalBoss = selectedStage === 3 && idx === monstersInStage.length - 1;
+  if (isFinalBoss) {
+    console.log("🎯 Final Boss has spawned!");
+    playFinalBossSFX();
+  } else if (idx === monstersInStage.length - 1) {
+    console.log("🔥 Boss monster has spawned!");
+    playBossSFX();
+  }
+  
 
   currentMonsterHealth = m.maxHp;
   maxMonsterHealth = m.maxHp;
@@ -875,10 +905,8 @@ async function spawnMonster(idx, shouldFetchQuestion = false) {
     monsterNameEl.textContent = m.displayName || m.name.replace(/-/g, ' ');
   }
 
-  // Log the current difficulty before fetching a new question
   console.log('Current difficulty before question fetch:', currentDifficulty);
 
-  // Start spawn animation (fade-in and shake effect)
   if (!isMonsterSpawnAnimationInProgress) {
     isMonsterSpawnAnimationInProgress = true;
 
@@ -891,35 +919,33 @@ async function spawnMonster(idx, shouldFetchQuestion = false) {
       isMonsterSpawnAnimationInProgress = false;
       monsterImg.removeEventListener('animationend', clearSpawn);
 
-      // Update health bars after monster spawns
       updateHealthBars();
 
-      // Add fade-out effect for current question
       const qText = document.getElementById('question-text');
       qText.classList.remove('fade-in');
-      qText.classList.add('fade-out'); // Fade out current question
+      qText.classList.add('fade-out');
 
       setTimeout(async () => {
-        // ✅ Only fetch a question if instructed
         if (shouldFetchQuestion) {
-          await fetchNewQuestion(); // Ensure the question fetch happens after animation
+          await fetchNewQuestion();
         }
 
-        // Apply fade-in effect for the new question
         qText.classList.remove('fade-out');
         qText.classList.add('fade-in');
-      }, 500); // Wait for fade-out to complete before transitioning
+      }, 500);
     });
   } else {
     console.log("Spawn in progress, skipping spawn for now.");
   }
-      // === PROGRESS UPDATE ===
-      if (selectedMap && selectedStage) {
-        const starsEarned = 1;  // Example value for stars earned
-        updateStageProgress(selectedMap, selectedStage, starsEarned);
-        updateRoadmapStars(`${selectedMap}-${selectedStage}`);
-    }
+
+  // === PROGRESS UPDATE ===
+  if (selectedMap && selectedStage) {
+    const starsEarned = 1;
+    updateStageProgress(selectedMap, selectedStage, starsEarned);
+    updateRoadmapStars(`${selectedMap}-${selectedStage}`);
+  }
 }
+
 
 
 
@@ -1056,7 +1082,7 @@ function startMonsterSpawnAnimation() {
     }
   
     // Play player damage sound
-    playSound('/static/sfx/playerdamaged.mp3', 100);  // Sound for player taking damage
+    playSound('/static/sfx/playerdamaged.mp3', 0);  // Sound for player taking damage
   
     checkGameOver();
   }
@@ -1582,7 +1608,7 @@ function fireballAttack() {
   player.classList.add("charging");
 
   // Play fireball charging sound
-  playSound('/static/sfx/attack.mp3',640); // Flask static URL for fireball sound
+  playSound('/static/sfx/attack.mp3',0); // Flask static URL for fireball sound
 
   // Fetch equipped skin from the backend
   fetch('/get_user_skins')
@@ -1608,7 +1634,7 @@ function fireballAttack() {
         sessionStorage.setItem('fireballTriggered', true);
 
         // Play fireball hit sound
-        playSound('/static/sfx/damaged.mp3',900); // Flask static URL for fireball hit sound
+        playSound('/static/sfx/damaged.mp3',500); // Flask static URL for fireball hit sound
 
         // 💢 Monster takes visual damage
         setTimeout(() => {

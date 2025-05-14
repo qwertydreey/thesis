@@ -13,10 +13,13 @@
       <img src="{{ url_for('static', filename='images/shopimg/shop.png') }}" alt="Shop Image" class="shop-img"/> 
 
       <audio id="buttonClickSound" src="/static/sfx/click.mp3" preload="auto"></audio>
+      <audio id="greetings" src="/static/sfx/shopwelcome.mp3" preload="auto"></audio>
+      <audio id="counticus" src="/static/sfx/counticuswelcome.mp3" preload="auto"></audio>
+      <audio id="farewell" src="/static/sfx/shopfarewell.mp3" preload="auto"></audio>
 
 
         <div class="shop-btn-wrapper">
-            <div class="shop-btn shopkeeper"onclick="playButtonClickSound();"></button>
+            <div class="shop-btn shopkeeper"onclick="greetings();"></button>
         </div>
 
         <div class="back-btn-wrapper">
@@ -41,7 +44,7 @@
           </div>
           
           <div class="shop-btn-wrapper">
-            <button class="shop-btn counticus"onclick="playButtonClickSound();"></button>
+            <button class="shop-btn counticus"onclick="counticus();"></button>
           </div>
           
 
@@ -115,16 +118,72 @@
                   console.error('Playback failed:', e);
               });
             }
-      
+            let hasPlayedGreeting = false;
+
+            function playGreetingSound() {
+              const sound = document.getElementById('greetings');
+
+              // Only play if not already playing
+              if (sound.paused) {
+                sound.currentTime = 0;
+                sound.volume = 1;
+                sound.play().catch((e) => {
+                  console.error('Playback failed:', e);
+                });
+              }
+            }
+
+            // Autoplay on first user interaction
+            ['click', 'keydown', 'touchstart'].forEach(event => {
+              document.addEventListener(event, () => {
+                if (!hasPlayedGreeting) {
+                  playGreetingSound();
+                  hasPlayedGreeting = true;
+                }
+              }, { once: true });
+            });
+
+            // Play again on button click or any call to this function
+            function greetings() {
+              playGreetingSound();
+            }
+
+
+          function counticus() {
+            const sound = document.getElementById('counticus');
+
+            // Only play if not already playing
+            if (sound.paused) {
+              sound.currentTime = 0; // rewind to start
+              sound.volume = 1;
+              sound.play().catch((e) => {
+                console.error('Playback failed:', e);
+              });
+            }
+          }
+
+          function farewell() {
+            const sound = document.getElementById('farewell');
+
+            // Only play if not already playing
+            if (sound.paused) {
+              sound.currentTime = 0; // rewind to start
+              sound.volume = 1;
+              sound.play().catch((e) => {
+                console.error('Playback failed:', e);
+              });
+            }
+          }
           </script>
         <script>
           function delayedBackRedirect(event) {
             event.preventDefault(); // Stop immediate navigation
-            playButtonClickSound(); // Play button sound (you already have this function)
+            farewell(); // Play button sound (you already have this function)
+
             const targetUrl = event.currentTarget.getAttribute('href');
             setTimeout(() => {
               window.location.href = targetUrl;
-            }, 400);
+            }, 2600);
           }
         </script>
 

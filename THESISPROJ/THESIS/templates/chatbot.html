@@ -15,6 +15,8 @@
 <body>
     <!-- Chat Container -->
     <div class="chat-container shadow">
+        <audio id="counticushelp" src="/static/sfx/counticushelp.mp3" preload="auto"></audio>
+
         <h5 class="text-center mb-3" style="color: white;">Chat with Wizard Counticus</h5>
         <div class="chat-messages" id="chat-box">
             <!-- Messages appear here -->
@@ -209,5 +211,30 @@
             }
         });
     </script>
+
+<script>
+    let hasPlayedCounticus = false;
+  
+    function counticushelp() {
+      const sound = document.getElementById('counticushelp');
+  
+      // Only play if not already playing and hasn't played before
+      if (!hasPlayedCounticus && sound.paused) {
+        sound.currentTime = 0;
+        sound.volume = 1;
+        sound.play().then(() => {
+          hasPlayedCounticus = true;
+        }).catch((e) => {
+          console.error('Playback failed:', e);
+        });
+      }
+    }
+  
+    // Play once on first interaction anywhere
+    ['click', 'keydown', 'touchstart'].forEach(event => {
+      document.addEventListener(event, counticushelp, { once: true });
+    });
+  </script>
+  
 </body>
 </html>

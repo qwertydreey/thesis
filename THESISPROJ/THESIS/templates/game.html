@@ -10,6 +10,11 @@
 </head>
 
 <body data-bgm="dynamic">
+  <audio id="buttonClickSound" src="/static/sfx/click.mp3" preload="auto"></audio>
+  <audio id="calcbtns" src="/static/sfx/calcbtns.mp3" preload="auto"></audio>
+  <audio id="counticus" src="/static/sfx/counticusclick.mp3" preload="auto"></audio>
+  <audio id="potionused" src="/static/sfx/potionused.mp3" preload="auto"></audio>
+
   <div class="game-wrapper">
 
     <!-- Game Background -->
@@ -85,7 +90,7 @@
 <div class="potion-section">
   <div class="potion-item">
     <div class="freeze-box-container">
-      <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="playButtonClickSound(); useFreezePotion()">
+      <img src="{{ url_for('static', filename='images/gameimg/freeze.png') }}" class="freeze-potion" alt="Freeze Potion" onclick="potionused(); useFreezePotion()">
       <img src="{{ url_for('static', filename='images/gameimg/freeze box.png') }}" class="freeze-box">
     </div>
     <span class="potion-quantity" id="freeze-quantity">3</span>
@@ -93,7 +98,7 @@
 
   <div class="potion-item">
     <div class="health-box-container">
-      <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="playButtonClickSound(); useHealthPotion()">
+      <img src="{{ url_for('static', filename='images/gameimg/health.png') }}" class="health-potion" alt="Health Potion" onclick="potionused(); useHealthPotion()">
       <img src="{{ url_for('static', filename='images/gameimg/health box.png') }}" class="health-box">
     </div>
     <span class="potion-quantity" id="health-quantity">1</span>
@@ -101,7 +106,7 @@
 
   <div class="potion-item">
     <div class="thunder-box-container">
-      <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="Thunder Potion" onclick="playButtonClickSound(); useThunderPotion()">
+      <img src="{{ url_for('static', filename='images/gameimg/thunder.png') }}" class="thunder-potion" alt="Thunder Potion" onclick="potionused(); useThunderPotion()">
       <img src="{{ url_for('static', filename='images/gameimg/thunder box.png') }}" class="thunder-box">
     </div>
     <span class="potion-quantity" id="thunder-quantity">3</span>
@@ -111,22 +116,21 @@
 
 
 
-<audio id="buttonClickSound" src="/static/sfx/click.mp3" preload="auto"></audio>
 
 
 <div class="game-control-container">
-  <div class="button" onclick="playButtonClickSound(); addToInput(7)"></div>
-  <div class="button" onclick="playButtonClickSound(); addToInput(8)"></div>
-  <div class="button" onclick="playButtonClickSound(); addToInput(9)"></div>
-  <div class="button" onclick="playButtonClickSound(); addToInput(4)"></div>
-  <div class="button" onclick="playButtonClickSound(); addToInput(5)"></div>
-  <div class="button" onclick="playButtonClickSound(); addToInput(6)"></div>
-  <div class="button" onclick="playButtonClickSound(); addToInput(1)"></div>
-  <div class="button" onclick="playButtonClickSound(); addToInput(2)"></div>
-  <div class="button" onclick="playButtonClickSound(); addToInput(3)"></div>
-  <div class="button backspace" onclick="playButtonClickSound(); backspace()"></div>
-  <div class="button" onclick="playButtonClickSound(); addToInput(0)"></div>
-  <div class="button" onclick="playButtonClickSound(); addToInput('.')"></div>
+  <div class="button" onclick="calcbtns(); addToInput(7)"></div>
+  <div class="button" onclick="calcbtns();  addToInput(8)"></div>
+  <div class="button" onclick="calcbtns();  addToInput(9)"></div>
+  <div class="button" onclick="calcbtns();  addToInput(4)"></div>
+  <div class="button" onclick="calcbtns();  addToInput(5)"></div>
+  <div class="button" onclick="calcbtns();  addToInput(6)"></div>
+  <div class="button" onclick="calcbtns();  addToInput(1)"></div>
+  <div class="button" onclick="calcbtns();  addToInput(2)"></div>
+  <div class="button" onclick="calcbtns();  addToInput(3)"></div>
+  <div class="button backspace" onclick="calcbtns();  backspace()"></div>
+  <div class="button" onclick="calcbtns(); addToInput(0)"></div>
+  <div class="button" onclick="calcbtns();  addToInput('.')"></div>
   <div class="placeholder-input">
     <input type="text" class="input-field" id="number-input" />
   </div>
@@ -142,7 +146,7 @@
           
           
        
-            <a href="{{ url_for('chatbot') }}" onclick="playButtonClickSound(); delayedRedirect(event)">
+            <a href="{{ url_for('chatbot') }}" onclick="counticus(); delayedRedirect(event)">
               <img src="{{ url_for('static', filename='images/gameimg/counticus.png') }}" alt="Wizard Counticus" class="chatbot-img">
             </a>
           </div>
@@ -364,6 +368,43 @@
     setTimeout(() => {
       window.location.href = targetUrl;
     }, 1000); // 1000 milliseconds = 1 second
+  }
+
+  function counticus() {
+            const sound = document.getElementById('counticus');
+
+            // Only play if not already playing
+            if (sound.paused) {
+              sound.currentTime = 0; // rewind to start
+              sound.volume = 1;
+              sound.play().catch((e) => {
+                console.error('Playback failed:', e);
+              });
+            }
+          }
+
+  function calcbtns() {
+      const originalSound = document.getElementById('calcbtns');
+      const soundClone = originalSound.cloneNode(); // clone the <audio> element
+      soundClone.volume = 1;
+      soundClone.playbackRate = 2;
+
+      // Play the cloned audio
+      soundClone.play().catch((e) => {
+          console.error('Playback failed:', e);
+      });
+    }
+
+  function potionused() {
+    const originalSound = document.getElementById('potionused');
+    const soundClone = originalSound.cloneNode(); // clone the <audio> element
+    soundClone.volume = 1;
+    soundClone.playbackRate = 2;
+
+    // Play the cloned audio
+    soundClone.play().catch((e) => {
+        console.error('Playback failed:', e);
+    });
   }
 </script>
   

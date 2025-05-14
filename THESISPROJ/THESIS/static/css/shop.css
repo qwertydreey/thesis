@@ -78,13 +78,11 @@ html, body {
     width: 22.5%;
     height: 46.8%;
     background-image: url('../images/shopimg/Shopkeeper.png');
-  
   }
 
   .shopkeeper, .counticus {
     filter: none !important;         /* Remove glow effects */
     transition: none !important;     /* Disable hover transition */
-    cursor: default !important;       /* Disable cursor change */
 
   }
   
