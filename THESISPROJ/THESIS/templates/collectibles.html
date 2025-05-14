@@ -12,10 +12,10 @@
       <div class="tab-sections">
 
         <div class="back-btn-wrapper">
-            <a href="{{ url_for('dashboard') }}">
-              <button class="back-btn"onclick="playButtonClickSound();"></button>
-            </a>
-          </div>
+          <a href="{{ url_for('dashboard') }}" onclick="delayedBackRedirect(event)">
+            <button class="back-btn"></button>
+          </a>
+        </div>
         
         <!-- Medals Section -->
         <div class="tab-slide active" id="medals-section">
@@ -82,6 +82,16 @@
     </script>
     
 
+    <script>
+      function delayedBackRedirect(event) {
+        event.preventDefault(); // Stop default navigation
+        playButtonClickSound(); // Play your custom sound
+        const targetUrl = event.currentTarget.getAttribute('href');
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 400); // 400 milliseconds delay
+      }
+    </script>
     
     
     

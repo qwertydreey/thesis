@@ -332,7 +332,11 @@ async function handleAttack() {
   }
 
   await saveProgress();
-  await fetchNewQuestion();
+
+  // Fetch new question ONLY if monster is still alive
+  if (isCorrect && currentMonsterHealth > 1) {
+    await fetchNewQuestion();
+  }
 
   // Clear input
   document.getElementById('number-input').value = '';
@@ -1632,12 +1636,14 @@ function fireballAttack() {
             console.log("Death animation added"); // Add log when death animation starts
             isMonsterDeathAnimationInProgress = true;
             monster.classList.add("monster-death");
+            playSound('/static/sfx/deathanim.mp3', 0); // make sure the path is correct
 
             // ✔️ Wait for death animation to finish
             const onDeath = () => {
               console.log("Death animation ended (fireball)"); // Log when death animation ends
               monster.removeEventListener("animationend", onDeath);
               monster.classList.remove("monster-death");
+
               currentMonsterIndex++;
               spawnMonster(currentMonsterIndex, true);
               isMonsterDeathAnimationInProgress = false;

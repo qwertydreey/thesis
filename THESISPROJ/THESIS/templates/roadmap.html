@@ -17,7 +17,7 @@
       <div class="roadmap-buttons">
         <!-- Back Button -->
         <div class="roadmap-btn-wrapper">
-          <a href="{{ url_for('dashboard') }}">
+          <a href="{{ url_for('dashboard') }}" onclick="delayedRoadmapRedirect(event)">
             <button class="back-btn"></button>
           </a>
         </div>
@@ -179,6 +179,17 @@
     });
   }
 
+</script>
+
+<script>
+  function delayedRoadmapRedirect(event) {
+    event.preventDefault(); // Prevent immediate redirect
+    playButtonClickSound(); // Play your button click sound
+    const targetUrl = event.currentTarget.getAttribute('href');
+    setTimeout(() => {
+      window.location.href = targetUrl;
+    }, 400); // 400ms delay before redirect
+  }
 </script>
 
 <script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>

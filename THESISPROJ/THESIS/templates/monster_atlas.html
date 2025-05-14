@@ -15,8 +15,8 @@
 
 
   <div class="back-btn-wrapper">
-    <a href="{{ url_for('dashboard') }}">
-      <button class="back-btn"onclick="playButtonClickSound()"></button>
+    <a href="{{ url_for('dashboard') }}" onclick="delayedBackRedirect(event)">
+      <button class="back-btn"></button>
     </a>
   </div>
 
@@ -391,6 +391,17 @@ nextBtn.addEventListener('click', function () {
             }
       
           </script>
+
+<script>
+  function delayedBackRedirect(event) {
+    event.preventDefault(); // Stop immediate redirect
+    playButtonClickSound(); // Play sound
+    const targetUrl = event.currentTarget.getAttribute('href');
+    setTimeout(() => {
+      window.location.href = targetUrl;
+    }, 400); // 400ms delay
+  }
+</script>
 
 <script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>
 

@@ -11,8 +11,10 @@
 </head>
 
 <body data-bgm="/static/bgm/default.mp3">
+  <audio id="buttonClickSound" src="/static/sfx/click.mp3" preload="auto"></audio>
+
   <div class="back">
-    <a href="{{ url_for('roadmap') }}">
+    <a href="{{ url_for('roadmap') }}" onclick="delayedRoadmapBackRedirect(event)">
       <button class="back-btn"></button>
     </a>
   </div>
@@ -390,9 +392,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </script>
 
+</script>
+<script>
+  function playButtonClickSound() {
+    const originalSound = document.getElementById('buttonClickSound');
+    const soundClone = originalSound.cloneNode(); // clone the <audio> element
+    soundClone.volume = 1;
+    soundClone.playbackRate = 2;
 
+    // Play the cloned audio
+    soundClone.play().catch((e) => {
+        console.error('Playback failed:', e);
+    });
+  }
+
+</script>
   
-
+<script>
+  function delayedRoadmapBackRedirect(event) {
+    event.preventDefault(); // Prevent immediate redirect
+    playButtonClickSound(); // Play the button sound
+    const targetUrl = event.currentTarget.getAttribute('href');
+    setTimeout(() => {
+      window.location.href = targetUrl;
+    }, 400); // 400ms delay
+  }
+</script>
   
 
 

@@ -105,7 +105,7 @@
         // Skip the intro
 // Skip intro
 function skipIntro() {
-    video.currentTime = 18; // Skip to 18 seconds
+    video.currentTime = 13; // Skip to 18 seconds
     video.pause();
     
     // Store video skipped state in localStorage and sessionStorage
@@ -166,7 +166,7 @@ function watchIntro() {
     
         // Video time checker
         video.addEventListener('timeupdate', () => {
-            if (video.currentTime >= 18) {
+            if (video.currentTime >= 13) {
                 localStorage.setItem('videoSkipped', 'true');
                 sessionStorage.setItem('preserveSkip', 'true');
                 skipButton.style.display = 'none';

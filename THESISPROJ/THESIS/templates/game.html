@@ -141,10 +141,11 @@
           </div>
           
           
-          <a href="{{ url_for('chatbot') }}">
-            <img src="{{ url_for('static', filename='images/gameimg/counticus.png') }}" alt="Wizard Counticus" class="chatbot-img">
-          </a>
-        </div>
+       
+            <a href="{{ url_for('chatbot') }}" onclick="playButtonClickSound(); delayedRedirect(event)">
+              <img src="{{ url_for('static', filename='images/gameimg/counticus.png') }}" alt="Wizard Counticus" class="chatbot-img">
+            </a>
+          </div>
 
 
 
@@ -356,7 +357,15 @@
   // setQuestion("This is a new dynamic question!");
 </script>
 
-
+<script>
+  function delayedRedirect(event) {
+    event.preventDefault(); // Stop immediate redirect
+    const targetUrl = event.currentTarget.getAttribute('href');
+    setTimeout(() => {
+      window.location.href = targetUrl;
+    }, 1000); // 1000 milliseconds = 1 second
+  }
+</script>
   
   
   

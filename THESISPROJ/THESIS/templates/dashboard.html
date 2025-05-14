@@ -27,7 +27,7 @@
         <!-- PROFILE -->
         <div class="dashboard-btn-wrapper">
           <div class="dashboard-btn profile">
-            <span class="user-name">{{ first_name }} {{ last_name }}</span>
+            <span class="user-name" id="username">{{ first_name }} {{ last_name }}</span>
             <span class="gender">GENDER: {{ gender }}</span>
             <span class="id">USER ID: {{ id }}</span>
           </div>
@@ -142,7 +142,21 @@
     });
   }
 
+  function autoResizeFont(element) {
+  let fontSize = 4;
+  element.style.fontSize = fontSize + 'vh';
+  element.style.whiteSpace = 'normal';
 
+  while ((element.scrollHeight > element.offsetHeight || element.scrollWidth > element.offsetWidth) && fontSize > 1) {
+    fontSize -= 0.1;
+    element.style.fontSize = fontSize + 'vh';
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const username = document.getElementById('username');
+  if (username) autoResizeFont(username);
+});
 
 </script>
 <script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>

@@ -16,14 +16,17 @@
 
 
         <div class="shop-btn-wrapper">
-            <div class="shop-btn shopkeeper"></div>
+            <div class="shop-btn shopkeeper"onclick="playButtonClickSound();"></button>
         </div>
 
         <div class="back-btn-wrapper">
-            <a href="{{ url_for('dashboard') }}">
-              <button class="back-btn"onclick="playButtonClickSound();"></button>
-            </a>
-          </div>
+          <a href="{{ url_for('dashboard') }}" onclick="delayedBackRedirect(event)">
+            <button class="back-btn"></button>
+          </a>
+        </div>
+        
+
+
 
         <div class="shop-btn-wrapper">
             <button class="shop-btn health"onclick="playButtonClickSound();"></button>
@@ -114,7 +117,16 @@
             }
       
           </script>
-
+        <script>
+          function delayedBackRedirect(event) {
+            event.preventDefault(); // Stop immediate navigation
+            playButtonClickSound(); // Play button sound (you already have this function)
+            const targetUrl = event.currentTarget.getAttribute('href');
+            setTimeout(() => {
+              window.location.href = targetUrl;
+            }, 400); // 1 second delay
+          }
+        </script>
 
           <script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>
 

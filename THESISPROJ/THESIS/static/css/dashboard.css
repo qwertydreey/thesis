@@ -93,17 +93,32 @@ body {
   color: #603002;
   font-size: 4vh;
   font-weight: 700;
-  text-align: left;
   font-family: "FSP DEMO - Merlo Neue Bold";
   position: absolute;
-  top: 12vh;
+  top: 12.3vh;
   left: 6.4vh;
-  width: 35vh;
+
+  width: 35vh;    /* Width fixed */
+  height: 6vh;    /* Height fixed */
   max-width: 35vh;
-  word-wrap: break-word;
-  word-break: break-word;
-  line-height: 1.4;
+  max-height: 6vh;
+
+  display: flex;
+  flex-direction: column; /* Stack text vertically */
+  justify-content: center; /* Vertically center the text */
+  align-items: flex-start; /* Align text to the left */
+
+  padding-left: 0vh;       /* Optional padding to the left */
+
+  white-space: normal;     /* Allow text wrapping */
+  overflow: hidden;
+  text-align: left;        /* Align text to the left */
+  line-height: 1.2;
   text-transform: uppercase;
+
+
+
+
 
 
   /* Mas contrasty stroke-style */
@@ -121,7 +136,7 @@ body {
   text-align: left;
   font-family: "FSP DEMO - Merlo Neue Bold";
   position: absolute;
-  top: 17.5vh;
+  top: 18.5vh;
   left: 6.4vh;
   width: 35vh;
   max-width: 35vh;
