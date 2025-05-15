@@ -17,13 +17,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (savedBgmVolume !== null) {
         previousBgmVolume = parseInt(savedBgmVolume, 10);
+        if (!isNaN(previousBgmVolume) && volumeSlider) {
+            volumeSlider.value = previousBgmVolume;
+        }
     }
+
     if (savedBgmMute === 'true') {
         isBgmMuted = true;
     }
+
     if (savedSfxVolume !== null) {
         sfxVolume = parseFloat(savedSfxVolume);
+        if (!isNaN(sfxVolume) && sfxVolumeSlider) {
+            sfxVolumeSlider.value = sfxVolume * 100;
+        }
     }
+
     if (savedSfxMute === 'true') {
         isSfxMuted = true;
     }
@@ -32,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (bodyBgmAttr === 'dynamic') {
         const urlParams = new URLSearchParams(window.location.search);
         const selectedMap = urlParams.get('map') || 'multiplication';
-        const selectedStage = parseInt(urlParams.get('stage'), 10) || 1;
 
         const mapMusicSources = {
             multiplication: '/static/bgm/multiplication.mp3',
@@ -57,20 +65,18 @@ document.addEventListener('DOMContentLoaded', function () {
     bgMusic.volume = isBgmMuted ? 0 : previousBgmVolume / 100;
     bgMusic.id = 'bg-music';
     bgMusic.autoplay = false;
-
     document.body.appendChild(bgMusic);
 
     // Set up volume slider for BGM
     if (volumeSlider) {
-        volumeSlider.value = previousBgmVolume;
         volumeSlider.addEventListener('input', updateBgmVolume);
-        updateBgmVolume(); // Initialize the volume slider state on load
+        updateBgmVolume(); // Apply volume on load
     }
 
     // Set up volume slider for SFX
     if (sfxVolumeSlider) {
-        sfxVolumeSlider.value = sfxVolume * 100;
         sfxVolumeSlider.addEventListener('input', updateSfxVolume);
+        updateSfxVolume(); // Apply volume on load
     }
 
     function updateBgmVolume() {
@@ -87,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('sfxVolume', sfxVolume);
     }
 
-    // Mute function for Background Music
     function toggleBgmMute() {
         if (isBgmMuted) {
             bgMusic.volume = volumeSlider.value / 100;
@@ -100,13 +105,11 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('bgmMuted', isBgmMuted);
     }
 
-    // Mute function for SFX
     function toggleSfxMute() {
         isSfxMuted = !isSfxMuted;
         localStorage.setItem('sfxMuted', isSfxMuted);
     }
 
-    // Add event listener for mute checkbox (BGM)
     const muteCheckbox = document.getElementById("muteCheckbox");
     if (muteCheckbox) {
         muteCheckbox.checked = isBgmMuted;
@@ -122,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Add event listener for mute checkbox (SFX)
     const sfxMuteCheckbox = document.getElementById("sfxMuteCheckbox");
     if (sfxMuteCheckbox) {
         sfxMuteCheckbox.checked = isSfxMuted;
