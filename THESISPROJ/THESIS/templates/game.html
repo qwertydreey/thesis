@@ -59,7 +59,7 @@
       </div>
 
       <!-- Menu Button -->
-<button class="1btn" id="menuButton" onclick="showVictoryScreen()">WWWWWWWWWWWWWWWWW</button>
+<button class="1btn" id="menuButton" onclick="showGameOverScreen()">WWWWWWWWWWWWWWWWW</button>
       <!-- Characters and Platform Section (Ground) -->
       <div class="ground">
         <!-- Platform -->
@@ -178,16 +178,14 @@
 <!-- Victory Screen -->
 <div id="victory-screen" class="victory-screen">
   <div class="victory-box">
-    <h1 class="victory-text">VICTORY!</h1>
     <div class="victory-buttons">
-      <button id="continue-btn" class="victory-btn">Continue</button>
-      <button id="retry-btn" class="victory-btn">Retry</button>
-      <button id="home-btn" class="victory-btn">Home</button>
+      <button id="continue-btn" class="victory-btn"></button>
+      <button id="retry-btn" class="victory-btn"></button>
+      <button id="home-btn" class="victory-btn"></button>
     </div>
     
     <!-- Reward Box (Moved here) -->
     <div class="reward-box">
-      <p class="reward-text">Rewards</p>
       <div class="reward-container">
         <div id="reward-claimed-text" class="reward-claimed-text hidden">🎉 Reward Claimed!</div>
 
@@ -238,10 +236,9 @@
 <!-- Game Over Screen -->
 <div id="gameover-screen" class="gameover-screen">
   <div class="gameover-box">
-    <h1 class="gameover-text">Game Over!</h1>
     <div class="gameover-buttons">
-      <button id="retry-btn" class="gameover-btn">Retry</button>
-      <button id="home-btn" class="gameover-btn">Home</button>
+      <button id="go-retry-btn" class="gameover-btn"></button>
+      <button id="go-home-btn" class="gameover-btn"></button>
     </div>
   </div>
 </div>
@@ -256,10 +253,10 @@
   <!-- Game Menu Overlay -->
   <div id="menuOverlay" class="menu-overlay hidden">
     <div id="gameMenu" class="game-menu">
-      <button class="menu-item" data-lang="resume" onclick="resumeGame()">Resume</button>
-      <button class="menu-item" data-lang="restart" onclick="restartGame()">Restart</button>
-      <button class="menu-item" data-lang="settings" onclick="openSettings()">Settings</button>
-      <button class="menu-item" data-lang="quit" onclick="goToMainMenu()">Quit</button>
+      <button class="menu-item" data-lang="resume" onclick="resumeGame()"></button>
+      <button class="menu-item" data-lang="restart" onclick="restartGame()"></button>
+      <button class="menu-item" data-lang="settings" onclick="openSettings()"></button>
+      <button class="menu-item" data-lang="quit" onclick="goToMainMenu()"></button>
     </div>
 
 <!-- Settings Menu -->
@@ -268,21 +265,29 @@
   <div class="settings-container">
     <!-- Volume Control for BGM -->
     <div class="setting-option">
-      <label for="volume" class="volume-label" data-lang="volumeLabel">BGM</label>
-      <input type="range" id="volume" class="volume-slider" min="0" max="30" value="30">
+      <label for="volume" class="volume-label" data-lang="volumeLabel">
+        <img src="{{ url_for('static', filename='images/gameimg/menuimg/BGM/BGM.png') }}"  alt="BGM" class="volume-icon" />
+      </label>
+            <input type="range" id="volume" class="volume-slider" min="0" max="30" value="30">
     </div>
+    
 
     <!-- Mute Toggle for BGM -->
     <div class="setting-option mute-align">
       <div class="mute-wrapper">
         <input type="checkbox" id="muteCheckbox" class="mute-checkbox" onchange="toggleMuteCheckbox(event)">
-        <span class="mute-label" data-lang="muteLabel">Mute</span>
-      </div>
+        <span class="mute-icon" data-lang="muteLabel">
+          <img src="{{ url_for('static', filename='images/gameimg/menuimg/BGM/mute.png') }}" alt="Mute" class="mute-icon" />
+        </span>
+              </div>
     </div>
 
     <!-- Volume Control for SFX -->
     <div class="setting-option">
-      <label for="sfx-volume" class="sfx-volume-label" data-lang="sfxVolumeLabel">SFX</label>
+      <label for="sfx-volume" class="sfx-volume-label" data-lang="sfxVolumeLabel">
+        <img src="{{ url_for('static', filename='images/gameimg/menuimg/SFX/SFX.png') }}" alt="SFX" class="sfx-volume-icon" />
+      </label>
+      
       <input type="range" id="sfx-volume" class="volume-slider" min="0" max="30" value="30">
     </div>
 
@@ -290,24 +295,17 @@
     <div class="setting-option mute-align">
       <div class="sfx-mute-wrapper">
         <input type="checkbox" id="sfxMuteCheckbox" class="mute-checkbox" onchange="toggleSfxMuteCheckbox(event)">
-        <span class="mute-label" data-lang="sfxMuteLabel">Mute</span>
-      </div>
+        <span class="sfx-mute-icon" data-lang="muteLabel">
+          <img src="{{ url_for('static', filename='images/gameimg/menuimg/SFX/mute.png') }}" alt="Mute" class="sfx-mute-icon" />
+        </span>
+              </div>
     </div>
 
-    <!-- Language Settings -->
-    <div class="language-container">
-      <label for="language" data-lang="languageLabel">Language</label>
-      <div class="language-box">
-        <button id="prevLanguage" onclick="changeLanguage('prev')"> &lt; </button>
-        <span id="languageText">English</span>
-        <button id="nextLanguage" onclick="changeLanguage('next')"> &gt; </button>
-      </div>
-    </div>
 
     <!-- Settings Buttons -->
     <div class="settings-item-container">
-      <button class="settings-item" onclick="applySettings()" data-lang="apply">Apply</button>
-      <button class="settings-item" onclick="closeSettings()" data-lang="back">Back</button>
+      <button class="settings-item" onclick="applySettings()" data-lang="apply"></button>
+      <button class="settings-item" onclick="closeSettings()" data-lang="back"></button>
     </div>
   </div>
 </div>

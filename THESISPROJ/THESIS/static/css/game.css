@@ -1388,17 +1388,13 @@ body {
     top: 8vh;        /* 80px / 10 */
     left: 50%;       /* stays as % for horizontal centering */
     transform: translateX(-50%);
-    background-image: url('../images/gameimg/menudrop.png');
+    background-image: url('../images/gameimg/menuimg/menubg.png');
     background-size: contain; /* Make image fill the area more prominently */
     background-position: center;
     background-repeat: no-repeat;
-    border-radius: 10px;
-    padding: 40px 20px; /* Increased padding for spacing */
     z-index: 999;
-    width: 85vh;
-    height: 60vh;
-    display: flex;
-    flex-direction: column;
+    width: 100vh;
+    height: 65vh;
     align-items: center;
     justify-content: center; /* Center items vertically */
     user-select: none;
@@ -1411,74 +1407,48 @@ body {
 
 
   .menu-item {
-    width: 55vh; /* or adjust as needed */
-    height: 5.5vh; /* 55px / 10 */
-    margin: 0 auto 4vh auto; /* Increased bottom margin to 40px as vh */
-    background-color: #2f855a; /* Deep emerald green */
-    color: #f0fff4; /* Mint white text */
-    font-weight: bold;
-    font-size: 2vh;
-    padding: 12px;
-    border-radius: 50px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 31vh;
+    height: 8vh;
+    background-size: contain; /* Make image fill the area more prominently */
+    background-position: center;
+    background-repeat: no-repeat;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 1px 5px rgba(255, 255, 255, 0.3); /* Stronger inner shadow */
-    transition: all 0.2s ease;
-    position: relative;
-    top: 3vh; /* Adjusted position if needed */
-  }
+    transition: all 0.4s ease;
+    position: absolute;
 
-  /* Hover effect with slight lift */
-  .menu-item:hover {
-    background-color: #38a169; /* Brighter emerald */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 7px rgba(255, 255, 255, 0.4); /* Stronger embossed effect */
-  }
-
-  /* Press effect (must be placed AFTER hover) */
-  .menu-item:active {
-    background-color: #2f855a; /* Revert back to original when clicked */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.5); /* Slight inset shadow when pressed */
-    transform: translateY(2px); /* Pressed effect */
   }
 
 /* Resume Button */
 .menu-item:nth-child(1) {
-  background-color: #2f855a; /* Darker green for resume */
-}
-
-.menu-item:nth-child(1):hover {
-  background-color: #276749; /* Even darker green on hover */
+  top: 17vh;
+  left: 34.7vh;
+  background-image: url('../images/gameimg/menuimg/Resume.png');
 }
 
 /* Restart Button */
 .menu-item:nth-child(2) {
-  background-color: #d97706; /* Darker orange for restart */
+  top:25vh;
+  left: 34.7vh;
+  background-image: url('../images/gameimg/menuimg/Restart.png');
 }
 
-.menu-item:nth-child(2):hover {
-  background-color: #b45309; /* Slightly darker orange on hover */
-}
 
 /* Settings Button */
 .menu-item:nth-child(3) {
-  background-color: #2c5282; /* Darker blue for settings */
-}
-
-.menu-item:nth-child(3):hover {
-  background-color: #1e3a8a; /* Slightly darker blue on hover */
-}
+  top: 33vh;
+  left: 34.7vh;
+  background-image: url('../images/gameimg/menuimg/Settings.png');}
 
 /* Quit Button */
 .menu-item:nth-child(4) {
-  background-color: #c53030; /* Darker red for quit */
-}
+  top:41vh;
+  left: 34.7vh;
+  background-image: url('../images/gameimg/menuimg/Quit.png');}
 
-.menu-item:nth-child(4):hover {
-  background-color: #9b2c2c; /* Slightly darker red on hover */
-}
+  /* Hover effect with slight lift */
+  .menu-item:hover {
+    transform: scale(1.02);
+  }
 
 
 
@@ -1509,54 +1479,68 @@ body {
   color: #e6ffe6;
 }
 
-/* Volume Range */
+/* === Volume Slider Track === */
 #volume {
-  width: 100%;
-  height: 0.8vh; /* 8px */
-  top:4vh;
+  width: 50vh;
+  height: 6.5vh;
+  top: 16vh;
+  left: 6vh;
   appearance: none;
-  background: #ffffff;
-  border-radius: 0.4vh;
+  background: url('../images/gameimg/menuimg/SFX/slider.png') no-repeat center;
+  background-size: 100% 100%;
   outline: none;
   position: absolute;
-  transition: background 0.3s ease;
 }
-.volume-label{
+
+/* === Volume Label === */
+
+
+.volume-icon {
   position: absolute;
-  top:0vh;
-  font-size: 2vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  top: 11vh;
+  left: 6vh;
+  width: 10vh;
+  height: 5vh;
+  user-select: none;
 }
-/* Volume Slider Thumb */
+
+
+/* === Customized Thumb (Chrome, Safari) === */
 #volume::-webkit-slider-thumb {
   appearance: none;
-  height: 2vh;
-  width: 2vh;
-  background: #4a90e2;
-  border: 0.2vh solid #1c5f94;
-  border-radius: 50%;
+  height: 6.5vh;
+  width: 6.5vh;
+  background: url('../images/gameimg/menuimg/SFX/thumb.png') no-repeat center;
+  background-size: contain;
+  border: none;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transform: translateY(-1.2vh);
+  transition: transform 0.2s ease;
 }
 
 #volume::-webkit-slider-thumb:hover {
-  background: #1c5f94;
-  transform: scale(1.2);
+  transform: translateY(-1.2vh) scale(1.1);
 }
 
+/* === Customized Thumb (Firefox) === */
 #volume::-moz-range-thumb {
-  height: 2vh;
-  width: 2vh;
-  background: #4a90e2;
-  border: 0.2vh solid #1c5f94;
-  border-radius: 50%;
+  height: 6.5vh;
+  width: 6.5vh;
+  background: url('../images/gameimg/menuimg/SFX/thumb.png') no-repeat center;
+  background-size: contain;
+  border: none;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transform: translateY(-1.2vh);
+  transition: transform 0.2s ease;
 }
 
 #volume::-moz-range-thumb:hover {
-  background: #1c5f94;
-  transform: scale(1.2);
+  transform: translateY(-1.2vh) scale(1.1);
 }
+
 
 /* Mute Wrapper aligns checkbox and label horizontally */
 .mute-wrapper {
@@ -1571,20 +1555,21 @@ body {
 
 /* Mute Checkbox Style */
 #muteCheckbox {
+  left: 40.1vh;
+  top: 5.4vh;
   appearance: none;
-  width: 2vh;
-  height: 2vh;
-  border: 0.2vh solid #4a90e2;
-  border-radius: 0.4vh;
-  position: relative;
+  width: 2.5vh;
+  height: 2.5vh;
+  border: none;
+  position: absolute;
   cursor: pointer;
+  z-index: 10;
 }
 
 /* Show mute icon when checked */
 #muteCheckbox:checked::before {
   content: "🔇";
-  color: white;
-  font-size: 1.4vh;
+  font-size: 2vh;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1592,90 +1577,104 @@ body {
 }
 
 /* Mute Label Style */
-.mute-label {
-  font-size: 1.6vh;
-  color: #fff;
-  font-weight: 600;
+.mute-icon {
+  position: absolute;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  top: 2.5vh;
+  left: 19.9vh;
+  width: 13vh;
+  height: 3vh;
+  user-select: none;
 }
 
 /* === SFX Volume Range === */
 #sfx-volume {
-  width: 100%;
-  height: 0.8vh;
-  top:15vh;
+  width: 50vh;
+  height: 6.5vh;
+  top: 28vh;
+  left: 6vh;
   appearance: none;
-  background: #ffffff;
-  border-radius: 0.4vh;
+  background: url('../images/gameimg/menuimg/SFX/slider.png') no-repeat center;
+  background-size: 100% 100%;
   outline: none;
   position: absolute;
-  transition: background 0.3s ease;
 }
 
-.sfx-volume-label {
+.sfx-volume-icon {
   position: absolute;
-  top: 11vh; /* Adjust this as needed */
-  font-size: 2vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  top: 23vh;
+  left: 6vh;
+  width: 12vh;
+  height: 5vh;
+  user-select: none;
 }
-
-/* SFX Volume Slider Thumb */
+/* === Customized Thumb (Chrome, Safari) === */
 #sfx-volume::-webkit-slider-thumb {
   appearance: none;
-  height: 2vh;
-  width: 2vh;
-  background: #4a90e2;
-  border: 0.2vh solid #1c5f94;
-  border-radius: 50%;
+  height: 6.5vh;
+  width: 6.5vh;
+  background: url('../images/gameimg/menuimg/SFX/thumb.png') no-repeat center;
+  background-size: contain;
+  border: none;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transform: translateY(-1.2vh); /* ✅ Adjust this value to vertically center */
+  transition: transform 0.2s ease;
 }
 
 #sfx-volume::-webkit-slider-thumb:hover {
-  background: #1c5f94;
-  transform: scale(1.2);
+  transform: translateY(-1.2vh) scale(1.1); /* Maintain same shift on hover */
 }
 
+/* === Customized Thumb (Firefox) === */
 #sfx-volume::-moz-range-thumb {
-  height: 2vh;
-  width: 2vh;
-  background: #4a90e2;
-  border: 0.2vh solid #1c5f94;
-  border-radius: 50%;
+  height: 6.5vh;
+  width: 6.5vh;
+  background: url('../images/gameimg/menuimg/SFX/thumb.png') no-repeat center;
+  background-size: contain;
+  border: none;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transform: translateY(-1.2vh); /* ✅ Same vertical adjustment for Firefox */
+  transition: transform 0.2s ease;
 }
 
 #sfx-volume::-moz-range-thumb:hover {
-  background: #1c5f94;
-  transform: scale(1.2);
+  transform: translateY(-1.2vh) scale(1.1);
 }
+
+
+
 
 /* SFX Mute Wrapper (aligns checkbox and label horizontally) */
 .sfx-mute-wrapper {
   top:17vh;
   left: 3vh;
   position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 1vh;
+
 
 }
 
 /* SFX Mute Checkbox */
 #sfxMuteCheckbox {
+  left: 40.1vh;
+  top: 6.4vh;
   appearance: none;
-  width: 2vh;
-  height: 2vh;
-  border: 0.2vh solid #4a90e2;
-  border-radius: 0.4vh;
-  position: relative;
+  width: 2.5vh;
+  height: 2.5vh;
+  border: none;
+  position: absolute;
   cursor: pointer;
+  z-index: 10;
 }
 
 /* SFX Mute Icon when checked */
 #sfxMuteCheckbox:checked::before {
   content: "🔇";
-  color: white;
-  font-size: 1.4vh;
+  font-size: 2vh;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1683,62 +1682,16 @@ body {
 }
 
 /* SFX Mute Label */
-.sfx-mute-label {
-  font-size: 1.6vh;
-  color: #fff;
-  font-weight: 600;
-}
-
-
-/* Language Container */
-.language-container {
-  top: 19vh;
-  left: 14vh;
+.sfx-mute-icon {
   position: absolute;
-  text-align: center;
-  font-weight: 600;
-}
-
-.language-container label {
-  display: block;
-  margin-bottom: 0.8vh;
-  font-size: 2vh;
-  font-weight: 600;
-  color: #fff;
-}
-
-/* Language Box */
-.language-box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #ffa726;
-  padding: 1vh 2vh;
-  border-radius: 5vh;
-  width: 25vh;
-  height: 5vh;
-  margin: 0 auto;
-}
-
-.language-box button {
-  background-color: transparent;
-  color: white;
-  border: none;
-  font-size: 1.8vh;
-  cursor: pointer;
-  padding: 0.5vh 1vh;
-}
-
-.language-box button:hover {
-  transform: scale(1.1);
-}
-
-#languageText {
-  color: white;
-  font-size: 1.8vh;
-  font-weight: bold;
-  text-align: center;
-  flex-grow: 1;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  top: 3vh;
+  left: 19.9vh;
+  width: 13vh;
+  height: 3vh;
+  user-select: none;
 }
 
 /* Buttons Section */
@@ -1753,36 +1706,29 @@ body {
 
 /* Shared styles */
 .settings-item {
-  display: block;
-  width: 45vh;
-  margin-bottom: 1vh;
-  padding: 1.2vh 2.5vh;
-  border-radius: 0.8vh;
+  width: 21vh;
+  height: 6vh;
+  background-size: contain; /* Make image fill the area more prominently */
+  background-position: center;
+  background-repeat: no-repeat;
   cursor: pointer;
-  font-size: 1.6vh;
-  text-align: center;
-  color: white;
-  font-weight: 600;
-  border: none;
-  transition: background-color 0.3s ease;
+  transition: all 0.4s ease;
+  position: absolute;
+
 }
 
-/* Apply Button - Green */
+/* Apply Button */
 .settings-item:first-child {
-  background-color: #38a169;
-}
-
-.settings-item:first-child:hover {
-  background-color: #2f855a;
+  top: 2vh;
+  left: 5vh;
+  background-image: url('../images/gameimg/menuimg/apply.png');
 }
 
 /* Back Button */
 .settings-item:last-child {
-  background-color: #D32F2F;
-}
-
-.settings-item:last-child:hover {
-  background-color: #B71C1C;
+  top:2vh;
+  left: 27.7vh;
+  background-image: url('../images/gameimg/menuimg/back.png');
 }
 
 
@@ -1855,118 +1801,87 @@ body {
 
 /* Popup box */
 .victory-box {
+  top:8vh;
+  position: absolute;
   background-image: url('../images/gameimg/victorybox.png');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  width: 102vh;
-  height: 68vh;
-  border-radius: 2vh;
-  text-align: center;
+  width: 91vh;
+  height: 71vh;
   opacity: 0;
   transform: scale(0.8);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Victory text */
-.victory-text {
-  font-size: 9vh;
-  font-weight: bold;
-  margin-top: 7vh;
-  color: #4caf50;
-  text-shadow: 0.5vh 0.5vh 1vh rgba(0, 0, 0, 0.3);
-}
 
-/* Button container */
-.victory-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 2vh;
-  margin-bottom: 3vh;
-  align-items: center;
-}
+
+
 
 /* Base button styles */
 .victory-btn {
-  padding: 0 4vw;
-  color: white;
+  position: absolute;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
   border: none;
-  border-radius: 4vh;
   cursor: pointer;
-  font-weight: 500;
-  font-size: 2vh;
-  text-transform: uppercase;
-  letter-spacing: 0.2vw;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  height: 5.5vh;
-  width: 23vw;
+  transition: transform 0.3s ease;
+  height: 10vh;
+  width: 40vh;
   /* Embossed effect with dark shadows */
-  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4);
 }
 
 /* CONTINUE - Royal Blue */
 #continue-btn {
-  background-color: #2563eb; /* Darker blue for default */
+  top: 28vh;
+  left: 28vh;
+  background-image: url('../images/gameimg/continue.png');
 }
 #continue-btn:hover {
-  background-color: #3b82f6; /* Lighter blue for hover */
-  transform: translateY(-0.5vh);
-  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-0.3vh);
 }
 
 /* RETRY - Crimson Red */
 #retry-btn {
-  background-color: #dc2626; /* Darker red for default */
+  top: 39vh;
+  left: 28vh;
+  background-image: url('../images/gameimg/retry.png');
 }
 #retry-btn:hover {
-  background-color: #ef4444; /* Lighter red for hover */
-  transform: translateY(-0.5vh);
-  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(0.3vh);
 }
 
 /* HOME - Fresh Green */
 #home-btn {
-  background-color: #3e9a2d; /* Darker green for default */
+  top: 50vh;
+  left: 28vh;
+  background-image: url('../images/gameimg/home.png');
 }
 #home-btn:hover {
-  background-color: #47b533; /* Lighter green for hover */
-  transform: translateY(-0.5vh);
-  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(0.3vh);
 }
 
 /* Reward Box and Others — unchanged */
 .reward-box {
-  margin: -1vh auto;
-  padding: 2vh;
-  border-radius: 2.5vh;
-  background-color: #f0c15d;
-  text-align: center;
-  width: 47vh;
-  height: 15vh;
-  border: 0.5vh solid #d79e3a;
+  position: absolute;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('../images/gameimg/rewardbox.png');
+  top: 61vh;
+  left: 26vh;
+  width: 44vh;
+  height: 17vh;
   overflow: hidden;
-  position: relative;
 }
 
-.reward-text {
-  position: absolute;
-  font-size: 2vh;
-  font-weight: bold;
-  color: #3f210a;
-  margin-bottom: 1.5vh;
-  margin-top: -2vh;
-  padding: 0.1vh 0.4vw;
-  text-align: center;
-  display: inline-block;
-  left: 50%;
-  transform: translateX(-50%);
-}
 
 /* Reward claimed text styling */
 .reward-claimed-text {
   position: absolute;
-  top: 76%;
-  left: 50%;
+  top: 100%;
+  left: 52%;
   transform: translate(-50%, -50%);
   font-size: 2.2vh;
   font-weight: bold;
@@ -2008,24 +1923,24 @@ body {
 /* Multiplication */
 #reward-multiplication-badge {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-multiplication-title {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-multiplication-border {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -2033,24 +1948,24 @@ body {
 /* Addition */
 #reward-addition-badge {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-addition-title {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-addition-border {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -2058,24 +1973,24 @@ body {
 /* Subtraction */
 #reward-subtraction-badge {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-subtraction-title {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-subtraction-border {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -2083,24 +1998,24 @@ body {
 /* Division */
 #reward-division-badge {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-division-title {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-division-border {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -2108,24 +2023,24 @@ body {
 /* Counting */
 #reward-counting-badge {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-counting-title {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-counting-border {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -2133,24 +2048,24 @@ body {
 /* Comparison */
 #reward-comparison-badge {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-comparison-title {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-comparison-border {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -2158,24 +2073,24 @@ body {
 /* Numerals */
 #reward-numerals-badge {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-numerals-title {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-numerals-border {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -2183,24 +2098,24 @@ body {
 /* Place Value */
 #reward-placevalue-badge {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-placevalue-title {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #reward-placevalue-border {
   width: auto;
-  height: 10.6vh;
-  top: 3vh;
+  height: 8.6vh;
+  top: 6.5vh;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -2227,75 +2142,53 @@ body {
 
 /* Popup box for Game Over */
 .gameover-box {
-  background-image: url('../images/gameimg/victorybox.png');
+  top:8vh;
+  position: absolute;
+  background-image: url('../images/gameimg/gameoverbox.png');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  margin-top: -11vh;
-  width: 84vh;
-  height: 58vh;
-  border-radius: 2vh;
-  text-align: center;
+  width: 91vh;
+  height: 71vh;
   opacity: 0;
   transform: scale(0.8);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Game Over text */
-.gameover-text {
-  font-size: 9vh;
-  font-weight: bold;
-  margin-top: 7vh;
-  color: #dc2626; /* Crimson Red */
-  text-shadow: 0.5vh 0.5vh 1vh rgba(0, 0, 0, 0.3);
-}
 
-/* Button container for Game Over */
-.gameover-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 4vh;
-  align-items: center;
-  margin-top: 3vh;
-  margin-bottom: 3vh; /* Adjust as needed for spacing */
-}
 
 /* Button base styles */
 .gameover-btn {
-  padding: 0 5vw; /* Adjust width padding for larger buttons */
-  color: white;
+  position: absolute;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
   border: none;
-  border-radius: 4vh;
   cursor: pointer;
-  font-weight: 500;
-  font-size: 2.5vh; /* Increased font size for better visibility */
-  text-transform: uppercase;
-  letter-spacing: 0.2vw;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  height: 7vh; /* Adjusted height for bigger buttons */
-  width: 28vw; /* Increased width for larger buttons */
-  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease;
+  height: 10vh;
+  width: 40vh;
+  /* Embossed effect with dark shadows */
 }
 
 
-/* Retry button (Crimson Red) */
-#retry-btn {
-  background-color: #dc2626;
+#go-retry-btn {
+  top: 29vh;
+  left: 28vh;
+  background-image: url('../images/gameimg/retry.png');
 }
-#retry-btn:hover {
-  background-color: #ef4444;
-  transform: translateY(-0.5vh);
-  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+#go-retry-btn:hover {
+  transform: translateY(-0.3vh);
 }
 
-/* Home button (Fresh Green) */
-#home-btn {
-  background-color: #3e9a2d;
+/* HOME - Fresh Green */
+#go-home-btn {
+  top: 40vh;
+  left: 28vh;
+  background-image: url('../images/gameimg/home.png');
 }
-#home-btn:hover {
-  background-color: #47b533;
-  transform: translateY(-0.5vh);
-  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+#go-home-btn:hover {
+  transform: translateY(-0.3vh);
 }
 
 

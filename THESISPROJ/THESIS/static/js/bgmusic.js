@@ -15,14 +15,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const savedSfxVolume = localStorage.getItem('sfxVolume');
     const savedSfxMute = localStorage.getItem('sfxMuted');
 
-    if (savedBgmVolume) {
-        previousBgmVolume = savedBgmVolume;
+    if (savedBgmVolume !== null) {
+        previousBgmVolume = parseInt(savedBgmVolume, 10);
     }
     if (savedBgmMute === 'true') {
         isBgmMuted = true;
     }
-    if (savedSfxVolume) {
-        sfxVolume = savedSfxVolume;
+    if (savedSfxVolume !== null) {
+        sfxVolume = parseFloat(savedSfxVolume);
     }
     if (savedSfxMute === 'true') {
         isSfxMuted = true;
@@ -35,14 +35,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedStage = parseInt(urlParams.get('stage'), 10) || 1;
 
         const mapMusicSources = {
-          multiplication: '/static/bgm/multiplication.mp3',
-          addition: '/static/bgm/addition.mp3',
-          subtraction: '/static/bgm/subtraction.mp3',
-          division: '/static/bgm/division.mp3',
-          counting: '/static/bgm/counting.mp3',
-          comparison: '/static/bgm/comparison.mp3',
-          numerals: '/static/bgm/numerals.mp3',
-          placevalue: '/static/bgm/placevalue.mp3'
+            multiplication: '/static/bgm/multiplication.mp3',
+            addition: '/static/bgm/addition.mp3',
+            subtraction: '/static/bgm/subtraction.mp3',
+            division: '/static/bgm/division.mp3',
+            counting: '/static/bgm/counting.mp3',
+            comparison: '/static/bgm/comparison.mp3',
+            numerals: '/static/bgm/numerals.mp3',
+            placevalue: '/static/bgm/placevalue.mp3'
         };
 
         bgMusicSrc = mapMusicSources[selectedMap] || '/static/sfx/default.mp3';
@@ -74,35 +74,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateBgmVolume() {
-        if (isBgmMuted) return; // Don't change volume if BGM is muted
+        if (isBgmMuted) return;
         const value = volumeSlider.value;
-        const percentage = (value / volumeSlider.max) * 100;
-        bgMusic.volume = value / 100;  // Adjust volume (0 to 1)
-        volumeSlider.style.background = `linear-gradient(to right, #4a90e2 ${percentage}%, #d3d3d3 ${percentage}%)`;
-
-        // Save the volume to localStorage
+        const volume = value / 100;
+        bgMusic.volume = volume;
         localStorage.setItem('bgmVolume', value);
     }
 
     function updateSfxVolume() {
+        if (isSfxMuted) return;
         sfxVolume = sfxVolumeSlider.value / 100;
-
-        // Save the volume to localStorage
         localStorage.setItem('sfxVolume', sfxVolume);
     }
 
     // Mute function for Background Music
     function toggleBgmMute() {
         if (isBgmMuted) {
-            bgMusic.volume = volumeSlider.value / 100;  // Use the slider value when unmuting
+            bgMusic.volume = volumeSlider.value / 100;
             isBgmMuted = false;
         } else {
-            previousBgmVolume = volumeSlider.value;  // Store the current volume when muting
+            previousBgmVolume = volumeSlider.value;
             bgMusic.volume = 0;
             isBgmMuted = true;
         }
-
-        // Save mute status to localStorage
         localStorage.setItem('bgmMuted', isBgmMuted);
     }
 
@@ -121,11 +115,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 bgMusic.volume = 0;
                 isBgmMuted = true;
             } else {
-                bgMusic.volume = volumeSlider.value / 100;  // Restore volume based on slider value
+                bgMusic.volume = volumeSlider.value / 100;
                 isBgmMuted = false;
             }
-
-            // Save mute status to localStorage
             localStorage.setItem('bgmMuted', isBgmMuted);
         });
     }
@@ -135,28 +127,22 @@ document.addEventListener('DOMContentLoaded', function () {
     if (sfxMuteCheckbox) {
         sfxMuteCheckbox.checked = isSfxMuted;
         sfxMuteCheckbox.addEventListener('change', function (e) {
-            if (e.target.checked) {
-                isSfxMuted = true;
-            } else {
-                isSfxMuted = false;
-            }
-
-            // Save mute status to localStorage
+            isSfxMuted = e.target.checked;
             localStorage.setItem('sfxMuted', isSfxMuted);
         });
     }
 
     // Function to play SFX with volume control
     window.playSound = function (src, delay = 0) {
-        if (isSfxMuted) return; // Prevent SFX from playing if muted
+        if (isSfxMuted) return;
         setTimeout(() => {
             const sound = new Audio(src);
-            sound.volume = sfxVolume; // Set the volume for SFX
+            sound.volume = sfxVolume;
             sound.play();
         }, delay);
     };
 
-    // Auto play background music after first click to bypass autoplay policy
+    // Auto play background music after first user interaction
     document.addEventListener('click', () => {
         if (bgMusic.paused) {
             bgMusic.play().catch(err => {
@@ -165,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }, { once: true });
 
-    // Expose functions to globally control background music
+    // Global controls
     window.muteBgMusic = function () {
         bgMusic.muted = true;
     };
@@ -178,9 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
         bgMusic.muted = !bgMusic.muted;
     };
 
-    // Expose the toggle for SFX mute
     window.toggleSfxMute = function () {
-        isSfxMuted = !isSfxMuted;
-        localStorage.setItem('sfxMuted', isSfxMuted);
+        toggleSfxMute();
     };
 });

@@ -1505,8 +1505,8 @@ function showGameOverScreen() {
   const gameoverScreen = document.getElementById('gameover-screen');
   const gameoverBox = gameoverScreen.querySelector('.gameover-box');
   const gameoverButtons = document.querySelector('.gameover-buttons');
-  const retryBtn = gameoverButtons.querySelector('#retry-btn');
-  const homeBtn = gameoverButtons.querySelector('#home-btn');
+  const retryBtn = gameoverButtons.querySelector('#go-retry-btn');
+  const homeBtn = gameoverButtons.querySelector('#go-home-btn');
 
   // Remove monsters
   document.querySelectorAll('.monster, .monster-spawn, .monster-death').forEach(el => el.remove());
@@ -2043,11 +2043,6 @@ function useThunderPotion() {
 // ================================================================================================ //
 
 // ===== SETTINGS MENU HANDLING =====
-// ===== SETTINGS MENU HANDLING =====
-// ===== SETTINGS MENU HANDLING =====
-let languages = ['English', 'Tagalog']; // Initialize languages before use
-let currentLanguageIndex = 0;
-let savedLanguageIndex = 0; // <-- This stores the last applied language
 
 function openSettings() {
   playButtonClickSound();
@@ -2057,27 +2052,18 @@ function openSettings() {
 
 function closeSettings() {
   playButtonClickSound();
-  currentLanguageIndex = savedLanguageIndex;
-  updateLanguageText();
   document.getElementById("settingsMenu").classList.add("hidden");
   document.getElementById("gameMenu").classList.remove("hidden");
 }
 
 // ===== VOLUME CONTROL =====
 const volumeSlider = document.getElementById("volume");
-const bgMusic = document.getElementById("bg-music"); // Get the audio element
+const bgMusic = document.getElementById("bg-music"); // Replace with your actual background music element ID
 
-// Function to update the volume of the audio element
 function updateVolumeFill() {
-  if (volumeSlider) { // Ensure volumeSlider is available
+  if (volumeSlider && bgMusic) {
     const value = volumeSlider.value;
-    const percentage = (value / volumeSlider.max) * 100;
-    volumeSlider.style.background = `linear-gradient(to right, #4a90e2 ${percentage}%, #d3d3d3 ${percentage}%)`;
-
-    // Set the audio element's volume (value is between 0 and 1)
-    if (bgMusic) {
-      bgMusic.volume = value / 100; // Divide by 100 to make it a value between 0 and 1
-    }
+    bgMusic.volume = value / 100;
   }
 }
 
@@ -2086,18 +2072,14 @@ if (volumeSlider) {
   updateVolumeFill(); // Initialize on load
 }
 
+
 const sfxVolumeSlider = document.getElementById("sfx-volume");
 const sfxAudio = document.getElementById("sfx-audio"); // Replace with your actual SFX audio element ID
 
 function updateSFXVolumeFill() {
-  if (sfxVolumeSlider) {
+  if (sfxVolumeSlider && sfxAudio) {
     const value = sfxVolumeSlider.value;
-    const percentage = (value / sfxVolumeSlider.max) * 100;
-    sfxVolumeSlider.style.background = `linear-gradient(to right, #4a90e2 ${percentage}%, #d3d3d3 ${percentage}%)`;
-
-    if (sfxAudio) {
-      sfxAudio.volume = value / 100;
-    }
+    sfxAudio.volume = value / 100;
   }
 }
 
@@ -2151,11 +2133,7 @@ if (sfxMuteCheckbox) {
 function applySettings() {
   playButtonClickSound();
   const volume = volumeSlider.value;
-  const selectedLanguage = languages[currentLanguageIndex];
   console.log("Volume:", volume);
-  console.log("Language:", selectedLanguage);
-  savedLanguageIndex = currentLanguageIndex;
-  updateAllGameTexts();
 }
 
 // ===== GAME CONTROL =====
@@ -2175,7 +2153,6 @@ function toggleMenu() {
   playButtonClickSound();
   const overlay = document.getElementById("menuOverlay");
   const menuButton = document.getElementById("menuButton");
-
   overlay.classList.toggle("hidden");
   menuButton.style.display = overlay.classList.contains("hidden") ? "block" : "none";
 }
@@ -2204,64 +2181,6 @@ document.addEventListener('keydown', function(event) {
   }
 });
 
-// ===== LANGUAGE CHANGE FUNCTIONALITY =====
-// Change language based on direction
-function changeLanguage(direction) {
-  playButtonClickSound();
-  if (direction === 'prev') {
-    currentLanguageIndex = (currentLanguageIndex - 1 + languages.length) % languages.length;
-  } else if (direction === 'next') {
-    currentLanguageIndex = (currentLanguageIndex + 1) % languages.length;
-  }
-
-  updateLanguageText();
-}
-
-// Update the display text for the language
-function updateLanguageText() {
-  const languageText = document.getElementById('languageText');
-  if (languageText) {
-    languageText.textContent = languages[currentLanguageIndex];
-  }
-}
-
-// Update all text elements in the game
-function updateAllGameTexts() {
-  const language = languages[currentLanguageIndex];
-  console.log(`All game text updated to ${language}`);
-  
-  // Update specific buttons or elements based on their 'data-lang' attributes
-  document.querySelectorAll('[data-lang]').forEach(element => {
-    const key = element.getAttribute('data-lang');
-    // Check if a translation exists for the key in the current language
-    if (languageData[language] && languageData[language][key]) {
-      // Update the element's text content with the corresponding translation
-      element.textContent = languageData[language][key];
-    }
-  });
-}
-
-// Language texts (You can expand this object as needed)
-const languageData = {
-  English: {
-    resume: 'Resume',
-    restart: 'Restart',
-    settings: 'Settings',
-    quit: 'Quit',
-    languageLabel: 'Language',
-    apply: 'Apply',
-    back: 'Back',
-  },
-  Tagalog: {
-    resume: 'Magpatuloy',
-    restart: 'Magsimula Muli',
-    settings: 'Mga Setting',
-    quit: 'Mag-quit',
-    languageLabel: 'Wika',
-    apply: 'I-apply',
-    back: 'Bumalik',
-  },
-};
 
 
 
