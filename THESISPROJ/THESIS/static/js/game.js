@@ -208,6 +208,8 @@ function getPreviousDifficulty(currentDifficulty) {
 
 
 // === Question Fetching ===
+let askedQuestions = new Set();  // Store indices of questions already asked
+
 async function fetchNewQuestion() {
   const qText = document.getElementById('question-text');
   const cAns = document.getElementById('correct-answer');
@@ -223,7 +225,27 @@ async function fetchNewQuestion() {
 
   const stageQuestions = questions[selectedMap][selectedStageKey][currentDifficulty];
   if (stageQuestions && stageQuestions.length > 0) {
-    const randomIndex = Math.floor(Math.random() * stageQuestions.length);
+    
+    // Reset askedQuestions if all questions have been asked
+    if (askedQuestions.size >= stageQuestions.length) {
+      askedQuestions.clear();
+    }
+
+    let randomIndex;
+    let attempts = 0;
+    const maxAttempts = 100;  // Prevent infinite loops in rare cases
+
+    do {
+      randomIndex = Math.floor(Math.random() * stageQuestions.length);
+      attempts++;
+    } while (askedQuestions.has(randomIndex) && attempts < maxAttempts);
+
+    if (attempts >= maxAttempts) {
+      console.warn("Could not find a new question after many attempts. Showing a repeated one.");
+    }
+
+    askedQuestions.add(randomIndex);
+
     const selectedQuestion = stageQuestions[randomIndex];
 
     qText.innerText = selectedQuestion.question_text;
@@ -242,6 +264,7 @@ async function fetchNewQuestion() {
     fb.innerText = '';
   }
 }
+
 
 function autoResizeFont(element) {
   let fontSize = 7; // Start with a base font size (in vh)
