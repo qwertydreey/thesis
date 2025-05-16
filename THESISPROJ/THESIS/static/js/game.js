@@ -771,56 +771,67 @@ const skins = [
     name: 'Default Skin',
     src: '/static/images/anim/sprite/idle.png',
     attackSrc: '/static/images/anim/sprite/attack.png',
+    fireballSrc: '/static/images/anim/sprite/default.png',
+
   },
   {
     id: 'r1',
     name: 'Multiplication Skin',
     src: '/static/images/anim/sprite/idle1.png',
     attackSrc: '/static/images/anim/sprite/attack1.png',
+    fireballSrc: '/static/images/anim/sprite/multiplication.png',
   },
   {
     id: 'r2',
     name: 'Addition Skin',
     src: '/static/images/anim/sprite/idle2.png',
     attackSrc: '/static/images/anim/sprite/attack2.png',
+    fireballSrc: '/static/images/anim/sprite/addition.png',
   },
   {
     id: 'r3',
     name: 'Subtraction Skin',
     src: '/static/images/anim/sprite/idle3.png',
     attackSrc: '/static/images/anim/sprite/attack3.png',
+    fireballSrc: '/static/images/anim/sprite/subtraction.png',
   },
   {
     id: 'r4',
     name: 'Division Skin',
     src: '/static/images/anim/sprite/idle4.png',
     attackSrc: '/static/images/anim/sprite/attack4.png',
+    fireballSrc: '/static/images/anim/sprite/division.png',
   },
   {
     id: 'r5',
     name: 'Counting Skin',
     src: '/static/images/anim/sprite/idle5.png',
     attackSrc: '/static/images/anim/sprite/attack5.png',
+    fireballSrc: '/static/images/anim/sprite/counting.png',
   },
   {
     id: 'r6',
     name: 'Comparison Skin',
     src: '/static/images/anim/sprite/idle6.png',
     attackSrc: '/static/images/anim/sprite/attack6.png',
+    fireballSrc: '/static/images/anim/sprite/comparison.png',
   },
   {
     id: 'r7',
     name: 'Numerals Skin',
     src: '/static/images/anim/sprite/idle7.png',
     attackSrc: '/static/images/anim/sprite/attack7.png',
+    fireballSrc: '/static/images/anim/sprite/numerals.png',
   },
   {
     id: 'r8',
     name: 'Place Value Skin',
     src: '/static/images/anim/sprite/idle8.png',
     attackSrc: '/static/images/anim/sprite/attack8.png',
+    fireballSrc: '/static/images/anim/sprite/placevalue.png',
   },
 ];
+
 
 
 
@@ -1612,54 +1623,56 @@ function updatePotionUI() {
 function fireballAttack() {
   if (sessionStorage.getItem('fireballTriggered')) return;
 
-  const paths = document.getElementById("attack-image-paths").dataset;
-  const attackEffects = [paths.add, paths.sub, paths.mul, paths.div];
-  const selectedAttack = attackEffects[Math.floor(Math.random() * attackEffects.length)];
-
-  const fireball = document.createElement("img");
-  fireball.src = selectedAttack;
-  fireball.classList.add("fireball");
-
   const groundContainer = document.querySelector(".ground");
   const player = document.querySelector(".player");
   const monster = document.querySelector(".monster");
 
-  fireball.style.left = `${player.offsetLeft + player.offsetWidth}px`;
-  fireball.style.bottom = "120px";
-
-  // 🧪 Charging effect
+  // Add charging animation to player at start
   player.classList.add("charging");
 
   // Play fireball charging sound
-  playSound('/static/sfx/attack.mp3',0); // Flask static URL for fireball sound
+  playSound('/static/sfx/attack.mp3', 100); // Flask static URL for fireball sound
 
-  // Fetch equipped skin from the backend
+  // Fetch equipped skin from backend
   fetch('/get_user_skins')
     .then(response => response.json())
     .then(data => {
       if (data.error) {
         console.error("Error fetching equipped skin:", data.error);
+        // Remove charging if error fetching skin
+        player.classList.remove("charging");
         return;
       }
 
-      // Get the equipped skin from the backend response
-      const equippedSkinId = data.equipped_skin || 'default-skin'; // Default to 'default-skin' if no skin found
-      const skin = skins.find(s => s.id === equippedSkinId) || skins[0];  // Default to first skin if not found
+      // Get equipped skin or fallback
+      const equippedSkinId = data.equipped_skin || 'default-skin';
+      const skin = skins.find(s => s.id === equippedSkinId) || skins[0];
+      const selectedAttack = skin.fireballSrc;
 
+      // Create fireball element with correct skin fireball image
+      const fireball = document.createElement("img");
+      fireball.src = selectedAttack;
+      fireball.classList.add("fireball");
+
+      // Position fireball at player start point
+      fireball.style.left = `${player.offsetLeft + player.offsetWidth}px`;
+      fireball.style.bottom = "120px";
+
+      // Append fireball after short delay for charging effect
       setTimeout(() => {
-        // Update the player's skin to attack state
+        // Change player image to attack pose
         player.src = skin.attackSrc;
         player.style.height = "35vh";
         player.style.width = "auto";
 
-        // 🔥 Fireball appears
+        // Add fireball to the ground container (appear and move)
         groundContainer.appendChild(fireball);
         sessionStorage.setItem('fireballTriggered', true);
 
-        // Play fireball hit sound
-        playSound('/static/sfx/damaged.mp3',500); // Flask static URL for fireball hit sound
+        // Play fireball hit sound after slight delay
+        playSound('/static/sfx/damaged.mp3', 500);
 
-        // 💢 Monster takes visual damage
+        // Monster visual damage animation sequence
         setTimeout(() => {
           monster.classList.add("damaged");
           setTimeout(() => {
@@ -1667,7 +1680,7 @@ function fireballAttack() {
           }, 600);
         }, 770);
 
-        // 🌀 Shake effect
+        // Shake effect after damage
         setTimeout(() => {
           monster.classList.add("shake");
           setTimeout(() => {
@@ -1675,47 +1688,43 @@ function fireballAttack() {
           }, 600);
         }, 1100);
 
-        // 💀 Apply damage + wait for animation to end
+        // Apply damage and check if monster dies
         setTimeout(() => {
           const damage = 1;
           currentMonsterHealth -= damage;
           updateHealthBars();
 
           if (currentMonsterHealth <= 0) {
-            console.log("Death animation added"); // Add log when death animation starts
             isMonsterDeathAnimationInProgress = true;
             monster.classList.add("monster-death");
-            playSound('/static/sfx/deathanim.mp3', 0); // make sure the path is correct
+            playSound('/static/sfx/deathanim.mp3', 0);
 
-            // ✔️ Wait for death animation to finish
+            // Wait for death animation end
             const onDeath = () => {
-              console.log("Death animation ended (fireball)"); // Log when death animation ends
               monster.removeEventListener("animationend", onDeath);
               monster.classList.remove("monster-death");
-
               currentMonsterIndex++;
               spawnMonster(currentMonsterIndex, true);
               isMonsterDeathAnimationInProgress = false;
             };
-
             monster.addEventListener("animationend", onDeath);
           }
         }, 1400);
 
-        // 🧼 Remove fireball
+        // Remove fireball after animation
         setTimeout(() => {
           fireball.remove();
           sessionStorage.removeItem('fireballTriggered');
         }, 1000);
 
-        // 🟢 Reset to idle
+        // Reset player to idle and remove charging effect
         setTimeout(() => {
           player.src = skin.src;
           player.style.height = "35vh";
           player.style.width = "auto";
           player.classList.remove("charging");
 
-          // Remove freeze effect after fireball hits the monster
+          // Handle freeze turns decrement & display update
           if (freezeTurns > 0) {
             freezeTurns--;
             if (freezeTurns === 0) {
@@ -1728,12 +1737,16 @@ function fireballAttack() {
             updateFreezeTurnsDisplay();
           }
         }, 700);
+
       }, 600);
     })
     .catch(error => {
       console.error("Error fetching equipped skin:", error);
+      // Remove charging if error fetching skin
+      player.classList.remove("charging");
     });
 }
+
 
 
 

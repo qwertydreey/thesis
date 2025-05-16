@@ -10,8 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body data-bgm="/static/bgm/default.mp3">
+<body>
   <audio id="buttonClickSound" src="/static/sfx/click.mp3" preload="auto"></audio>
+  <audio id="loadingSFX" src="/static/sfx/loading.mp3" preload="auto"></audio>
 
   <div class="back">
     <a href="{{ url_for('roadmap') }}" onclick="delayedRoadmapBackRedirect(event)">
@@ -59,14 +60,15 @@
     </div>
     
 
+
     <script>
       function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
       }
     
-      const selectedMap = getQueryParam("map") || "defaultMap";     // fallback if needed
-      const selectedStageKey = getQueryParam("stage") || "stage1";  // fallback if needed
+      const selectedMap = getQueryParam("map") || "defaultMap";
+      const selectedStageKey = getQueryParam("stage") || "stage1";
     
       // Function to navigate to the stage
       function goToStage(stageNumber) {
@@ -78,9 +80,9 @@
           loadingOverlay.style.left = '0';
           loadingOverlay.style.width = '100vw';
           loadingOverlay.style.height = '100vh';
-          loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.3)'; // slightly dim for contrast
-          loadingOverlay.style.backdropFilter = 'blur(10px)'; // BLUR EFFECT HERE
-          loadingOverlay.style.webkitBackdropFilter = 'blur(10px)'; // Safari support
+          loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+          loadingOverlay.style.backdropFilter = 'blur(10px)';
+          loadingOverlay.style.webkitBackdropFilter = 'blur(10px)';
           loadingOverlay.style.display = 'flex';
           loadingOverlay.style.justifyContent = 'center';
           loadingOverlay.style.alignItems = 'center';
@@ -95,7 +97,7 @@
           topHalf.style.width = '100vw';
           topHalf.style.height = '50%';
           topHalf.style.objectFit = 'fill';
-          topHalf.style.transition = 'transform 0.7s ease';
+          topHalf.style.transition = 'transform 4s ease';
     
           const bottomHalf = document.createElement('img');
           bottomHalf.src = '/static/images/anim/loading/down.png';
@@ -105,22 +107,32 @@
           bottomHalf.style.width = '100vw';
           bottomHalf.style.height = '50%';
           bottomHalf.style.objectFit = 'fill';
-          bottomHalf.style.transition = 'transform 0.7s ease';
+          bottomHalf.style.transition = 'transform 4s ease';
     
           loadingOverlay.appendChild(topHalf);
           loadingOverlay.appendChild(bottomHalf);
           document.body.appendChild(loadingOverlay);
     
-          // Animate after 1s delay
+          // 🔊 Play loading SFX
+          const loadingSound = document.getElementById('loadingSFX');
+          if (loadingSound) {
+            loadingSound.currentTime = 0;
+            loadingSound.volume = 1; // Optional: adjust volume here
+            loadingSound.play().catch((e) => {
+              console.warn('Loading sound failed to play:', e);
+            });
+          }
+    
+          // Animate after slight delay
           setTimeout(() => {
             topHalf.style.transform = 'translateY(-100%)';
             bottomHalf.style.transform = 'translateY(100%)';
-          }, 600);
+          }, 0);
     
           // Navigate after animation
           setTimeout(() => {
             window.location.href = `/game?map=${selectedMap}&stage=${stageNumber}`;
-          }, 1450);
+          }, 3900);
         } else {
           alert('No map selected.');
         }
@@ -133,6 +145,7 @@
         });
       });
     </script>
+    
     
   
   
@@ -392,7 +405,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </script>
 
-</script>
 <script>
   function playButtonClickSound() {
     const originalSound = document.getElementById('buttonClickSound');
@@ -421,7 +433,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
 
 
-<script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>
 
 
 

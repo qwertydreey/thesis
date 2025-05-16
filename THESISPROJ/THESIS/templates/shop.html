@@ -6,7 +6,7 @@
   <title>Roadmap</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/shop.css') }}" />
 </head>
-<body data-bgm="/static/bgm/shop.mp3">
+<body data-bgm="/static/bgm/shop.mp3" data-play-bgm="true">
   <div class="shop-wrapper">
     <div class="shop-content">
       <!-- Fullscreen Background Image -->
@@ -107,6 +107,9 @@
           </script>
           
           <script>
+            let isNavigatingAway = false;
+
+
             function playButtonClickSound() {
               const originalSound = document.getElementById('buttonClickSound');
               const soundClone = originalSound.cloneNode(); // clone the <audio> element
@@ -136,12 +139,14 @@
             // Autoplay on first user interaction
             ['click', 'keydown', 'touchstart'].forEach(event => {
               document.addEventListener(event, () => {
-                if (!hasPlayedGreeting) {
+                if (!hasPlayedGreeting && !isNavigatingAway) {
                   playGreetingSound();
                   hasPlayedGreeting = true;
                 }
               }, { once: true });
             });
+
+
 
             // Play again on button click or any call to this function
             function greetings() {
@@ -177,14 +182,17 @@
           </script>
         <script>
           function delayedBackRedirect(event) {
-            event.preventDefault(); // Stop immediate navigation
-            farewell(); // Play button sound (you already have this function)
+            event.preventDefault();
+            isNavigatingAway = true; // Set flag to avoid greeting sound
+            farewell(); // Play farewell sound
 
             const targetUrl = event.currentTarget.getAttribute('href');
             setTimeout(() => {
               window.location.href = targetUrl;
             }, 2600);
           }
+
+
         </script>
 
           <script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>
