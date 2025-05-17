@@ -13,25 +13,46 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}" />
 </head>
 <body>
-    <!-- Chat Container -->
-    <div class="chat-container shadow">
-        <audio id="counticushelp" src="/static/sfx/counticushelp.mp3" preload="auto"></audio>
+  <!-- Chat Container -->
+  <div class="chat-container shadow">
+    <audio id="counticushelp" src="/static/sfx/counticushelp.mp3" preload="auto"></audio>
 
-        <h5 class="text-center mb-3" style="color: white;">Chat with Wizard Counticus</h5>
-        <div class="chat-messages" id="chat-box">
-            <!-- Messages appear here -->
-        </div>
-        <form id="chat-form" class="d-flex mt-2">
-            <input type="text" class="form-control me-2" id="user-input" placeholder="Type your message...">
-            <button type="submit" class="btn btn-success">Send</button>
-        </form>
-        
-        <!-- Voice Selection Dropdown -->
-        <div class="voice-selector mt-3">
-            <label for="voice-select">Choose a voice: </label>
-            <select id="voice-select" class="form-select">
-                <!-- Options will be added dynamically -->
-            </select>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+        <button onclick="history.back()" style="
+        flex: 0 0 auto;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      " 
+      onmouseover="this.style.backgroundColor='#45a049';" 
+      onmouseout="this.style.backgroundColor='#4CAF50';">
+        Back
+      </button>
+              <h5 style="color: white; flex: 1 1 auto; text-align: center; margin: 0;">Chat with Wizard Counticus</h5>
+        <div style="flex: 0 0 60px;"><!-- empty placeholder to balance the back button --></div>
+      </div>
+      
+
+    <div class="chat-messages" id="chat-box">
+      <!-- Messages appear here -->
+    </div>
+    <form id="chat-form" class="d-flex mt-2">
+      <input type="text" class="form-control me-2" id="user-input" placeholder="Type your message...">
+      <button type="submit" class="btn btn-success">Send</button>
+    </form>
+    
+    <!-- Voice Selection Dropdown -->
+    <div class="voice-selector mt-3">
+      <label for="voice-select">Choose a voice: </label>
+      <select id="voice-select" class="form-select">
+        <!-- Options will be added dynamically -->
+      </select>
+    </div>
         </div>
     </div>
 
@@ -40,177 +61,205 @@
 
     <!-- Sample Chat Logic -->
     <script>
-        let currentUtterance = null;
-
+        // Check if page load is due to reload
+        const navEntries = performance.getEntriesByType("navigation");
+        const isReload = navEntries.length > 0 && navEntries[0].type === 'reload';
+    
+        // Clear sessionStorage chat only if it's reload
+        if (isReload) {
+            sessionStorage.removeItem('chatMessages');
+        }
+    
+        // Load saved messages or start with empty array
+        const savedMessages = sessionStorage.getItem('chatMessages');
+        const messages = savedMessages ? JSON.parse(savedMessages) : [];
+    
+        const chatBox = document.getElementById('chat-box');
         const form = document.getElementById('chat-form');
         const input = document.getElementById('user-input');
-        const chatBox = document.getElementById('chat-box');
-        const voiceSelect = document.getElementById('voice-select');
         const sendButton = form.querySelector('button');
-
-        // Variable to hold the selected voice
+        const voiceSelect = document.getElementById('voice-select');
+    
+        let currentUtterance = null;
         let selectedVoice = null;
+    
+        function saveMessagesToStorage() {
+            sessionStorage.setItem('chatMessages', JSON.stringify(messages));
+        }
+    
+        // Render messages so newest pairs are on top, grouped as user+bot pairs
+        function renderMessages() {
+    chatBox.innerHTML = '';
 
-        // Load voices and populate the dropdown
+    for (let i = messages.length - 1; i >= 0; i -= 2) {
+        const pairContainer = document.createElement('div');
+        pairContainer.classList.add('conversation-pair');
+
+        // bot message (if exists)
+        if (i - 1 >= 0) {
+            const botMsg = createMessageRow(messages[i - 1].text, messages[i - 1].sender);
+            pairContainer.appendChild(botMsg);
+        }
+
+        // user message (if exists)
+        if (i >= 0) {
+            const userMsg = createMessageRow(messages[i].text, messages[i].sender);
+            pairContainer.appendChild(userMsg);
+        }
+
+        chatBox.appendChild(pairContainer);
+    }
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+    saveMessagesToStorage();
+}
+
+    
+        // Voice loading code unchanged
         function loadVoice() {
             const voices = speechSynthesis.getVoices();
-
-            // If no voices are loaded, retry after a short delay
             if (voices.length === 0) {
                 setTimeout(loadVoice, 100);
                 return;
             }
-
-
-            // Clear the dropdown
             voiceSelect.innerHTML = '';
-
             voices.forEach(voice => {
                 const option = document.createElement('option');
                 option.value = voice.name;
                 option.textContent = voice.name;
                 voiceSelect.appendChild(option);
             });
-
-            // Set default to Google US English voice (or first available English voice)
             const defaultVoice = voices.find(voice => voice.name.includes('Google US English')) || voices[0];
             selectedVoice = defaultVoice;
-
-            // Set the voice in the select dropdown
             voiceSelect.value = selectedVoice.name;
         }
-
-        // Ensure voices are loaded
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = loadVoice;
         }
         loadVoice();
-
-        // Listen for changes in voice selection
+    
         voiceSelect.addEventListener('change', () => {
             const voices = speechSynthesis.getVoices();
             selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
         });
-
-        // Create message row for user and bot
+    
+        // createMessageRow function unchanged, keep it here from your code
         function createMessageRow(message, sender) {
             const row = document.createElement('div');
             row.classList.add('message-row', sender);
-
+    
             const profile = document.createElement('img');
             profile.classList.add('profile-pic');
             profile.src = sender === 'user'
                 ? "{{ url_for('static', filename='images/chatbotimg/userpfp.png') }}"
                 : "{{ url_for('static', filename='images/chatbotimg/counticuspfp.png') }}";
-
+    
             const bubble = document.createElement('div');
             bubble.classList.add('message-bubble');
-
+    
             const messageText = document.createElement('span');
             messageText.textContent = message;
-
+    
             bubble.appendChild(messageText);
-
-            // ✅ Only add speaker icon if the sender is 'bot'
+    
             if (sender === 'bot') {
+                const profileContainer = document.createElement('div');
+                profileContainer.style.display = 'flex';
+                profileContainer.style.flexDirection = 'column';
+                profileContainer.style.alignItems = 'center';
+                profileContainer.style.gap = '4px';
+    
+                profileContainer.appendChild(profile);
+    
                 const speakerIcon = document.createElement('i');
                 speakerIcon.classList.add('fas', 'fa-volume-up', 'speaker-icon', 'bot');
                 speakerIcon.title = "Read aloud";
-
-                // Adjust the position of the speaker icon at the bottom of the message
-                speakerIcon.style.position = 'absolute';
-                speakerIcon.style.bottom = '5px'; // Adjust the bottom space as needed
-                speakerIcon.style.right = '5px';  // Adjust the right space as needed
-
+                speakerIcon.style.fontSize = '20px';
+                speakerIcon.style.cursor = 'pointer';
+    
                 speakerIcon.addEventListener('click', () => {
-                    // If there's an utterance currently playing, stop it
                     if (currentUtterance && speechSynthesis.speaking) {
-                        speechSynthesis.cancel();  // Stop the current speech
-                        currentUtterance = null;   // Reset the utterance
+                        speechSynthesis.cancel();
+                        currentUtterance = null;
                     } else {
-                        // Create a new utterance for the current message
                         const utterance = new SpeechSynthesisUtterance(message);
                         if (selectedVoice) {
                             utterance.voice = selectedVoice;
                         }
                         utterance.rate = 0.9;
                         utterance.pitch = 1;
-
-                        // Set the current utterance to this new one
                         currentUtterance = utterance;
-
-                        // Speak the message
                         speechSynthesis.speak(utterance);
                     }
                 });
-
-                bubble.appendChild(speakerIcon);
-            }
-
-            // Ensure the bubble adjusts its height based on the message length
-            bubble.style.position = 'relative'; // Ensure the bubble holds its children in relative positioning
-
-            if (sender === 'user') {
-                row.appendChild(bubble);  // bubble first
-                row.appendChild(profile); // profile to the right
+    
+                profileContainer.appendChild(speakerIcon);
+    
+                row.appendChild(profileContainer);
+                row.appendChild(bubble);
             } else {
-                row.appendChild(profile); // profile to the left
-                row.appendChild(bubble);  // bubble to the right
+                row.appendChild(bubble);
+                row.appendChild(profile);
             }
-
+    
+            bubble.style.position = 'relative';
+    
             return row;
         }
-
-        // Handle form submission
-        form.addEventListener('submit', async function (e) {
+    
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
+    
             const userText = input.value.trim();
             if (!userText) return;
-
-            // Stop any ongoing speech when a new message is sent
+    
             if (currentUtterance && speechSynthesis.speaking) {
-                speechSynthesis.cancel();  // Stop the current speech
-                currentUtterance = null;   // Reset the utterance
+                speechSynthesis.cancel();
+                currentUtterance = null;
             }
-
-            // Disable the input field and send button while waiting for bot response
+    
             input.disabled = true;
             sendButton.disabled = true;
-
-            const userMsg = createMessageRow(userText, 'user');
-            chatBox.prepend(userMsg);
-
-            const thinkingMsg = createMessageRow("Hmm... let me think about that!", 'bot');
-            chatBox.prepend(thinkingMsg);
-
+    
+            // Add user message
+            messages.push({ sender: 'user', text: userText });
+            renderMessages();
+    
+            // Add "thinking" bot message
+            messages.push({ sender: 'bot', text: "Hmm... let me think about that!" });
+            renderMessages();
+    
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
-
+    
             try {
                 const response = await fetch('/chatbot-api', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: userText })
                 });
-
                 const data = await response.json();
-
-                thinkingMsg.remove();
-                const botReply = createMessageRow(data.reply, 'bot');
-                chatBox.prepend(botReply);
-
+    
+                // Replace the "thinking" message with actual reply
+                messages.pop();
+                messages.push({ sender: 'bot', text: data.reply });
+                renderMessages();
             } catch (error) {
-                thinkingMsg.remove();
-                const errorMsg = createMessageRow("Oops! Counticus couldn't reach the magic scrolls 🧙‍♂️📜.", 'bot');
-                chatBox.prepend(errorMsg);
-
+                messages.pop();
+                messages.push({ sender: 'bot', text: "Oops! Counticus couldn't reach the magic scrolls 🧙‍♂️📜." });
+                renderMessages();
             } finally {
-                // Re-enable the input field and send button once the bot has replied
                 input.disabled = false;
                 sendButton.disabled = false;
             }
         });
+    
+        // Initial render on page load
+        renderMessages();
+    
     </script>
+    
+
 
 <script>
     let hasPlayedCounticus = false;

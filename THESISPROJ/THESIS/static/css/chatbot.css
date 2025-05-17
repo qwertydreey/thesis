@@ -29,7 +29,7 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column-reverse;
-    padding: 3vh 1vh;
+    padding: 1vh 1vh;
     border-radius: 5px;
     background-color: #1f1f1f;
     height: 90%;
@@ -74,24 +74,31 @@ body {
 
 /* Speaker icon for user messages */
 .speaker-icon {
-    position: absolute;
-    right: 2.5vh; /* For user messages */
-    top: 6vh;
-    font-size: 2vh;
-    color: #007bff;
     cursor: pointer;
-    transition: color 0.3s;
-}
-
-.message-row.bot .speaker-icon {
-    left: -5vh;
-    top: 6vh;
-    transform: scaleX(1);
+    min-width: 20px;
+    min-height: 20px;
+    font-size: 20px;
+    user-select: none;
+    /* Remove any absolute positioning */
+    position: static !important;
+    margin-left: 11px;
+    margin-top: 4px; /* space below the image */
+    display: inline-block;
+    color: #0d6efd; /* or your preferred icon color */
+    transition: color 0.2s ease;
 }
 
 .speaker-icon:hover {
-    color: #0056b3;
+    color: #0f61db; /* Bootstrap primary blue on hover */
 }
+
+/* Remove the .message-row.bot .speaker-icon left/top positioning */
+.message-row.bot .speaker-icon {
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+}
+
 
 
 #user-input::placeholder {
