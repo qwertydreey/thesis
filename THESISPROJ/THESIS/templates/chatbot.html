@@ -16,9 +16,9 @@
   <!-- Chat Container -->
   <div class="chat-container shadow">
     <audio id="counticushelp" src="/static/sfx/counticushelp.mp3" preload="auto"></audio>
-
+  
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-        <button onclick="history.back()" style="
+      <button onclick="history.back()" style="
         flex: 0 0 auto;
         background-color: #4CAF50;
         color: white;
@@ -33,10 +33,30 @@
       onmouseout="this.style.backgroundColor='#4CAF50';">
         Back
       </button>
-              <h5 style="color: white; flex: 1 1 auto; text-align: center; margin: 0;">Chat with Wizard Counticus</h5>
-        <div style="flex: 0 0 60px;"><!-- empty placeholder to balance the back button --></div>
+  
+      <h5 style="color: white; flex: 1 1 auto; text-align: center; margin: 0;">
+        Chat with Wizard Counticus
+      </h5>
+  
+      <div style="flex: 0 0 auto;">
+        <button id="clearChatBtn" onclick="clearChat()" style="
+          background-color: #f44336;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          font-size: 14px;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        "
+        onmouseover="this.style.backgroundColor='#da190b';"
+        onmouseout="this.style.backgroundColor='#f44336';"
+        >
+          Clear Chat
+        </button>
       </div>
-      
+    </div>
+
 
     <div class="chat-messages" id="chat-box">
       <!-- Messages appear here -->
@@ -257,6 +277,23 @@
         // Initial render on page load
         renderMessages();
     
+
+        function clearChat() {
+  // Clear messages array
+  messages.length = 0;
+
+  // Clear sessionStorage
+  sessionStorage.removeItem('chatMessages');
+
+  // Clear the chat box UI
+  chatBox.innerHTML = '';
+
+  // Optionally, disable speech synthesis if speaking
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+  }
+}
+
     </script>
     
 
