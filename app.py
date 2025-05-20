@@ -2,8 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_bcrypt import Bcrypt
 import mysql.connector
 import openai
-import os
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'  # Change this later
@@ -13,10 +11,10 @@ bcrypt = Bcrypt(app)
 
 # Connect to MySQL
 db = mysql.connector.connect(
-    host=os.environ.get("MYSQL_HOST", "127.0.0.1"),        # Railway sets MYSQL_HOST; fallback to localhost
-    user=os.environ.get("MYSQL_USER", "root"),             # Railway sets MYSQL_USER; fallback to root
-    password=os.environ.get("MYSQL_PASSWORD", "qweqwe"),   # Railway sets MYSQL_PASSWORD; fallback to qweqwe
-    database=os.environ.get("MYSQL_DATABASE", "learning_game")  # Railway sets MYSQL_DATABASE; fallback to your DB
+    host="172.19.112.1",
+    user="root",
+    password="qweqwe",
+    database="learning_game"
 )
 cursor = db.cursor(dictionary=True)
 
@@ -959,7 +957,7 @@ def reset_counters():
         connection.close()
 
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+if __name__ == '__main__':
+    app.run(debug=True)
+
     
