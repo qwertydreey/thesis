@@ -2,13 +2,18 @@
 use = ["python"]
 
 [phases.install]
-use = ["python"]
+commands = [
+  "pip install --upgrade pip",
+  "pip install -r requirements.txt"
+]
 
 [phases.build]
 use = ["python"]
 
 [phases.start]
-use = ["python"]
+commands = [
+  "gunicorn app:app"
+]
 
 [start]
 command = "gunicorn app:app"
