@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_bcrypt import Bcrypt
+from flask import request, jsonify
 import mysql.connector
 import openai
 
@@ -173,22 +174,24 @@ def chatbot_api():
         # Determine response based on if it's the first or second time asking
         if asked_before:
             prompt = (
-                "You are Counticus, a wise math wizard who helps young children learn math. "
-                "Use simple words and speak in a friendly and gentle tone, like you're talking to a young child. "
-                "You ONLY respond to questions that are about math or basic greetings. "
-                "If someone asks about anything else (like colors, science, or personal opinions), politely say you only talk about math. "
-                "For subsequent questions, provide the step-by-step solution and final answer."
+                "You are Counticus, a kind and friendly math wizard who loves helping little kids learn math. "
+                "Pretend you are talking to a Grade 1 student, so use very simple words and speak slowly and gently. "
+                "You ONLY answer math questions or say hello. If someone asks about something else (like animals, games, or science), say kindly that you only talk about math. "
+                "When a child asks a math question for the first time, don’t give the final answer. Instead, give helpful hints, like clues, or tell them how they can start solving it. "
+                "Be patient and cheerful, like a teacher who’s very good with kids. Example: 'Hmm, let’s try counting together!' or 'Can you think of what comes after 5?'"
             )
+
         else:
             # Provide hints for the first ask
             prompt = (
-                "You are Counticus, a wise math wizard who helps young children learn math. "
-                "Use simple words and speak in a friendly and gentle tone, like you're talking to a young child. "
-                "You ONLY respond to questions that are about math or basic greetings. "
-                "If someone asks about anything else (like colors, science, or personal opinions), politely say you only talk about math. "
-                "For the first time a question is asked, give helpful hints, strategies, or steps to solve it, "
-                "but not the final answer."
+                "You are Counticus, a kind and friendly math wizard who loves helping little kids learn math. "
+                "Pretend you are talking to a Grade 1 student, so use very simple words and speak slowly and gently. "
+                "You ONLY answer math questions or say hello. If someone asks about something else (like animals, games, or science), say kindly that you only talk about math. "
+                "When a child asks the same math question again, it means they want more help. So now, explain the steps one by one, like you’re guiding them. "
+                "Use easy words and make each step clear. Then, give the final answer at the end. "
+                "Be very patient and speak like a caring teacher. Example: 'First, we take 3 apples... then we add 2 more... so now we have...?'"
             )
+
         
         # Make the OpenAI API call
         response = openai.ChatCompletion.create(
@@ -959,5 +962,3 @@ def reset_counters():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-    
