@@ -11,7 +11,7 @@ bcrypt = Bcrypt(app)
 
 # Connect to MySQL
 db = mysql.connector.connect(
-    host="172.27.240.1",
+    host="localhost",
     user="root",
     password="qweqwe",
     database="learning_game"
