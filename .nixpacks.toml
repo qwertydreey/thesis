@@ -12,8 +12,8 @@ use = ["python"]
 
 [phases.start]
 commands = [
-  "gunicorn app:app"
+  "python -m gunicorn app:app"
 ]
 
 [start]
-command = "gunicorn app:app"
+command = "python -m gunicorn app:app"
