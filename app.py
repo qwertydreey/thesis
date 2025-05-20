@@ -16,17 +16,20 @@ bcrypt = Bcrypt(app)
 
 # Connect to MySQL
 cleardb_url = os.getenv("CLEARDB_DATABASE_URL")
+
 if cleardb_url:
-    url = urlparse(cleardb_url)
+    # Parse the CLEARDB URL
+    parsed_url = urlparse(cleardb_url)
+    
     db = mysql.connector.connect(
-        host=url.hostname,
-        user=url.username,
-        password=url.password,
-        database=url.path.lstrip('/'),
-        port=url.port or 3306
+        host=parsed_url.hostname,
+        user=parsed_url.username,
+        password=parsed_url.password,
+        database=parsed_url.path.lstrip('/'),
+        port=parsed_url.port or 3306
     )
 else:
-    # fallback to localhost for local dev
+    # Fallback to local development settings
     db = mysql.connector.connect(
         host=os.getenv("MYSQL_HOST", "localhost"),
         user=os.getenv("MYSQL_USER", "root"),
