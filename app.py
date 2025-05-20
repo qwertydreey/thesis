@@ -15,28 +15,13 @@ app.config['SECRET_KEY'] = 'your_secret_key'  # Change this later
 bcrypt = Bcrypt(app)
 
 # Connect to MySQL
-cleardb_url = os.getenv("CLEARDB_DATABASE_URL")
-
-if cleardb_url:
-    # Parse the CLEARDB URL
-    parsed_url = urlparse(cleardb_url)
-    
-    db = mysql.connector.connect(
-        host=parsed_url.hostname,
-        user=parsed_url.username,
-        password=parsed_url.password,
-        database=parsed_url.path.lstrip('/'),
-        port=parsed_url.port or 3306
-    )
-else:
-    # Fallback to local development settings
-    db = mysql.connector.connect(
-        host=os.getenv("MYSQL_HOST", "localhost"),
-        user=os.getenv("MYSQL_USER", "root"),
-        password=os.getenv("MYSQL_PASSWORD", ""),
-        database=os.getenv("MYSQL_DATABASE", "learning_game"),
-        port=int(os.getenv("MYSQL_PORT", 3306))
-    )
+db = mysql.connector.connect(
+    host=os.getenv("MYSQL_HOST", "localhost"),
+    user=os.getenv("MYSQL_USER", "root"),
+    password=os.getenv("MYSQL_PASSWORD", ""),
+    database=os.getenv("MYSQL_DATABASE", "learning_game"),
+    port=int(os.getenv("MYSQL_PORT", 3306))
+)
 
 cursor = db.cursor(dictionary=True)
 
