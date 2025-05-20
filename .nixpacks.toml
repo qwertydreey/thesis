@@ -1,0 +1,14 @@
+[phases.setup]
+use = ["python"]
+
+[phases.install]
+use = ["python"]
+
+[phases.build]
+use = ["python"]
+
+[phases.start]
+use = ["python"]
+
+[start]
+command = "gunicorn app:app"
