@@ -5,6 +5,8 @@ import openai
 import os
 from dotenv import load_dotenv
 
+load_dotenv()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'  # Change this later
 
@@ -15,7 +17,7 @@ bcrypt = Bcrypt(app)
 db = mysql.connector.connect(
     host=os.getenv("MYSQL_HOST", "localhost"),
     user=os.getenv("MYSQL_USER", "root"),
-    password=os.getenv("MYSQL_PASSWORD", "qweqwe"),
+    password=os.getenv("MYSQL_PASSWORD", ""),
     database=os.getenv("MYSQL_DATABASE", "learning_game")
 )
 
