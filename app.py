@@ -4,6 +4,7 @@ import mysql.connector
 import openai
 import os
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 load_dotenv()
 
@@ -14,12 +15,25 @@ app.config['SECRET_KEY'] = 'your_secret_key'  # Change this later
 bcrypt = Bcrypt(app)
 
 # Connect to MySQL
-db = mysql.connector.connect(
-    host=os.getenv("MYSQL_HOST", "localhost"),
-    user=os.getenv("MYSQL_USER", "root"),
-    password=os.getenv("MYSQL_PASSWORD", ""),
-    database=os.getenv("MYSQL_DATABASE", "learning_game")
-)
+cleardb_url = os.getenv("CLEARDB_DATABASE_URL")
+if cleardb_url:
+    url = urlparse(cleardb_url)
+    db = mysql.connector.connect(
+        host=url.hostname,
+        user=url.username,
+        password=url.password,
+        database=url.path.lstrip('/'),
+        port=url.port or 3306
+    )
+else:
+    # fallback to localhost for local dev
+    db = mysql.connector.connect(
+        host=os.getenv("MYSQL_HOST", "localhost"),
+        user=os.getenv("MYSQL_USER", "root"),
+        password=os.getenv("MYSQL_PASSWORD", ""),
+        database=os.getenv("MYSQL_DATABASE", "learning_game"),
+        port=int(os.getenv("MYSQL_PORT", 3306))
+    )
 
 cursor = db.cursor(dictionary=True)
 
