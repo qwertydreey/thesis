@@ -11,7 +11,7 @@ bcrypt = Bcrypt(app)
 
 # Connect to MySQL
 db = mysql.connector.connect(
-    host="172.19.112.1",
+    host="host.docker.internal",
     user="root",
     password="qweqwe",
     database="learning_game"
