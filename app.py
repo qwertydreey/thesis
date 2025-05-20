@@ -2,6 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_bcrypt import Bcrypt
 import mysql.connector
 import openai
+import os
+from dotenv import load_dotenv
+from urllib.parse import urlparse
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'  # Change this later
@@ -11,16 +16,18 @@ bcrypt = Bcrypt(app)
 
 # Connect to MySQL
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="qweqwe",
-    database="learning_game"
+    host=os.getenv("MYSQL_HOST", "localhost"),
+    user=os.getenv("MYSQL_USER", "root"),
+    password=os.getenv("MYSQL_PASSWORD", ""),
+    database=os.getenv("MYSQL_DATABASE", "learning_game"),
+    port=int(os.getenv("MYSQL_PORT", 3306))
 )
+
 cursor = db.cursor(dictionary=True)
 
 # 🔥 OpenRouter Setup
 openai.api_base = "https://openrouter.ai/api/v1"
-openai.api_key = "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"  # ← Replace this with your OpenRouter API Key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # --- Routes ---
 

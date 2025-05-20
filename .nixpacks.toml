@@ -1,0 +1,20 @@
+[phases.setup]
+use = ["python"]
+
+[phases.install]
+commands = [
+  "pip install --upgrade pip",
+  "pip install -r requirements.txt",
+  "pip install waitress"
+]
+
+[phases.build]
+use = ["python"]
+
+[phases.start]
+commands = [
+  "waitress-serve --port=8000 app:app"
+]
+
+[start]
+command = "waitress-serve --port=8000 app:app"
