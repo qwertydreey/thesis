@@ -5,9 +5,7 @@ use = ["python"]
 commands = [
   "pip install --upgrade pip",
   "pip install -r requirements.txt",
-  "pip show gunicorn",
-  "which gunicorn",
-  "python -m pip list"
+  "pip install waitress"
 ]
 
 [phases.build]
@@ -15,8 +13,8 @@ use = ["python"]
 
 [phases.start]
 commands = [
-  "python -m gunicorn app:app"
+  "waitress-serve --port=8000 app:app"
 ]
 
 [start]
-command = "python -m gunicorn app:app"
+command = "waitress-serve --port=8000 app:app"
