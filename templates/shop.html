@@ -108,8 +108,7 @@
           
           <script>
             let isNavigatingAway = false;
-
-
+          
             function playButtonClickSound() {
               const originalSound = document.getElementById('buttonClickSound');
               const soundClone = originalSound.cloneNode(); // clone the <audio> element
@@ -121,11 +120,12 @@
                   console.error('Playback failed:', e);
               });
             }
+          
             let hasPlayedGreeting = false;
-
+          
             function playGreetingSound() {
               const sound = document.getElementById('greetings');
-
+          
               // Only play if not already playing
               if (sound.paused) {
                 sound.currentTime = 0;
@@ -135,7 +135,7 @@
                 });
               }
             }
-
+          
             // Autoplay on first user interaction
             ['click', 'keydown', 'touchstart'].forEach(event => {
               document.addEventListener(event, () => {
@@ -145,55 +145,64 @@
                 }
               }, { once: true });
             });
-
-
-
+          
             // Play again on button click or any call to this function
             function greetings() {
               playGreetingSound();
             }
-
-
-          function counticus() {
-            const sound = document.getElementById('counticus');
-
-            // Only play if not already playing
-            if (sound.paused) {
-              sound.currentTime = 0; // rewind to start
-              sound.volume = 1;
-              sound.play().catch((e) => {
-                console.error('Playback failed:', e);
+          
+            function counticus() {
+              const sound = document.getElementById('counticus');
+          
+              // Only play if not already playing
+              if (sound.paused) {
+                sound.currentTime = 0; // rewind to start
+                sound.volume = 1;
+                sound.play().catch((e) => {
+                  console.error('Playback failed:', e);
+                });
+              }
+            }
+          
+            function farewell() {
+              const sound = document.getElementById('farewell');
+          
+              // Only play if not already playing
+              if (sound.paused) {
+                sound.currentTime = 0; // rewind to start
+                sound.volume = 1;
+                sound.play().catch((e) => {
+                  console.error('Playback failed:', e);
+                });
+              }
+            }
+          
+            // NEW FUNCTION to stop all sounds immediately
+            function stopAllSounds() {
+              const sounds = ['greetings', 'counticus', 'farewell', 'buttonClickSound'];
+              sounds.forEach(id => {
+                const audio = document.getElementById(id);
+                if (!audio.paused) {
+                  audio.pause();
+                  audio.currentTime = 0;
+                }
               });
             }
-          }
-
-          function farewell() {
-            const sound = document.getElementById('farewell');
-
-            // Only play if not already playing
-            if (sound.paused) {
-              sound.currentTime = 0; // rewind to start
-              sound.volume = 1;
-              sound.play().catch((e) => {
-                console.error('Playback failed:', e);
-              });
+          
+            function delayedBackRedirect(event) {
+              event.preventDefault();
+              isNavigatingAway = true; // Set flag to avoid greeting sound
+              
+              stopAllSounds();  // STOP all sounds immediately before playing farewell
+              farewell(); // Play farewell sound
+          
+              const targetUrl = event.currentTarget.getAttribute('href');
+              setTimeout(() => {
+                window.location.href = targetUrl;
+              }, 2600);
             }
-          }
           </script>
-        <script>
-          function delayedBackRedirect(event) {
-            event.preventDefault();
-            isNavigatingAway = true; // Set flag to avoid greeting sound
-            farewell(); // Play farewell sound
-
-            const targetUrl = event.currentTarget.getAttribute('href');
-            setTimeout(() => {
-              window.location.href = targetUrl;
-            }, 2600);
-          }
-
-
-        </script>
+          
 
           <script src="{{ url_for('static', filename='js/bgmusic.js') }}"></script>
 
