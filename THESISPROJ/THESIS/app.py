@@ -158,41 +158,54 @@ def register():
 
 # ✅ CHATBOT API ROUTE
 user_question_status = {}
+user_last_question = {}
 
 @app.route('/chatbot-api', methods=['POST'])
 def chatbot_api():
     try:
-        user_message = request.json['message']
+        user_message = request.json['message'].strip().lower()
 
-        # Check if the user has asked for the solution before in the current session
-        if user_message in user_question_status:
-            asked_before = user_question_status[user_message]
+        # For simplicity, assuming one global user — if you're using logins, use session/user_id keys
+        global_user_id = "default_user"
+
+        # Initialize user state if not yet present
+        if global_user_id not in user_last_question:
+            user_last_question[global_user_id] = None
+
+        follow_ups = [
+            "i don't know", "can you help", "i still don't get it", 
+            "i need help", "what now", "i’m confused", "i dont know"
+        ]
+
+        # Check if it's a follow-up
+        if user_message in follow_ups and user_last_question[global_user_id]:
+            # It's a follow-up to a previous question
+            original_question = user_last_question[global_user_id]
+            user_message = original_question
+            asked_before = True
         else:
-            asked_before = False
-            user_question_status[user_message] = False  # Mark as not asked yet
+            # New question
+            original_question = user_message
+            asked_before = user_question_status.get(user_message, False)
+            user_last_question[global_user_id] = user_message  # Remember this as the last question
 
-        # Determine response based on if it's the first or second time asking
+        # Set the prompt based on whether it’s the first or second time asking
         if asked_before:
             prompt = (
                 "You are Counticus, a kind and friendly math wizard who loves helping little kids learn math. "
                 "Pretend you are talking to a Grade 1 student, so use very simple words and speak slowly and gently. "
-                "You ONLY answer math questions or say hello. If someone asks about something else (like animals, games, or science), say kindly that you only talk about math. "
-                "When a child asks a math question for the first time, don’t give the final answer. Instead, give helpful hints, like clues, or tell them how they can start solving it. "
-                "Be patient and cheerful, like a teacher who’s very good with kids. Example: 'Hmm, let’s try counting together!' or 'Can you think of what comes after 5?'"
-            )
-
-        else:
-            # Provide hints for the first ask
-            prompt = (
-                "You are Counticus, a kind and friendly math wizard who loves helping little kids learn math. "
-                "Pretend you are talking to a Grade 1 student, so use very simple words and speak slowly and gently. "
-                "You ONLY answer math questions or say hello. If someone asks about something else (like animals, games, or science), say kindly that you only talk about math. "
                 "When a child asks the same math question again, it means they want more help. So now, explain the steps one by one, like you’re guiding them. "
                 "Use easy words and make each step clear. Then, give the final answer at the end. "
                 "Be very patient and speak like a caring teacher. Example: 'First, we take 3 apples... then we add 2 more... so now we have...?'"
             )
+        else:
+            prompt = (
+                "You are Counticus, a kind and friendly math wizard who loves helping little kids learn math. "
+                "Pretend you are talking to a Grade 1 student, so use very simple words and speak slowly and gently. "
+                "When a child asks a math question for the first time, don’t give the final answer. Instead, give helpful hints, like clues, or tell them how they can start solving it. "
+                "Be patient and cheerful, like a teacher who’s very good with kids. Example: 'Hmm, let’s try counting together!' or 'Can you think of what comes after 5?'"
+            )
 
-        
         # Make the OpenAI API call
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -202,16 +215,16 @@ def chatbot_api():
             ]
         )
 
-        # Check response for hint or solution
+        # Get the reply
         reply = response['choices'][0]['message']['content'].strip()
 
-        # Update status after the first ask, so we know the user is asking again
-        user_question_status[user_message] = True  # Mark as asked before
+        # Mark that this question has now been asked
+        user_question_status[original_question] = True
 
         return jsonify({"reply": reply})
 
     except Exception as e:
-        print("❌ OpenRouter Error:", e)
+        print("❌ Chatbot Error:", e)
         return jsonify({"reply": "Oops! Counticus couldn’t reach the magic scrolls. Try again later."})
 
 
@@ -962,3 +975,5 @@ def reset_counters():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+    
